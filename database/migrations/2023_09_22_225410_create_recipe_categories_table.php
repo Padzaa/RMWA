@@ -13,6 +13,21 @@ return new class extends Migration
     {
         Schema::create('recipe_categories', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('recipe_id');
+            $table
+                ->foreign('recipe_id')
+                ->references('id')
+                ->on('recipes')
+                ->onDelete('CASCADE')
+                ->onUpdate('CASCADE');
+
+            $table->unsignedBigInteger('category_id');
+            $table
+                ->foreign('category_id')
+                ->references('id')
+                ->on('categories')
+                ->onDelete('CASCADE')
+                ->onUpdate('CASCADE');
             $table->timestamps();
         });
     }

@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreIngridientRequest;
-use App\Http\Requests\UpdateIngridientRequest;
-use App\Models\Ingridient;
+use App\Http\Requests\StoreRecipeIngridientRequest;
+use App\Http\Requests\UpdateRecipeIngridientRequest;
+use App\Models\RecipeIngredient;
 
-class IngridientController extends Controller
+class RecipeIngredientController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -27,7 +27,7 @@ class IngridientController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreIngridientRequest $request)
+    public function store(StoreRecipeIngridientRequest $request)
     {
         //
     }
@@ -35,7 +35,7 @@ class IngridientController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Ingridient $ingridient)
+    public function show(RecipeIngredient $recipeIngridient)
     {
         //
     }
@@ -43,7 +43,7 @@ class IngridientController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Ingridient $ingridient)
+    public function edit(RecipeIngredient $recipeIngridient)
     {
         //
     }
@@ -51,7 +51,7 @@ class IngridientController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateIngridientRequest $request, Ingridient $ingridient)
+    public function update(UpdateRecipeIngridientRequest $request, RecipeIngredient $recipeIngridient)
     {
         //
     }
@@ -59,7 +59,7 @@ class IngridientController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Ingridient $ingridient)
+    public function destroy(RecipeIngredient $recipeIngridient)
     {
         //
     }

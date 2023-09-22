@@ -13,6 +13,15 @@ return new class extends Migration
     {
         Schema::create('reviews', function (Blueprint $table) {
             $table->id();
+            $table->integer('rating');
+            $table->unsignedBigInteger('recipe_id');
+            $table
+                ->foreign('recipe_id')
+                ->references('id')
+                ->on('recipes')
+                ->onDelete('CASCADE')
+                ->onUpdate('CASCADE');
+            $table->text('massage');
             $table->timestamps();
         });
     }

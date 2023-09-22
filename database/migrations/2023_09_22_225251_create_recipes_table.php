@@ -13,6 +13,17 @@ return new class extends Migration
     {
         Schema::create('recipes', function (Blueprint $table) {
             $table->id();
+            $table->string('title');
+            $table->string('description');
+            $table->text('instructions');
+            $table->unsignedBigInteger('user_id');
+            $table
+                ->foreign('user_id')
+                ->references('id')
+                ->on('users')
+                ->onDelete('CASCADE')
+                ->onUpdate('CASCADE');
+            $table->boolean('is_favorite');
             $table->timestamps();
         });
     }
