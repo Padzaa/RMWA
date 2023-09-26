@@ -3,7 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-
+use Illuminate\Support\Facades\Auth;
 class StoreRecipeRequest extends FormRequest
 {
     /**
@@ -11,7 +11,11 @@ class StoreRecipeRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        if(Auth::user()){
+            return true;
+        }else{
+            return false;
+        }
     }
 
     /**
@@ -22,7 +26,7 @@ class StoreRecipeRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+          //
         ];
     }
 }

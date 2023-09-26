@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 
 class UpdateCommentRequest extends FormRequest
 {
@@ -11,8 +12,11 @@ class UpdateCommentRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
-    }
+        if(Auth::user()){
+            return true;
+        }else{
+            return false;
+        }    }
 
     /**
      * Get the validation rules that apply to the request.

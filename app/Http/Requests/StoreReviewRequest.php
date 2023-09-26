@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 
 class StoreReviewRequest extends FormRequest
 {
@@ -11,7 +12,11 @@ class StoreReviewRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        if(Auth::user()){
+            return true;
+        }else{
+            return false;
+        }
     }
 
     /**
