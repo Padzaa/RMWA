@@ -28,7 +28,6 @@ Route::middleware('auth')->group(function (){
     })->name('welcome1');
     Route::resource('/recipe', RecipeController::class);
     Route::put('/recipe/{id}/favorite', [RecipeController::class, 'favorite'])->name('favorite');
-    Route::post('/recipe/filter',[RecipeController::class,'filter']);
     Route::get('/recipe/{id}/favorite', function(){
 
         return Inertia::location("/recipe/");

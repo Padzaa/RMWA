@@ -19,13 +19,11 @@
 </template>
 
 <script>
-import {Link} from '@inertiajs/vue3';
+
 
 export default {
     name: "Card.vue",
-    components: {
-        Link
-    }
+    components: {}
 }
 </script>
 
@@ -52,8 +50,9 @@ div.card {
 
 
 }
-.card-body{
-    display:grid;
+
+.card-body {
+    display: grid;
     height: 100%;
 
     grid-template-rows: min-content auto min-content;

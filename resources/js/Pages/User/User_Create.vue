@@ -18,13 +18,14 @@
                                 <label for="firstname" class="col-md-4 col-form-label text-md-end">Firstname</label>
 
                                 <div class="col-md-6">
-                                    <input v-model="form.firstname" id="firstname" type="text" class="form-control " name="firstname" required autocomplete="firstname" autofocus>
+                                    <input v-model="form.firstname" id="firstname" type="text" class="form-control "
+                                           name="firstname" required autocomplete="firstname" autofocus>
 
-<!--                                    @error('name')-->
-<!--                                    <span class="invalid-feedback" role="alert">-->
-<!--                                        <strong>{{ $message }}</strong>-->
-<!--                                    </span>-->
-<!--                                    @enderror-->
+                                    <!--                                    @error('name')-->
+                                    <!--                                    <span class="invalid-feedback" role="alert">-->
+                                    <!--                                        <strong>{{ $message }}</strong>-->
+                                    <!--                                    </span>-->
+                                    <!--                                    @enderror-->
                                 </div>
                             </div>
 
@@ -32,7 +33,8 @@
                                 <label for="lastname" class="col-md-4 col-form-label text-md-end">Lastname</label>
 
                                 <div class="col-md-6">
-                                    <input id="lastname" type="text" class="form-control" name="lastname" v-model="form.lastname" required autocomplete="lastname" autofocus>
+                                    <input id="lastname" type="text" class="form-control" name="lastname"
+                                           v-model="form.lastname" required autocomplete="lastname" autofocus>
 
                                     <!--                                    @error('name')-->
                                     <!--                                    <span class="invalid-feedback" role="alert">-->
@@ -46,13 +48,14 @@
                                 <label for="email" class="col-md-4 col-form-label text-md-end">Email Address</label>
 
                                 <div class="col-md-6">
-                                    <input id="email" type="email" class="form-control" v-model="form.email" name="email"  required autocomplete="email">
+                                    <input id="email" type="email" class="form-control" v-model="form.email"
+                                           name="email" required autocomplete="email">
 
-<!--                                    @error('email')-->
-<!--                                    <span class="invalid-feedback" role="alert">-->
-<!--                                        <strong>{{ $message }}</strong>-->
-<!--                                    </span>-->
-<!--                                    @enderror-->
+                                    <!--                                    @error('email')-->
+                                    <!--                                    <span class="invalid-feedback" role="alert">-->
+                                    <!--                                        <strong>{{ $message }}</strong>-->
+                                    <!--                                    </span>-->
+                                    <!--                                    @enderror-->
                                 </div>
                             </div>
 
@@ -60,27 +63,32 @@
                                 <label for="password" class="col-md-4 col-form-label text-md-end">Password</label>
 
                                 <div class="col-md-6">
-                                    <input id="password" type="password" class="form-control" v-model="form.password" name="password" required autocomplete="new-password">
+                                    <input id="password" type="password" class="form-control" v-model="form.password"
+                                           name="password" required autocomplete="new-password">
 
-<!--                                    @error('password')-->
-<!--                                    <span class="invalid-feedback" role="alert">-->
-<!--                                        <strong>{{ $message }}</strong>-->
-<!--                                    </span>-->
-<!--                                    @enderror-->
+                                    <!--                                    @error('password')-->
+                                    <!--                                    <span class="invalid-feedback" role="alert">-->
+                                    <!--                                        <strong>{{ $message }}</strong>-->
+                                    <!--                                    </span>-->
+                                    <!--                                    @enderror-->
                                 </div>
                             </div>
 
                             <div class="row mb-3">
-                                <label for="password-confirm" class="col-md-4 col-form-label text-md-end">Confirm Password</label>
+                                <label for="password-confirm" class="col-md-4 col-form-label text-md-end">Confirm
+                                    Password</label>
 
                                 <div class="col-md-6">
-                                    <input id="password-confirm" type="password" class="form-control" v-model="form.password_confirmation" name="password_confirmation" required autocomplete="new-password">
+                                    <input id="password-confirm" type="password" class="form-control"
+                                           v-model="form.password_confirmation" name="password_confirmation" required
+                                           autocomplete="new-password">
                                 </div>
                             </div>
 
                             <div class="row mb-0">
                                 <div class="col-md-6 offset-md-4">
-                                    <button type="submit" name="submit" :disabled="form.processing" class="btn btn-primary">
+                                    <button type="submit" name="submit" :disabled="form.processing"
+                                            class="btn btn-primary">
                                         Register
                                     </button>
                                 </div>
@@ -96,8 +104,9 @@
 </template>
 
 <script setup>
-import { reactive } from 'vue';
-import { Inertia } from '@inertiajs/inertia';
+import {reactive} from 'vue';
+import {Inertia} from '@inertiajs/inertia';
+
 let form = reactive({
     firstname: "",
     lastname: "",
@@ -106,8 +115,8 @@ let form = reactive({
     password_confirmation: "",
 
 });
-let submit = () =>{
-    Inertia.post('/register',form);
+let submit = () => {
+    Inertia.post('/register', form);
 }
 
 </script>
