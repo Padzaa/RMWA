@@ -74,7 +74,8 @@ class RecipeController extends Controller
     public function create()
     {
         return Inertia::render('Recipe/Recipe_Create', [
-            "ingredients" => Ingredient::all()
+            "ingredients" => Ingredient::all(),
+            "categories" => Category::all()
         ]);
     }
 
@@ -153,7 +154,7 @@ class RecipeController extends Controller
         $recipe = Recipe::findOrFail($id);
         $recipe->is_favorite = !$recipe->is_favorite;
         $recipe->save();
-        return $this->index();
+        return $this->index($request);
 
 
     }
