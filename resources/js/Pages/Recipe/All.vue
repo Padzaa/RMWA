@@ -63,11 +63,27 @@
                           method="GET"
                     >Edit
                     </Link>
-                    <Link class="btn btn-danger"
-                          :href="recipes.path + '/' + recipe.id"
-                          method="DELETE"
-                    >Delete
-                    </Link>
+                    <button type="button"  class="btn btn-danger" data-bs-toggle="modal" :data-bs-target="'#exampleModal'+recipe.id">
+                        Delete
+                    </button>
+                    <div class="modal fade" :id="'exampleModal'+recipe.id" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h1 class="modal-title fs-5" id="exampleModalsLabel">Confirm your deletion</h1>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    Are you sure you want to delete this recipe permanently?
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                    <Link @click="close" method="DELETE" :href="recipes.path + '/' + recipe.id" class="btn btn-danger" id="delete_recipe">Delete Recipe</Link>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <Link class="heart" method="PUT" :href="'/recipe/' + recipe.id + '/favorite'" preserve-scroll>
                         <svg width="48px" height="48px" viewBox="0 0 24 24" fill="none"
                              xmlns="http://www.w3.org/2000/svg">
@@ -104,7 +120,8 @@
 </template>
 
 <script>
-
+// <div className="modal fade" id="exampleModal52" tabIndex="-1" aria-labelledby="exampleModalLabel" data-v-ad55b4eb=""
+//      aria-modal="true" role="dialog" aria-hidden="true" style="display: none;">
 
 import Card from '../../Shared/Card.vue';
 import Filter from '../../Shared/Filter.vue';
@@ -112,6 +129,7 @@ import {Inertia} from '@inertiajs/inertia'
 import {router} from '@inertiajs/vue3'
 import {useRemember} from '@inertiajs/inertia-vue3';
 // Define a method to send the filter request
+
 
 
 export default {
@@ -138,13 +156,15 @@ export default {
     methods: {
         submit() {
             Inertia.get('/recipe', this.form);
+
         },
+        close() {
+            $('.modal').modal("hide");
+        }
+
 
     },
-    mounted() {
 
-
-    }
 }
 </script>
 <style scoped>
@@ -179,11 +199,15 @@ a {
 
 div.actions {
     align-self: end;
+    align-items: center;
     display: flex;
     gap: 10px;
 
 }
-
+div.actions>a{
+    text-align: center;
+    height:fit-content;
+}
 .filter-form {
     display: grid;
 

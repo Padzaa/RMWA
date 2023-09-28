@@ -73,6 +73,7 @@ class RecipeController extends Controller
      */
     public function create()
     {
+
         return Inertia::render('Recipe/Recipe_Create', [
             "ingredients" => Ingredient::all(),
             "categories" => Category::all()
@@ -84,7 +85,18 @@ class RecipeController extends Controller
      */
     public function store(StoreRecipeRequest $request)
     {
-
+$ingredients = [];
+$categories = [];
+        foreach ($request->ingredients as $ingredient) {
+            if(isset($ingredient["id"])){
+                $ingredients[] = $ingredient["id"];
+            }
+        }
+        foreach ($request->categories as $category) {
+            if(isset($category["id"])){
+                $categories[] = $category["id"];
+            }
+        }
         $request->attributes = $request->validate([
             'title' => ['required', 'string', 'max:255'],
             'description' => ['required', 'string', 'max:512'],
@@ -100,13 +112,8 @@ class RecipeController extends Controller
             'user_id' => Auth::user()->id,
             'is_favorite' => +$request->favorite
         ]);
-
-        foreach ($request->ingredients as $ingredient) {
-            if (explode("|", $ingredient)[1]) {
-                $ingredients[] = explode("|", $ingredient)[1];
-            }
-        }
         $recipe->ingredients()->attach($ingredients);
+        $recipe->categories()->attach($categories);
         return Inertia::location('/recipe');
     }
 
@@ -116,6 +123,8 @@ class RecipeController extends Controller
     public function show($id)
     {
         $recipe = Recipe::findOrFail($id);
+        $this->authorize('view', $recipe);
+
 
         return Inertia::render('Recipe/Show',
             [
@@ -127,31 +136,79 @@ class RecipeController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Recipe $recipe)
+    public function edit($id)
     {
-        //
+
+        $recipe = Recipe::findOrFail($id);
+        $this->authorize('view', $recipe);
+
+        return Inertia::render('Recipe/Recipe_Edit', [
+            "recipe" => $recipe,
+            "recipe_ingredients" => $recipe->ingredients,
+            "recipe_categories" => $recipe->categories,
+            "ingredients" => Ingredient::all(),
+            "categories" => Category::all()
+        ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateRecipeRequest $request, Recipe $recipe)
+    public function update(UpdateRecipeRequest $request, $id)
     {
-        //
+        $recipe = Recipe::findOrFail($id);
+        $this->authorize('update', $recipe);
+        $ingredients = [];
+        $categories = [];
+
+        foreach ($request->ingredients as $ingredient) {
+            if(isset($ingredient["id"])){
+                $ingredients[] = $ingredient["id"];
+            }
+        }
+        foreach ($request->categories as $category) {
+            if(isset($category["id"])){
+                $categories[] = $category["id"];
+            }
+        }
+
+        $request->request = $request->validate([
+            'title' => ['required', 'string', 'max:255'],
+            'description' => ['required', 'string', 'max:512'],
+            'instructions' => ['required', 'string', 'max:3000'],
+            'ingredients' => ['required', 'array', 'min:1']
+
+        ]);
+
+        $recipe->title = $request->title;
+        $recipe->description = $request->description;
+        $recipe->instructions = $request->instructions;
+        $recipe->is_favorite = $request->favorite;
+        $recipe->ingredients()->sync($ingredients);
+        $recipe->categories()->sync($categories);
+        $recipe->save();
+
+       return Inertia::location('/recipe');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Recipe $recipe)
+    public function destroy($id)
     {
-        //
+        $recipe = Recipe::findOrFail($id);
+        $this->authorize('delete', $recipe);
+        $recipe->ingredients()->detach();
+        $recipe->categories()->detach();
+
+        $recipe->delete();
     }
 
     public function favorite($id, Request $request)
     {
 
         $recipe = Recipe::findOrFail($id);
+        $this->authorize('update', $recipe);
         $recipe->is_favorite = !$recipe->is_favorite;
         $recipe->save();
         return $this->index($request);

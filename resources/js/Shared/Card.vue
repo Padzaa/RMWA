@@ -54,7 +54,7 @@ div.card {
 .card-body {
     display: grid;
     height: 100%;
-
+    padding-bottom:10px;
     grid-template-rows: min-content auto min-content;
 }
 </style>

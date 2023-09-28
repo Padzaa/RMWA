@@ -13,7 +13,7 @@ class Recipe extends Model
     }
     public function categories()
     {
-        return $this->belongsToMany(Recipe::class,'recipe_categories');
+        return $this->belongsToMany(Category::class,'recipe_categories');
     }
     public function user(){
         return $this->belongsTo(User::class);

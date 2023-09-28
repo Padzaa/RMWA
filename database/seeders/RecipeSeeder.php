@@ -6,7 +6,7 @@ use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Faker\Faker;
 use App\Models\Recipe;
-
+use Illuminate\Support\Facades\Auth;
 class RecipeSeeder extends Seeder
 {
     /**
@@ -14,14 +14,15 @@ class RecipeSeeder extends Seeder
      */
     public function run(): void
     {
+
         for($i = 0; $i <= 50; $i++)
         {
-            Recipe::create([
+            $recipe = Recipe::create([
                 "title" => "this is $i. recipe",
                 "description" => "this is $i. description",
                 "instructions" => "this is $i. instruction",
-                "is_favorite" => 0
-
+                "is_favorite" => 0,
+                "user_id" => 1
             ]);
         }
     }

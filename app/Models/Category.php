@@ -11,4 +11,5 @@ class Category extends Model
         return $this->belongsToMany(Recipe::class,'recipe_categories');
     }
     use HasFactory;
+    protected $fillable=['name'];
 }

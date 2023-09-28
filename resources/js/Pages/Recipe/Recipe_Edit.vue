@@ -13,26 +13,26 @@
 
                 <label for="ingredients">Ingredients</label>
 
-<!--                            <select id="ingredients" class="form-select">-->
-<!--                                <option selected>Select a favorite activity or create a new one</option>-->
+                <!--                            <select id="ingredients" class="form-select">-->
+                <!--                                <option selected>Select a favorite activity or create a new one</option>-->
 
-<!--                                    <option v-for="(ingredient,index) in ingredients" :value="ingredient.id" class="ingredient">{{ingredient.name}}</option>-->
+                <!--                                    <option v-for="(ingredient,index) in ingredients" :value="ingredient.id" class="ingredient">{{ingredient.name}}</option>-->
 
-<!--                            </select>-->
+                <!--                            </select>-->
                 <v-container fluid style="padding:0 !important;">
                     <v-row>
-                <v-col cols="12" style="padding:15px 12px 0 12px !important;">
-                    <v-combobox
-                        id="ingredients"
-                        v-model="selectIngredients"
-                        :items="ingredients"
-                        item-title="name"
-                        item-value="id"
-                        label="Select ingredients"
-                        multiple
+                        <v-col cols="12" style="padding:15px 12px 0 12px !important;">
+                            <v-combobox
+                                id="ingredients"
+                                v-model="selectIngredients"
+                                :items="ingredients"
+                                item-title="name"
+                                item-value="id"
+                                label="Select ingredients"
+                                multiple
 
-                    ></v-combobox>
-                </v-col>
+                            ></v-combobox>
+                        </v-col>
                     </v-row>
                 </v-container>
 
@@ -66,7 +66,7 @@
 
             </div>
             <div class="form-group d-grid" style="">
-                <label >Favorite</label>
+                <label>Favorite</label>
                 <input v-model="form.favorite" type="checkbox" class="btn-check" id="btn-check-outlined" autocomplete="off">
                 <label class="btn btn-outline-primary" for="btn-check-outlined">Make This Recipe Your Favorite</label><br>
 
@@ -80,7 +80,7 @@
                 <textarea class="form-control" id="instructions" maxlength="3000" v-model="form.instructions" placeholder="Write recipe instructions" required></textarea>
             </div>
 
-            <button type="submit" class="btn btn-primary" :disabled="form.processing">Create Recipe</button>
+            <button type="submit" class="btn btn-primary" :disabled="form.processing">Update Recipe</button>
         </form>
     </div>
 
@@ -91,22 +91,22 @@ import { reactive } from 'vue';
 import { Inertia } from '@inertiajs/inertia';
 import { ref } from 'vue';
 
-const selectIngredients = ref([]);
-const selectCategories = ref([]);
+const selectIngredients = ref(recipe.ingredients);
+const selectCategories = ref(recipe.categories);
 
 
 let form = reactive({
-    title:'',
-    description: '',
-    instructions: '',
+    title:recipe.title,
+    description: recipe.description,
+    instructions: recipe.instructions,
     ingredients: selectIngredients,
     categories: selectCategories,
-    favorite: false,
+    favorite: recipe.is_favorite ? true : false,
 });
 let submit = () =>{
-    Inertia.post('/recipe',form);
+    Inertia.put('/recipe/'+recipe.id,form);
 }
-let { ingredients,categories } = defineProps(['ingredients','categories']);
+let { ingredients,categories,recipe } = defineProps(['ingredients','categories','recipe']);
 
 
 </script>

@@ -3,8 +3,8 @@
 
         <div class="form-group">
             <div class="btn-group">
-                <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown"
-                        aria-haspopup="true" aria-expanded="false">
+                <button type="button" class="btn btn-primary dropdown-toggle"
+                        aria-haspopup="true" data-bs-toggle="dropdown" aria-expanded="false">
                     <slot name="button_name"></slot>
                 </button>
                 <div class="dropdown-menu">
