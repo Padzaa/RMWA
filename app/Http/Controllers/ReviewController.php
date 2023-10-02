@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreReviewRequest;
 use App\Http\Requests\UpdateReviewRequest;
 use App\Models\Review;
+use Illuminate\Support\Facades\Auth;
+use Inertia\Inertia;
 
 class ReviewController extends Controller
 {
@@ -13,7 +15,11 @@ class ReviewController extends Controller
      */
     public function index()
     {
-        //
+        $reviews = Review::where('user_id', Auth::user()->id)->get();
+
+        return Inertia::render('User/Reviews',[
+            "reviews" => $reviews
+        ]);
     }
 
     /**

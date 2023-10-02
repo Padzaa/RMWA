@@ -21,12 +21,11 @@
                                     <input v-model="form.firstname" id="firstname" type="text" class="form-control "
                                            name="firstname" required autocomplete="firstname" autofocus>
 
-                                    <!--                                    @error('name')-->
-                                    <!--                                    <span class="invalid-feedback" role="alert">-->
-                                    <!--                                        <strong>{{ $message }}</strong>-->
-                                    <!--                                    </span>-->
-                                    <!--                                    @enderror-->
+                                    <span class="text-danger text-center" v-if="$attrs.errors.firstname">
+                                    {{$attrs.errors.firstname}}
+                                </span>
                                 </div>
+
                             </div>
 
                             <div class="row mb-3">
@@ -36,12 +35,11 @@
                                     <input id="lastname" type="text" class="form-control" name="lastname"
                                            v-model="form.lastname" required autocomplete="lastname" autofocus>
 
-                                    <!--                                    @error('name')-->
-                                    <!--                                    <span class="invalid-feedback" role="alert">-->
-                                    <!--                                        <strong>{{ $message }}</strong>-->
-                                    <!--                                    </span>-->
-                                    <!--                                    @enderror-->
+                                    <span class="text-danger text-center" v-if="$attrs.errors.lastname">
+                                    {{$attrs.errors.lastname}}
+                                </span>
                                 </div>
+
                             </div>
 
                             <div class="row mb-3">
@@ -51,12 +49,11 @@
                                     <input id="email" type="email" class="form-control" v-model="form.email"
                                            name="email" required autocomplete="email">
 
-                                    <!--                                    @error('email')-->
-                                    <!--                                    <span class="invalid-feedback" role="alert">-->
-                                    <!--                                        <strong>{{ $message }}</strong>-->
-                                    <!--                                    </span>-->
-                                    <!--                                    @enderror-->
+                                    <span class="text-danger text-center" v-if="$attrs.errors.email">
+                                    {{$attrs.errors.email}}
+                                </span>
                                 </div>
+
                             </div>
 
                             <div class="row mb-3">
@@ -65,13 +62,11 @@
                                 <div class="col-md-6">
                                     <input id="password" type="password" class="form-control" v-model="form.password"
                                            name="password" required autocomplete="new-password">
-
-                                    <!--                                    @error('password')-->
-                                    <!--                                    <span class="invalid-feedback" role="alert">-->
-                                    <!--                                        <strong>{{ $message }}</strong>-->
-                                    <!--                                    </span>-->
-                                    <!--                                    @enderror-->
+                                    <span class="text-danger text-center" v-if="$attrs.errors.password">
+                                    {{$attrs.errors.password}}
+                                </span>
                                 </div>
+
                             </div>
 
                             <div class="row mb-3">
@@ -82,7 +77,11 @@
                                     <input id="password-confirm" type="password" class="form-control"
                                            v-model="form.password_confirmation" name="password_confirmation" required
                                            autocomplete="new-password">
+                                    <span class="text-danger text-center" v-if="$attrs.errors.password_confirmation">
+                                    {{$attrs.errors.password_confirmation}}
+                                </span>
                                 </div>
+
                             </div>
 
                             <div class="row mb-0">

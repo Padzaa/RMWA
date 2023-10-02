@@ -56,6 +56,17 @@ class RegisterController extends Controller
             'lastname' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
+        ],
+        [
+            'firstname.required' => 'First name is required!',
+            'lastname.required' => 'Last name is required!',
+            'email.required' => 'Email is required!',
+            'email.unique' => 'Email already exists!',
+            'password' => [
+                'required' => 'Password is required!',
+                'min' => 'Password must be at least 8 characters!',
+                'confirmed' => 'Passwords do not match!',
+            ]
         ]);
     }
 
@@ -72,6 +83,7 @@ class RegisterController extends Controller
             'firstname' => $data['firstname'],
             'lastname' => $data['lastname'],
             'email' => $data['email'],
+            'is_admin' => 0,
             'password' => Hash::make($data['password']),
         ]);
         return redirect('/');

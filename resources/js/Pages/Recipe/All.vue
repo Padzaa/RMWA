@@ -32,10 +32,58 @@
 
             <div class="for-fav" style="">
 
-                <input v-model="form.favorite" type="checkbox" class="btn-check" id="btn-check-outlined"
+                <input v-model="form.favorites" type="checkbox" class="btn-check" id="btn-check-outlined"
                        autocomplete="off">
-                <label class="btn btn-outline-primary" for="btn-check-outlined">Only Favorites</label>
+                <label class="btn btn-outline-primary" for="btn-check-outlined" >Only Favorites</label>
 
+            </div>
+            <div class="rating">
+                Rating:
+                <div class="form-check">
+                    <input class="form-check-input" v-model="form.ratings" name="rating" type="checkbox" value="1"
+                           id="flexCheckDefault">
+                    <label class="form-check-label" for="flexCheckDefault">
+                        1
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" v-model="form.ratings" name="rating" type="checkbox" value="2"
+                           id="flexCheckChecked">
+                    <label class="form-check-label" for="flexCheckChecked">
+                        2
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" v-model="form.ratings" name="rating" type="checkbox" value="3"
+                           id="flexCheckDefault">
+                    <label class="form-check-label" for="flexCheckDefault">
+                        3
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" v-model="form.ratings" name="rating" type="checkbox" value="4"
+                           id="flexCheckChecked">
+                    <label class="form-check-label" for="flexCheckChecked">
+                        4
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" v-model="form.ratings" name="rating" type="checkbox" value="5"
+                           id="flexCheckChecked">
+                    <label class="form-check-label" for="flexCheckChecked">
+                        5
+                    </label>
+                </div>
+            </div>
+            <div class="order">
+                <div class="form-check">
+                <input class="form-check-input" type="radio" name="order" id="asc" value="asc" v-model="form.order">
+                <label class="form-check-label" for="asc">Ascending Rating</label>
+                </div>
+                <div class="form-check">
+                <input class="form-check-input" type="radio" name="order" id="desc" value="desc" v-model="form.order">
+                <label class="form-check-label" for="desc">Descending Rating</label>
+                </div>
             </div>
         </div>
 
@@ -43,61 +91,7 @@
 
 
     </form>
-    <div class="grid-net">
-        <Card v-for="(recipe,index) in recipes.data">
-            <template v-slot:title>
-                {{ recipe.title }}
-            </template>
-            <template v-slot:instructions>
-                {{ recipe.instructions }} Lorem ipsum dolor sit amet con et element nulla par
-            </template>
-            <template v-slot:actions>
-                <div class="actions">
-                    <Link class="btn btn-success"
-                          :href="recipes.path + '/' + recipe.id"
-                          method="GET"
-                    >Show
-                    </Link>
-                    <Link class="btn btn-primary"
-                          :href="recipes.path + '/' + recipe.id + '/edit'"
-                          method="GET"
-                    >Edit
-                    </Link>
-                    <button type="button"  class="btn btn-danger" data-bs-toggle="modal" :data-bs-target="'#exampleModal'+recipe.id">
-                        Delete
-                    </button>
-                    <div class="modal fade" :id="'exampleModal'+recipe.id" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h1 class="modal-title fs-5" id="exampleModalsLabel">Confirm your deletion</h1>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body">
-                                    Are you sure you want to delete this recipe permanently?
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                    <Link @click="close" method="DELETE" :href="recipes.path + '/' + recipe.id" class="btn btn-danger" id="delete_recipe">Delete Recipe</Link>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <Link class="heart" method="PUT" :href="'/recipe/' + recipe.id + '/favorite'" preserve-scroll>
-                        <svg width="48px" height="48px" viewBox="0 0 24 24" fill="none"
-                             xmlns="http://www.w3.org/2000/svg">
-                            <path :class="{'heart-svg': recipe.is_favorite }"
-                                  d="M12 20C12 20 21 16 21 9.71405C21 6 18.9648 4 16.4543 4C15.2487 4 14.0925 4.49666 13.24 5.38071L12.7198 5.92016C12.3266 6.32798 11.6734 6.32798 11.2802 5.92016L10.76 5.38071C9.90749 4.49666 8.75128 4 7.54569 4C5 4 3 6 3 9.71405C3 16 12 20 12 20Z"
-                                  stroke="#000000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                    </Link>
-                </div>
-            </template>
-        </Card>
-    </div>
-
-
+    <GridNet :recipes="recipes.data" :auth="this.$attrs.auth"></GridNet>
     <div id="paginator">
         <p>Recipes from {{ recipes.from }} to {{ recipes.to }} of total {{ recipes.total }}</p>
         Page:
@@ -126,11 +120,7 @@
 import Card from '../../Shared/Card.vue';
 import Filter from '../../Shared/Filter.vue';
 import {Inertia} from '@inertiajs/inertia'
-import {router} from '@inertiajs/vue3'
-import {useRemember} from '@inertiajs/inertia-vue3';
-// Define a method to send the filter request
-
-
+import GridNet from "../../Shared/GridNet.vue";
 
 export default {
     props: {
@@ -138,20 +128,24 @@ export default {
         categories: Object,
         ingredients: Object,
         filterData: Object,
+        rating: 0,
+
     },
 
     components: {
-        Card, Filter,
+        Card, Filter, GridNet
     },
     data() {
         return {
             form: {
                 categories: this.filterData.categories ? this.filterData.categories : [],
                 ingredients: this.filterData.ingredients ? this.filterData.ingredients : [],
-                favorite: this.filterData.favorite ? this.filterData.favorite : null,
-            },
+                favorites: this.filterData.favorites ? this.filterData.favorites : null,
+                ratings: this.filterData.ratings ? this.filterData.ratings : [],
+                order: this.filterData.order ? this.filterData.order : 'desc',
+        },
 
-        }
+    }
     },
     methods: {
         submit() {
@@ -204,22 +198,27 @@ div.actions {
     gap: 10px;
 
 }
-div.actions>a{
+
+div.actions > a {
     text-align: center;
-    height:fit-content;
+    height: fit-content;
 }
+
 .filter-form {
     display: grid;
 
 }
 
 .pickers {
-    display: grid;
-    grid-auto-flow: column;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+   display: flex;
+   flex-wrap: wrap;
+    justify-content: center;
     width: 85%;
     justify-self: center;
     place-items: center;
+    padding:1.5em 2em;
+    column-gap:4em;
+    row-gap: 2em;
 }
 
 button[name="submit"] {
@@ -232,8 +231,21 @@ button[name="submit"] {
     place-items: center;
 }
 
-.for-fav > label {
+.for-fav > label,
+.rating > label {
     padding: 0.5em 1.6em;
 
+}
+
+.rating {
+    display: flex;
+    gap: 5px;
+    font-size: 20px;
+}
+
+.btn-check:checked+.btn, .btn.active, .btn.show, .btn:first-child:active, :not(.btn-check)+.btn:active {
+    color: var(--bs-btn-active-color);
+    background-color: var(--bs-btn-active-bg);
+    border-color: var(--bs-btn-active-border-color);
 }
 </style>

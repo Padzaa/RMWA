@@ -21,7 +21,16 @@ return new class extends Migration
                 ->on('recipes')
                 ->onDelete('CASCADE')
                 ->onUpdate('CASCADE');
-            $table->text('massage');
+
+            $table->unsignedBigInteger('user_id');
+            $table
+                ->foreign('user_id')
+                ->references('id')
+                ->on('users')
+                ->onDelete('CASCADE')
+                ->onUpdate('CASCADE');
+
+            $table->text('message');
             $table->timestamps();
         });
     }

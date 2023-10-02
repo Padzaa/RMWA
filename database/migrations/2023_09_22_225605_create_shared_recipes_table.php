@@ -13,6 +13,8 @@ return new class extends Migration
     {
         Schema::create('shared_recipes', function (Blueprint $table) {
             $table->id();
+
+
             $table->unsignedBigInteger('recipe_id');
             $table
                 ->foreign('recipe_id')
@@ -21,9 +23,9 @@ return new class extends Migration
                 ->onDelete('CASCADE')
                 ->onUpdate('CASCADE');
 
-            $table->unsignedBigInteger('shared_to_id');
+            $table->unsignedBigInteger('user_shared_to');
             $table
-                ->foreign('shared_to_id')
+                ->foreign('user_shared_to')
                 ->references('id')
                 ->on('users')
                 ->onDelete('CASCADE')

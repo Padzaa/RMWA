@@ -7,12 +7,22 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
-
+use Illuminate\Support\Facades\Auth;
 class User extends Authenticatable
 {
     public function recipes(){
         return $this->hasMany(Recipe::class);
     }
+
+    public function favorites(){
+        return Recipe::where('is_favorite', true)->where('user_id', Auth::user()->id)->get();
+    }
+    public function sharedRecipes()
+    {
+        return $this->belongsToMany(Recipe::class, 'shared_recipes','user_shared_to', 'recipe_id');
+    }
+
+
     use HasApiTokens, HasFactory, Notifiable;
 
     /**
@@ -24,7 +34,9 @@ class User extends Authenticatable
         'firstname',
         'lastname',
         'email',
+        'is_admin',
         'password',
+        'picture'
     ];
 
     /**
@@ -34,6 +46,7 @@ class User extends Authenticatable
      */
     protected $hidden = [
         'password',
+        'is_admin',
         'remember_token',
     ];
 

@@ -8,6 +8,9 @@
             <div class="form-group">
                 <label for="recipe_title">Recipe Title</label>
                 <input type="text" class="form-control" id="recipe_title" name="title" v-model="form.title" placeholder="Enter recipe name" required>
+                <span class="text-danger text-center" v-if="$attrs.errors.title">
+                                    {{$attrs.errors.title}}
+                                </span>
             </div>
             <div class="form-group">
 
@@ -35,7 +38,9 @@
                         </v-col>
                     </v-row>
                 </v-container>
-
+                <span class="text-danger text-center" v-if="$attrs.errors.ingredients">
+                                    {{$attrs.errors.ingredients}}
+                                </span>
             </div>
             <div class="form-group">
 
@@ -63,7 +68,9 @@
                         </v-col>
                     </v-row>
                 </v-container>
-
+                <span class="text-danger text-center" v-if="$attrs.errors.categories">
+                                    {{$attrs.errors.categories}}
+                                </span>
             </div>
             <div class="form-group d-grid" style="">
                 <label>Favorite</label>
@@ -74,11 +81,17 @@
             <div class="form-group">
                 <label for="description">Description</label>
                 <textarea class="form-control" id="description" maxlength="512" v-model="form.description" placeholder="Write recipe description" required></textarea>
+                <span class="text-danger text-center" v-if="$attrs.errors.description">
+                                    {{$attrs.errors.description}}
+                                </span>
             </div>
             <div class="form-group">
                 <label for="instructions">Instructions</label>
                 <textarea class="form-control" id="instructions" maxlength="3000" v-model="form.instructions" placeholder="Write recipe instructions" required></textarea>
-            </div>
+                <span class="text-danger text-center" v-if="$attrs.errors.instructions">
+                                    {{$attrs.errors.instructions}}
+                                </span>
+                </div>
 
             <button type="submit" class="btn btn-primary" :disabled="form.processing">Update Recipe</button>
         </form>

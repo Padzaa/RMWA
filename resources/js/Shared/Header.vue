@@ -2,15 +2,18 @@
 
     <header>
         <div>
-            <h2>Welcome, {{ $page.props.auth.user.username }} {{ $page.props.auth.user.lastname }}</h2>
+            <h2>Welcome, {{ $page.props.auth.user.firstname }} {{ $page.props.auth.user.lastname }}</h2>
             <div class="links">
                 <Link class="links" href="/">Home</Link>
-                <Link class="links" href="/recipe">Recipe</Link>
+                <Link class="links" href="/recipe">Recipes</Link>
+                <Link class="links" href="/recipe/create">Create Recipe</Link>
 
             </div>
 
         </div>
-        <div>
+        <div class="profile-section">
+            <Link :href="'/user/'+$page.props.auth.user.id+'/edit'"><img :src="pic" alt="" class="profile-pic"/></Link>
+
             <Link class="btn btn-danger" href="/logout" method="POST" as="button">Logout</Link>
         </div>
     </header>
@@ -22,8 +25,15 @@ export default {
     name: "Header.vue",
     components: {},
     props: {
-        title: String
+        title: String,
+
+    },
+    data(){
+        return {
+            pic: this.$page.props.auth.user.picture ? this.$page.props.auth.user.picture : "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_640.png"
+        }
     }
+
 
 }
 </script>
@@ -50,5 +60,18 @@ h2 {
     display: flex;
     gap: 10px;
 }
-
+.profile-pic,.profile-section>a{
+    width:60px;
+    height:60px;
+    border-radius:50%;
+}
+.profile-section{
+    display:grid;
+    gap:10px;
+    grid-auto-flow: column;
+}
+.profile-section>button{
+    height:fit-content;
+    align-self:center;
+}
 </style>

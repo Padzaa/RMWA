@@ -37,12 +37,17 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
+
         return array_merge(parent::share($request), [
+
 
             "auth" => Auth::user() ? [
                 'user' =>[
-                    "username" => Auth::user()->firstname,
-                    "lastname" => Auth::user()->lastname
+                    "id" => Auth::user()->id,
+                    "firstname" => Auth::user()->firstname,
+                    "lastname" => Auth::user()->lastname,
+                    "email" => Auth::user()->email,
+                    "picture" => Auth::user()->picture ? asset(Auth::user()->picture) : null,
                 ]
 
             ] : null,
@@ -50,6 +55,7 @@ class HandleInertiaRequests extends Middleware
             "categories" => Category::all() ? [
                 "categories" => Category::all()
                 ] : null,
+
 
 
         ]);

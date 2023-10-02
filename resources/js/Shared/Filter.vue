@@ -31,11 +31,14 @@ export default {
 <style scoped>
 .filters {
     display: grid;
-    padding: 1.5em 3em;
-    height: 92px;
+    //padding: 1.5em 3em;
+    //height: 92px;
     width: fit-content;
 }
-
+button{
+    color:white;
+    font-weight: 500;
+}
 .dropdown-menu {
     overflow: scroll;
     max-height: 400px;

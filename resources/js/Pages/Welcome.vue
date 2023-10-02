@@ -4,18 +4,18 @@
     </Head>
     <Header/>
 
-    <Recipes/>
+    <HomeMenu/>
 
 </template>
 
 <script>
 
 
-import Recipes from "../Shared/Recipes.vue";
+import HomeMenu from "../Shared/HomeMenu.vue";
 
 export default {
     components: {
-        Recipes,
+        HomeMenu,
     },
     props: {},
 

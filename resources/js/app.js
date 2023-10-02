@@ -1,16 +1,17 @@
 import { createApp, h } from 'vue'
 import {createInertiaApp,Link,Head} from "@inertiajs/inertia-vue3";
 import Header from './Shared/Header.vue';
-import * as styles from  'vuetify/styles?inline';
+import * as styles from  'vuetify/styles';
 import { createVuetify } from 'vuetify';
 import * as components from 'vuetify/components';
 import * as directives from 'vuetify/directives';
+
 
 const vuetify = createVuetify({
     components,
     directives,
     styles
-})
+});
 
 
 createInertiaApp({

@@ -21,7 +21,8 @@ class RecipePolicy
      */
     public function view(User $user, Recipe $recipe): bool
     {
-        return $user->id === $recipe->user_id;
+        $exist = $recipe->shared()->where("user_shared_to", $user->id)->where("recipe_id", $recipe->id)->get();
+        return ($user->id === $recipe->user_id) || ($exist->count() > 0);
     }
 
     /**

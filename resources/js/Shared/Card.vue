@@ -2,7 +2,8 @@
 
     <div class="card bg-light mb-3" style="max-width: 18rem;">
         <div class="card-header">
-            <slot name="title"></slot>
+            <slot name="title1"></slot>
+
         </div>
         <div class="card-body">
             <h5 class="card-title">
@@ -38,8 +39,14 @@ div.card {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+   text-align: center;
 }
+.card-title {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 
+}
 .card-text {
     width: 100%;
 

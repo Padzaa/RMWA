@@ -27,6 +27,7 @@
         .heart-svg{
             fill:red;
         }
+
     </style>
 </head>
 <body >

@@ -4,7 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
+use App\Models\Recipe;
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
+use Inertia\Inertia;
 
 class UserController extends Controller
 {
@@ -45,15 +50,52 @@ class UserController extends Controller
      */
     public function edit(User $user)
     {
-        //
+        $recipes = $user->recipes()
+            ->orWhereHas('shared', function ($query) use ($user) {
+                $query->where('shared_recipes.user_shared_to', $user->id);
+            })->get();
+        return Inertia::render('User/User_Edit',[
+            "recipes" => $recipes
+            ]
+        );
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateUserRequest $request, User $user)
+    public function update(UpdateUserRequest $request, $id)
     {
-        //
+        $validator = $request->all();
+
+        $validator = $request->validate([
+            'firstname' => ['required', 'string', 'max:255'],
+            'lastname' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users')->ignore(auth()->id())],
+
+        ],
+            [
+                'firstname.required' => 'First name is required!',
+                'lastname.required' => 'Last name is required!',
+                'email.required' => 'Email is required!',
+                'email.unique' => 'Email already exists!',
+
+            ]);
+
+
+        $user = User::findOrFail($id);
+
+        if ($request->hasFile('file')) {
+            $uploadedFile = $request->file('file');
+            $filename = time() . '_' . $uploadedFile->getClientOriginalName();
+            $path = $uploadedFile->storeAs('public', $filename);
+            $user->picture = "storage/".$filename;
+        }
+
+        $user->firstname = $request->firstname;
+        $user->lastname = $request->lastname;
+        $user->email = $request->email;
+        $user->save();
+        return Inertia::location('/');
     }
 
     /**

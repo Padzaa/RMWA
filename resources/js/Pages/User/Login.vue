@@ -18,11 +18,6 @@
                                     <input id="email" type="email" class="form-control " name="email"
                                            v-model="form.email" required autocomplete="email" autofocus>
 
-                                    <!--                                    @error('email')-->
-                                    <!--                                    <span class="invalid-feedback" role="alert">-->
-                                    <!--                                        <strong>{{ $message }}</strong>-->
-                                    <!--                                    </span>-->
-                                    <!--                                    @enderror-->
                                 </div>
                             </div>
 
@@ -33,12 +28,10 @@
                                     <input id="password" type="password" class="form-control" v-model="form.password"
                                            name="password" required autocomplete="current-password">
 
-                                    <!--                                    @error('password')-->
-                                    <!--                                    <span class="invalid-feedback" role="alert">-->
-                                    <!--                                        <strong>{{ $message }}</strong>-->
-                                    <!--                                    </span>-->
-                                    <!--                                    @enderror-->
                                 </div>
+                                <span class="text-danger text-center" v-if="$attrs.errors.error">
+                                    {{$attrs.errors.error}}
+                                </span>
                             </div>
 
                             <div class="row mb-3">
@@ -54,11 +47,12 @@
                             </div>
 
                             <div class="row mb-0">
-                                <div class="col-md-8 offset-md-4">
+                                <div class="col-md-8 offset-md-4 gap-2 d-flex">
                                     <button type="submit" name="submit" :disabled="form.processing"
                                             class="btn btn-primary">
                                         Login
                                     </button>
+                                    <Link class="btn btn-primary" href="/register">Register</Link>
 
                                     <!--                                    @if (Route::has('password.request'))-->
                                     <!--                                    <a class="btn btn-link" href="{{ route('password.request') }}">-->
@@ -92,5 +86,7 @@ let submit = () => {
 </script>
 
 <style scoped>
-
+button{
+    color:white;
+}
 </style>
