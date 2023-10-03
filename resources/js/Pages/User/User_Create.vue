@@ -8,7 +8,9 @@
         <div class="row justify-content-center">
             <div class="col-md-8">
                 <div class="card">
-                    <div class="card-header"></div>
+                    <div class="card-header">
+                        <h2>Register</h2>
+                    </div>
 
                     <div class="card-body">
                         <form @submit.prevent="submit">
@@ -85,11 +87,12 @@
                             </div>
 
                             <div class="row mb-0">
-                                <div class="col-md-6 offset-md-4">
+                                <div class="col-md-6 offset-md-4 gap-2 d-flex">
                                     <button type="submit" name="submit" :disabled="form.processing"
                                             class="btn btn-primary">
                                         Register
                                     </button>
+                                    <Link class="btn btn-danger" href="/login">Login</Link>
                                 </div>
                             </div>
                         </form>
@@ -119,3 +122,14 @@ let submit = () => {
 }
 
 </script>
+
+<style scoped>
+.container{
+    height: 100%;
+    padding:5em
+
+}
+button{
+    color:white;
+}
+</style>

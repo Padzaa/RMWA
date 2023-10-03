@@ -1,7 +1,7 @@
 <template>
     <Header></Header>
     <Head>
-        <title>Edit User</title>
+        <title>Edit Profile</title>
     </Head>
     <div class="container rounded bg-white mt-5 mb-5">
         <form enctype="multipart/form-data" @submit.prevent="submit">

@@ -27,6 +27,17 @@ class Recipe extends Model
         return $this->belongsToMany(User::class,"shared_recipes",'recipe_id','user_shared_to');
     }
 
+    public function collection(){
+        return $this->belongsToMany(Collection::class,"collection_recipes");
+    }
+    public static function accessibleRecipes(){
+        $user = Auth::user();
+        return $user->recipes()
+            ->orWhereHas('shared', function ($query) use ($user) {
+                $query->where('shared_recipes.user_shared_to', $user->id);
+            });
+    }
+
     use HasFactory;
 
 

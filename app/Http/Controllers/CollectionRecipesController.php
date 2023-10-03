@@ -2,25 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreReviewRequest;
-use App\Http\Requests\UpdateReviewRequest;
-use App\Models\Review;
-use Illuminate\Support\Facades\Auth;
-use Inertia\Inertia;
+use App\Http\Requests\StoreCollectionRecipesRequest;
+use App\Http\Requests\UpdateCollectionRecipesRequest;
+use App\Models\CollectionRecipes;
 
-class ReviewController extends Controller
+class CollectionRecipesController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $reviews = Review::with("recipe")->where('user_id', Auth::user()->id);
-        $reviews = $reviews->paginate(10);
-
-        return Inertia::render('User/Reviews',[
-            "reviews" => $reviews
-        ]);
+        //
     }
 
     /**
@@ -34,7 +27,7 @@ class ReviewController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreReviewRequest $request)
+    public function store(StoreCollectionRecipesRequest $request)
     {
         //
     }
@@ -42,7 +35,7 @@ class ReviewController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Review $review)
+    public function show(CollectionRecipes $collectionRecipes)
     {
         //
     }
@@ -50,7 +43,7 @@ class ReviewController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Review $review)
+    public function edit(CollectionRecipes $collectionRecipes)
     {
         //
     }
@@ -58,7 +51,7 @@ class ReviewController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateReviewRequest $request, Review $review)
+    public function update(UpdateCollectionRecipesRequest $request, CollectionRecipes $collectionRecipes)
     {
         //
     }
@@ -66,7 +59,7 @@ class ReviewController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Review $review)
+    public function destroy(CollectionRecipes $collectionRecipes)
     {
         //
     }

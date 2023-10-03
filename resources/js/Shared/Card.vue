@@ -29,6 +29,24 @@ export default {
 </script>
 
 <style scoped>
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #888;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
 div.card {
     min-width: 330px;
     max-height: 450px;
@@ -50,7 +68,7 @@ div.card {
 .card-text {
     width: 100%;
 
-    overflow: hidden;
+    overflow-y: auto;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 5;
     display: -webkit-box;

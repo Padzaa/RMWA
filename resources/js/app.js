@@ -29,5 +29,5 @@ createInertiaApp({
             .use(vuetify)
             .mount(el)
     },
-    title: title => "RMWA - "+ title,
+    title: title => "RMWA - " + title,
 });

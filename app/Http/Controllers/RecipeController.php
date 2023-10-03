@@ -22,17 +22,14 @@ class RecipeController extends Controller
      */
     public function index(Request $request)
     {
-        $user = Auth::user();
+
         $ingredients = $request->query('ingredients');
         $categories = $request->query('categories');
         $favorite = $request->query('favorites');
         $ratings = $request->query('ratings');
         $order = $request->query('order');
 
-        $filteredRecipes = $user->recipes()
-            ->orWhereHas('shared', function ($query) use ($user) {
-                $query->where('shared_recipes.user_shared_to', $user->id);
-            });
+        $filteredRecipes = Recipe::accessibleRecipes();
 
         if ($ratings !== null) {
             $filteredRecipes = $filteredRecipes->select('recipes.*', \DB::raw('ROUND(AVG(reviews.rating),2) as average_rating'), \DB::raw('COUNT(reviews.id) as review_count'))
@@ -298,7 +295,7 @@ class RecipeController extends Controller
         $userIDs = [];
         $recipe = Recipe::findOrFail($id);
         $this->authorize('update', $recipe);
-        
+
         foreach($request->users as $user){
             $userIDs[] = $user["id"];
         }

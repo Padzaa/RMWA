@@ -2,11 +2,9 @@
 
     <header>
         <div>
-            <h2>Welcome, {{ $page.props.auth.user.firstname }} {{ $page.props.auth.user.lastname }}</h2>
+            <h2>{{ $page.props.auth.user.firstname }} {{ $page.props.auth.user.lastname }}</h2>
             <div class="links">
                 <Link class="links" href="/">Home</Link>
-                <Link class="links" href="/recipe">Recipes</Link>
-                <Link class="links" href="/recipe/create">Create Recipe</Link>
 
             </div>
 

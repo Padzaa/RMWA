@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use App\Http\Controllers\CollectionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -31,6 +32,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('/recipe', RecipeController::class);
     Route::resource('/user', UserController::class);
     Route::resource('/review', ReviewController::class);
+    Route::resource('/collection', CollectionController::class);
 
 
 //Rate routes

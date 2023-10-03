@@ -3,10 +3,10 @@
         <title>Login</title>
     </Head>
     <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-md-8">
+        <div class="row justify-content-center d-flex">
+            <div class="col-md-8 form">
                 <div class="card">
-                    <div class="card-header">Login</div>
+                    <div class="card-header"><h2>Login</h2></div>
 
                     <div class="card-body">
                         <form @submit.prevent="submit">
@@ -52,7 +52,8 @@
                                             class="btn btn-primary">
                                         Login
                                     </button>
-                                    <Link class="btn btn-primary" href="/register">Register</Link>
+                                    <Link class="btn btn-danger" href="/register">Register</Link>
+
 
                                     <!--                                    @if (Route::has('password.request'))-->
                                     <!--                                    <a class="btn btn-link" href="{{ route('password.request') }}">-->
@@ -89,4 +90,10 @@ let submit = () => {
 button{
     color:white;
 }
+.container{
+    height: 100%;
+    padding:5em
+
+}
+
 </style>

@@ -42,6 +42,16 @@
             </div>
         </Link>
 
+      <Link href="/collection">
+        <div class="card">
+          <h2>My Collections</h2>
+          <img
+              src="../../../public/collections.svg"
+              alt="picture">
+
+        </div>
+      </Link>
+
     </div>
 </template>
 
