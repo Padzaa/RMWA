@@ -106,7 +106,7 @@
                                     {{$attrs.errors.ccomment}}
                 </span>
           <br>
-          <button @click="submitComment" type="submit" class="btn btn-danger" id="comment_recipe">Comment</button>
+          <button @click="submitComment" type="submit" class="btn btn-danger" id="comment_recipe" >Comment</button>
         </div>
       <div class="comments">
         <template v-for="comment in comments">
@@ -175,7 +175,10 @@ export default {
       submitComment() {
         $('.modal').modal("hide");
 
-        Inertia.put('/recipe/'+this.recipe.id+'/comment', this.comment);
+        Inertia.put('/recipe/'+this.recipe.id+'/comment', this.comment,{
+          preserveScroll: true,
+        });
+
       }
     },
     data() {
@@ -251,7 +254,7 @@ div.picture{
     display: grid;
     padding: 3em 0;
     justify-items: center;
-    height: 100%;
+
     gap: 2em;
     grid-auto-rows: min-content;
 }

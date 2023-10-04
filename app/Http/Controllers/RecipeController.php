@@ -67,21 +67,6 @@ class RecipeController extends Controller
                 $categories[] = $category["id"];
             }
         }
-        $request->attributes = $request->validate([
-            'title' => ['required', 'string', 'max:255'],
-            'description' => ['required', 'string', 'max:512'],
-            'instructions' => ['required', 'string', 'max:3000'],
-            'ingredients' => ['required', 'array', 'min:1'],
-            'categories' => ['required', 'array', 'min:1']
-
-        ],
-        [
-            'title.required' => 'A title is required!',
-            'description.required' => 'A description is required!',
-            'instructions.required' => 'An instructions is required!',
-            'ingredients.required' => 'At least one ingredient is required!',
-            'categories.required' => 'At least one category is required!',
-        ]);
 
         $recipe = Recipe::create([
             'title' => $request->title,
@@ -163,22 +148,6 @@ class RecipeController extends Controller
                 $categories[] = $category["id"];
             }
         }
-
-        $request->attributes = $request->validate([
-            'title' => ['required', 'string', 'max:255'],
-            'description' => ['required', 'string', 'max:512'],
-            'instructions' => ['required', 'string', 'max:3000'],
-            'ingredients' => ['required', 'array', 'min:1'],
-            'categories' => ['required', 'array', 'min:1']
-
-        ],
-            [
-                'title.required' => 'A title is required!',
-                'description.required' => 'A description is required!',
-                'instructions.required' => 'An instructions is required!',
-                'ingredients.required' => 'At least one ingredient is required!',
-                'categories.required' => 'At least one category is required!',
-            ]);
 
         $recipe->title = $request->title;
         $recipe->description = $request->description;

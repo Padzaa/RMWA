@@ -28,7 +28,6 @@ export default{
             </div>
             <div class="footer">
                 <div class="actions">
-                    <Link class="btn btn-success" :href="'/collection/' + collection.id">Show</Link>
                     <Link class="btn btn-primary" :href="'/collection/' + collection.id + '/edit'">Edit</Link>
                     <Link class="btn btn-danger" as="button" method="DELETE" :href="'/collection/' + collection.id">Delete</Link>
                 </div>

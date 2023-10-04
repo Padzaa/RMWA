@@ -78,21 +78,6 @@ class UserController extends Controller
     {
         $validator = $request->all();
 
-        $validator = $request->validate([
-            'firstname' => ['required', 'string', 'max:255'],
-            'lastname' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users')->ignore(auth()->id())],
-
-        ],
-            [
-                'firstname.required' => 'First name is required!',
-                'lastname.required' => 'Last name is required!',
-                'email.required' => 'Email is required!',
-                'email.unique' => 'Email already exists!',
-
-            ]);
-
-
         $user = User::findOrFail($id);
 
         if ($request->hasFile('file')) {

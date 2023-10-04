@@ -12,11 +12,7 @@ class UpdateRecipeRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        if(Auth::user()){
-            return true;
-        }else{
-            return false;
-        }
+        return true;
     }
 
     /**
@@ -27,7 +23,11 @@ class UpdateRecipeRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'title' => ['required', 'string', 'max:255'],
+            'description' => ['required', 'string', 'max:512'],
+            'instructions' => ['required', 'string', 'max:3000'],
+            'ingredients' => ['required', 'array', 'min:1'],
+            'categories' => ['required', 'array', 'min:1']
         ];
     }
 }

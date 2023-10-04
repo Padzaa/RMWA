@@ -40,10 +40,13 @@
                         <div class="col-md-6"><label class="labels">Lastname</label><input type="text"
                                                                                            name="lastname"                                                                                           class="form-control"
                                                                                            v-model="form.lastname"
-                                                                                           placeholder="Lastname"></div>
-                      <span class="text-danger text-center" v-if="$attrs.errors.lastname">
+
+                                                                                           placeholder="Lastname">
+                          <span class="text-danger text-center" v-if="$attrs.errors.lastname">
                                     {{$attrs.errors.lastname}}
                 </span>
+                        </div>
+
                     </div>
                     <div class="row mt-3">
 

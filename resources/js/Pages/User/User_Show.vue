@@ -65,7 +65,7 @@
             </div>
           </div>
         </div>
-        <div class="follow">
+        <div v-if="user.id !== this.$attrs.auth.user.id" class="follow">
           <Link :href="'/user/' + user.id + '/follow'" method="PUT" :class="is_following ? 'btn-danger' : 'btn-primary'" class="btn">{{is_following ? 'Unfollow' : 'Follow'}}</Link>
         </div>
       </div>

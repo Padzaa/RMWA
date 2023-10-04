@@ -45,15 +45,7 @@ class CollectionController extends Controller
         foreach($request->recipes as $recipe){
             $recipeIDs[] = $recipe["id"];
         }
-        $request->attributes = $request->validate([
-            'recipes' => 'required',
-            'name' => ['required', 'string', 'max:255', Rule::unique("collections", "name")->where("user_id", Auth::user()->id)],
-        ],
-        [
-            'recipes.required' => 'You must select at least one recipe',
-            'name.required' => 'A name is required',
-            'name.unique' => 'A collection with this name already exists',
-        ]);
+
 
         $collection = Collection::create([
             'name' => $request->name,

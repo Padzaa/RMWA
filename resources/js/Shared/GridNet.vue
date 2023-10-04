@@ -1,9 +1,13 @@
 <script>
 import Card from "./Card.vue";
+import {Inertia} from "@inertiajs/inertia";
 
 export default{
     methods: {
+      submit() {
+        $('.modal').modal("hide");
 
+      },
     },
     props: {
         recipes: {
@@ -62,7 +66,7 @@ export default{
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel
                                     </button>
-                                    <Link @click="close" method="DELETE" :href="'/recipe/' + recipe.id"
+                                    <Link @click="submit" method="DELETE" :href="'/recipe/' + recipe.id"
                                           class="btn btn-danger" id="delete_recipe">Delete Recipe
                                     </Link>
                                 </div>

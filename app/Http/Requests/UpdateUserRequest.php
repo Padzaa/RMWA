@@ -23,6 +23,11 @@ class UpdateUserRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [ ];
+        return [
+            'firstname' => ['required', 'string', 'max:255'],
+            'lastname' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users')->ignore(auth()->id())]
+
+            ];
     }
 }
