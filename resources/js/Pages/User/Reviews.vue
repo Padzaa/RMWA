@@ -5,6 +5,7 @@ export default {
   components: {Header},
     props:{
         reviews: Object,
+
     },
     data(){
         return {
@@ -24,7 +25,7 @@ export default {
     <h1>Reviews</h1>
     <template v-for="review in reviews.data">
       <div class="alert alert-success">
-        <h1>Rating: </h1>
+        <h1>Rating: {{review.rating}} </h1>
         <h3>Recipe Name: <Link class="recipe_name" :href="'/recipe/'+review.recipe.id">{{review.recipe.title}}</Link> </h3>
         <h5>Review Message: "{{review.message}}"</h5>
       </div>

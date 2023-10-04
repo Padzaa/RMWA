@@ -68,7 +68,7 @@ export default {
                                     {{$attrs.errors.recipes}}
                                 </span>
             </div>
-            <button type="submit" class="btn btn-primary" :disabled="form.processing">Create new Collection</button>
+            <button type="submit" class="btn btn-primary" :disabled="form.processing">Update Collection</button>
 
         </form>
     </div>

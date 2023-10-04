@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreLikeRequest;
 use App\Http\Requests\UpdateLikeRequest;
 use App\Models\Like;
+use Illuminate\Support\Facades\Auth;
+use Inertia\Inertia;
 
 class LikeController extends Controller
 {
@@ -13,7 +15,10 @@ class LikeController extends Controller
      */
     public function index()
     {
-        //
+
+        return Inertia::render('User/Likes', [
+            'likes' => Auth::user()->likes()->get(),
+        ]);
     }
 
     /**

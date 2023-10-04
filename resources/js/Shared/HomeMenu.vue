@@ -11,6 +11,18 @@
 
             </div>
         </Link>
+
+      <Link href="/like">
+        <div class="card">
+          <h2>Liked Recipes</h2>
+          <img
+
+              src="../../../public/likes.svg/"
+              alt="picture">
+
+        </div>
+      </Link>
+
         <Link href="/recipe/create">
             <div class="card">
                 <h2>Add Recipe</h2>
@@ -52,6 +64,15 @@
         </div>
       </Link>
 
+      <Link href="/follow">
+        <div class="card">
+          <h2>All follows</h2>
+          <img
+              src="../../../public/follow.svg"
+              alt="picture">
+
+        </div>
+      </Link>
     </div>
 </template>
 

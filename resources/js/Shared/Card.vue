@@ -53,16 +53,17 @@ div.card {
     min-height: 450px;
 }
 
-.card-header {
+.card-header{
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
    text-align: center;
 }
-.card-title {
+.card-title{
     overflow: hidden;
-    text-overflow: ellipsis;
+    text-overflow: ellipsis !important;
     white-space: nowrap;
+  font-size:1.3rem;
 
 }
 .card-text {

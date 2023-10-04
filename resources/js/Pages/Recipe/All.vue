@@ -9,7 +9,7 @@
                 <template v-slot:button_name>Select Categories</template>
                 <template v-slot:filter_slot>
                     <template v-for="category in categories">
-                        <div class="dropdown-item">
+                        <div class="dropdown-item" onclick="event.stopPropagation()">
                             <input class="input-cat" v-model="form.categories" type="checkbox" :value="category.id"
                                    :id="category.name"> <label :for="category.name">{{ category.name }}</label>
                         </div>
@@ -19,10 +19,24 @@
             </Filter>
 
             <Filter>
+                <template v-slot:button_name>Select Collections</template>
+                <template v-slot:filter_slot>
+                    <template v-for="collection in collections">
+                        <div class="dropdown-item" onclick="event.stopPropagation()">
+                            <input class="input-cat" v-model="form.collections" type="checkbox" :value="collection.id"
+                                   :id="collection.name"> <label :for="collection.name">{{ collection.name }}</label>
+                        </div>
+                    </template>
+
+                </template>
+            </Filter>
+
+
+            <Filter>
                 <template v-slot:button_name>Select Ingredients</template>
                 <template v-slot:filter_slot>
                     <template v-for="ingredient in ingredients">
-                        <div class="dropdown-item">
+                        <div class="dropdown-item" onclick="event.stopPropagation()">
                             <input class="input-cat" v-model="form.ingredients" type="checkbox" :value="ingredient.id"
                                    :id="ingredient.name"> <label :for="ingredient.name">{{ ingredient.name }}</label>
                         </div>
@@ -85,6 +99,12 @@
                 <label class="form-check-label" for="desc">Descending Rating</label>
                 </div>
             </div>
+          <div class="search">
+
+            <input placeholder="Search recipes" v-model="form.search" type="search" name="search" id="search" class="form-input form-control">
+
+
+          </div>
         </div>
 
         <button type="submit" name="submit" class="btn btn-primary">Filter Recipes</button>
@@ -129,6 +149,7 @@ export default {
         ingredients: Object,
         filterData: Object,
         rating: 0,
+        collections:Object
 
     },
 
@@ -143,6 +164,8 @@ export default {
                 favorites: this.filterData.favorites ? this.filterData.favorites : null,
                 ratings: this.filterData.ratings ? this.filterData.ratings : [],
                 order: this.filterData.order ? this.filterData.order : 'desc',
+                search: this.filterData.search ? this.filterData.search : '',
+                collections: this.filterData.collections ? this.filterData.collections : [],
         },
 
     }
@@ -220,7 +243,9 @@ div.actions > a {
     column-gap:4em;
     row-gap: 2em;
 }
-
+.search{
+  width:100%;
+}
 button[name="submit"] {
     width: 85%;
     justify-self: center;
@@ -248,4 +273,8 @@ button[name="submit"] {
     background-color: var(--bs-btn-active-bg);
     border-color: var(--bs-btn-active-border-color);
 }
+input#search{
+  font-size:1.2em;
+}
+
 </style>

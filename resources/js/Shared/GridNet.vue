@@ -26,8 +26,7 @@ export default{
                 <h5><i>Rating: </i><b>{{ recipe.average_rating }}</b> </h5>based on {{recipe.review_count}} reviews
             </template>
             <template v-slot:title>
-
-                <h4>{{recipe.title}}</h4>
+                {{recipe.title}}
             </template>
             <template v-slot:instructions>
                 {{ recipe.instructions }} Lorem ipsum dolor sit amet con et element nulla par

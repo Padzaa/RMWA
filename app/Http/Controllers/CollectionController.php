@@ -70,6 +70,7 @@ class CollectionController extends Controller
     public function show(Collection $collection)
     {
         $this->authorize('view', $collection);
+        $collection = Collection::where("id", $collection->id)->with('recipes')->first();
         return Inertia::render('Collection/Collection_Show',[
             "collection" => $collection
         ]);

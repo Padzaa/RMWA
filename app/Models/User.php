@@ -21,8 +21,25 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Recipe::class, 'shared_recipes','user_shared_to', 'recipe_id');
     }
+    public function collections(){
+        return $this->hasMany(Collection::class);
+    }
 
+    public function comments(){
+        return $this->hasMany(Comment::class);
+    }
 
+    public function follow(){
+        return $this->belongsToMany(User::class, 'follows', 'user_id', 'followed_user_id');
+    }
+
+    public function followed(){
+        return $this->belongsToMany(User::class, 'follows', 'followed_user_id', 'user_id');
+    }
+
+    public function likes(){
+        return $this->belongsToMany(Recipe::class, 'likes', 'user_id', 'recipe_id');
+    }
     use HasApiTokens, HasFactory, Notifiable;
 
     /**

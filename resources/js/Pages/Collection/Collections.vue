@@ -74,4 +74,8 @@ div.actions > a {
 .collections-actions{
     grid-column: 1/-1;
 }
+.info{
+    height: 100%;
+    display:grid;
+}
 </style>

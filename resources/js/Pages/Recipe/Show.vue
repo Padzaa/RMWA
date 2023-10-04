@@ -17,13 +17,14 @@
             <p class="description">{{ recipe.description }}</p>
             <h6>INGREDIENTS:</h6>
             <ul>
-                <li v-for="ingredient in recipe.ingredients">{{ ingredient.name }}</li>
+                <li v-for="ingredient in recipe.ingredients"><p>{{ ingredient.name }}</p></li>
             </ul>
             <h6>INSTRUCTIONS:</h6>
             <p class="instructions"> {{ recipe.instructions }}</p>
             <div class="rate-me">
                 <h4>Average rating : {{average}}</h4>
                 <div class="modals">
+                  <Link class="btn" :href="'/recipe/' + recipe.id + '/like'" method="PUT" :class="is_liked ? 'btn-danger' : 'btn-primary'">{{ is_liked ? 'Dislike' : 'Like' }}</Link>
                     <button v-if="this.$attrs.auth.user.id == recipe.user_id" class="btn btn-primary share" data-bs-toggle="modal" :data-bs-target="'#shareModal'+recipe.id">
                         Share
                     </button>
@@ -97,7 +98,31 @@
 
             </div>
         </div>
-
+        <div class="leave-comment">
+          <label for="comment">Leave a comment:
+          </label>
+          <textarea name="comment" class="form-control" id="comment" placeholder="Leave a comment" maxlength="500" v-model="comment.ccomment"></textarea>
+          <span class="text-danger text-center" v-if="$attrs.errors.ccomment">
+                                    {{$attrs.errors.ccomment}}
+                </span>
+          <br>
+          <button @click="submitComment" type="submit" class="btn btn-danger" id="comment_recipe">Comment</button>
+        </div>
+      <div class="comments">
+        <template v-for="comment in comments">
+          <div class="comment form-control">
+            <div class="picture">
+              <Link :href="'/user/' + comment.user_id">
+                <img :src="comment.user.picture ? comment.user.picture : 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_640.png'" alt="user"/>
+              </Link>
+            </div>
+            <div class="body">
+              <h6>{{comment.user.firstname + " " +comment.user.lastname}}</h6>
+              <p>{{comment.comment}}</p>
+            </div>
+          </div>
+        </template>
+      </div>
         <div v-if="review" class="review alert alert-success">
             <h6>RATING:</h6>
             <p>You rated this recipe with <b>{{review.rating}}</b> stars</p>
@@ -105,7 +130,7 @@
             <p class="comment">``{{review.message}}``</p>
         </div>
 
-        <template v-if="reviews" v-for="review in reviews">
+        <template v-for="review in reviews">
             <div class="review alert alert-danger">
                 <h6>RATING: {{review.rating}}</h6>
 
@@ -133,7 +158,9 @@ export default {
         average:Number,
         reviews:Object,
         users:Object,
-        shared_to:Object
+        shared_to:Object,
+        comments:Object,
+      is_liked:Boolean
     },
     components: {},
     methods:{
@@ -144,7 +171,12 @@ export default {
         submitShare() {
             $('.modal').modal("hide");
             Inertia.put('/recipe/'+this.recipe.id+'/share', this.share);
-        }
+        },
+      submitComment() {
+        $('.modal').modal("hide");
+
+        Inertia.put('/recipe/'+this.recipe.id+'/comment', this.comment);
+      }
     },
     data() {
         return{
@@ -154,7 +186,11 @@ export default {
             },
             share: {
                 users: this.shared_to ? this.shared_to : []
-            }
+            },
+            comment: {
+                ccomment: ""
+            },
+
 
         }
     }
@@ -162,6 +198,48 @@ export default {
 </script>
 
 <style scoped>
+.leave-comment{
+  width:750px;
+  display:grid;
+
+}
+div.comments{
+  display:grid;
+  gap:10px
+}
+div.comment{
+  width:750px;
+  display:grid;
+  grid-template-columns: 1fr 9fr;
+
+  padding:0 !important;
+
+  border-radius:20px;
+}
+.body>h6{
+  font-style: italic;
+}
+.body>p{
+  font-size: 14px;
+  color:gray;
+  font-style: italic;
+}
+div.body{
+  border-left: 1px solid lightgray;
+  padding:1em;
+}
+div.picture{
+  padding:1em;
+}
+.picture img{
+ height:75px;
+  width: 75px;
+  border-radius: 50%;
+}
+.leave-comment>textarea{
+  max-height: 150px;
+  font-size:14px;
+}
 .review{
     min-width: 750px;
     max-width: 750px;

@@ -6,6 +6,7 @@ use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 use App\Models\Recipe;
 use App\Models\User;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
@@ -42,7 +43,17 @@ class UserController extends Controller
      */
     public function show(User $user)
     {
-        //
+        if(Auth::user()->follow()->where('followed_user_id', $user->id)->count() > 0){
+            $is_following = true;
+        }else{
+            $is_following = false;
+        }
+        return Inertia::render('User/User_Show', [
+            "user" => $user,
+            "is_following" => $is_following,
+
+
+        ]);
     }
 
     /**
@@ -88,7 +99,7 @@ class UserController extends Controller
             $uploadedFile = $request->file('file');
             $filename = time() . '_' . $uploadedFile->getClientOriginalName();
             $path = $uploadedFile->storeAs('public', $filename);
-            $user->picture = "storage/".$filename;
+            $user->picture = "/storage/".$filename;
         }
 
         $user->firstname = $request->firstname;
@@ -104,5 +115,18 @@ class UserController extends Controller
     public function destroy(User $user)
     {
         //
+    }
+
+
+    public function follow(Request $request,$id){
+        $user = User::findOrFail($id);
+        if(Auth::user()->follow()->where('followed_user_id', $user->id)->count() > 0){
+            Auth::user()->follow()->detach($user->id);
+        }else{
+            Auth::user()->follow()->attach($user->id);
+
+        }
+
+        return redirect()->back();
     }
 }

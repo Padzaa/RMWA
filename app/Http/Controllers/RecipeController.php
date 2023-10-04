@@ -4,10 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreRecipeRequest;
 use App\Http\Requests\UpdateRecipeRequest;
+use App\Models\Collection;
 use App\Models\Ingredient;
 use App\Models\Recipe;
 use App\Models\Review;
 use App\Models\User;
+use Dflydev\DotAccessData\Data;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Inertia\Inertia;
@@ -22,60 +24,16 @@ class RecipeController extends Controller
      */
     public function index(Request $request)
     {
-
-        $ingredients = $request->query('ingredients');
-        $categories = $request->query('categories');
-        $favorite = $request->query('favorites');
-        $ratings = $request->query('ratings');
-        $order = $request->query('order');
-
-        $filteredRecipes = Recipe::accessibleRecipes();
-
-        if ($ratings !== null) {
-            $filteredRecipes = $filteredRecipes->select('recipes.*', \DB::raw('ROUND(AVG(reviews.rating),2) as average_rating'), \DB::raw('COUNT(reviews.id) as review_count'))
-                ->leftJoin('reviews', 'reviews.recipe_id', '=', 'recipes.id')
-                ->groupBy('recipes.id')
-                ->havingRaw('FLOOR(AVG(reviews.rating)) IN (' . implode(',', $ratings) . ')')
-                ->orderBy('average_rating', $order ? $order : 'desc');
-        }
-        if ($ratings == null) {
-            $filteredRecipes = $filteredRecipes->select('recipes.*', \DB::raw('ROUND(AVG(reviews.rating),2) as average_rating'), \DB::raw('COUNT(reviews.id) as review_count'))
-                ->leftJoin('reviews', 'reviews.recipe_id', '=', 'recipes.id')
-                ->groupBy('recipes.id')
-                ->orderBy('average_rating', $order ? $order : 'desc');
-
-        }
-
-        if ($categories !== null) {
-            $filteredRecipes->whereHas('categories', function ($query) use ($categories) {
-                $query->whereIn('category_id', $categories);
-            });
-        }
-
-        if ($ingredients !== null) {
-            $filteredRecipes->whereHas('ingredients', function ($query) use ($ingredients) {
-                $query->whereIn('ingredient_id', $ingredients);
-            });
-
-        }
-        if ($favorite == "true") {
-            $favorite = 1;
-            $filteredRecipes->where("is_favorite", true)->where("recipes.user_id", Auth::user()->id);
-        }
-        if ($favorite == "false") {
-            $filteredRecipes->whereIn("is_favorite", [0, 1]);
-        }
-
+        $filteredRecipes = Recipe::forUser()
+                                   ->Filter($request);
         $filteredRecipes = $filteredRecipes->paginate(10);
-
-
 
         return Inertia::render('Recipe/All', [
             'recipes' => $filteredRecipes,
             'categories' => Category::all(),
             'ingredients' => Ingredient::all(),
             'filterData' => $request->query->all(),
-
+            'collections' => Auth::user()->collections()->get()
 
         ]);
     }
@@ -161,7 +119,9 @@ class RecipeController extends Controller
                 "average" => $average ? $average : "No Rating Yet",
                 "reviews" => $reviews,
                 "users" => User::all()->except(Auth::user()->id),
-                "shared_to" => $shared_to
+                "shared_to" => $shared_to,
+                "comments" => $recipe->comments()->with('user')->get(),
+                "is_liked" => $recipe->likes()->where('user_id', Auth::user()->id)->count() > 0,
             ]);
     }
 
@@ -305,6 +265,37 @@ class RecipeController extends Controller
         return redirect()->back();
     }
 
+    public function comment($id, Request $request){
+        $recipe = Recipe::findOrFail($id);
+        $this->authorize('view', $recipe);
+
+        $request->request = $request->validate([
+            "ccomment" => ['required', 'string', 'max:500', 'min:1']
+        ],
+        [
+            "ccomment.required" => "Comment is required!",
+        ]);
+
+        $recipe->comments()->create([
+            "comment" => $request->ccomment,
+            "user_id" => Auth::user()->id,
+        ]);
+
+        return redirect()->back();
+    }
+    public function like($id){
+        $recipe = Recipe::findOrFail($id);
+        $this->authorize('view', $recipe);
+
+        if($recipe->likes()->where('user_id', Auth::user()->id)->count() > 0){
+            $recipe->likes()->detach(Auth::user()->id);
+        }else{
+            $recipe->likes()->attach(Auth::user()->id);
+
+        }
+
+        return redirect()->back();
+    }
 
 
 }

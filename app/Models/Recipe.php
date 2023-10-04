@@ -10,37 +10,103 @@ class Recipe extends Model
 {
     public function ingredients()
     {
-        return $this->belongsToMany(Ingredient::class,'recipe_ingredients');
+        return $this->belongsToMany(Ingredient::class, 'recipe_ingredients');
     }
+
     public function categories()
     {
-        return $this->belongsToMany(Category::class,'recipe_categories');
+        return $this->belongsToMany(Category::class, 'recipe_categories');
     }
-    public function user(){
+
+    public function user()
+    {
         return $this->belongsTo(User::class);
     }
-    public function reviews(){
+
+    public function reviews()
+    {
         return $this->hasMany(Review::class);
     }
 
-    public function shared(){
-        return $this->belongsToMany(User::class,"shared_recipes",'recipe_id','user_shared_to');
+    public function shared()
+    {
+        return $this->belongsToMany(User::class, "shared_recipes", 'recipe_id', 'user_shared_to');
     }
 
-    public function collection(){
-        return $this->belongsToMany(Collection::class,"collection_recipes");
+    public function collections()
+    {
+        return $this->belongsToMany(Collection::class, "collection_recipes");
     }
-    public static function accessibleRecipes(){
+
+    public function comments(){
+        return $this->hasMany(Comment::class);
+    }
+
+    public function likes(){
+        return $this->belongsToMany(User::class, "likes", 'recipe_id', 'user_id');
+    }
+    public function scopeForUser($query)
+    {
         $user = Auth::user();
-        return $user->recipes()
-            ->orWhereHas('shared', function ($query) use ($user) {
-                $query->where('shared_recipes.user_shared_to', $user->id);
-            });
+
+        return $query->whereHas('user', function ($query) use ($user) {
+            $query->where('id', $user->id);
+        })->orWhereHas('shared', function ($query) use ($user) {
+            $query->where('user_shared_to', $user->id);
+        });
     }
+
+    public function scopeFilter($query, $request)
+    {
+        $filters = $request->query();
+
+        $query->when($request->search, function ($query, $search) {
+            $query->where(function ($query) use ($search) {
+
+                    $query->orWhere('description', 'like', '%' . $search . '%')->orWhere('title', 'like', '%' . $search . '%')->orWhere('instructions', 'like', '%' . $search . '%');
+
+            });
+        })->when($request->ratings, function ($query, $ratings) use ($request) {
+
+            $query->select('recipes.*', \DB::raw('ROUND(AVG(reviews.rating),2) as average_rating'), \DB::raw('COUNT(reviews.id) as review_count'))
+                ->leftJoin('reviews', 'reviews.recipe_id', '=', 'recipes.id')
+                ->groupBy('recipes.id')
+                ->havingRaw('FLOOR(AVG(reviews.rating)) IN (' . implode(',', $ratings) . ')')
+                ->orderBy('average_rating', $request->order ? $request->order : 'desc');
+
+        })->when($request->ratings == null, function ($query) use ($request) {
+            $query->select('recipes.*', \DB::raw('ROUND(AVG(reviews.rating),2) as average_rating'), \DB::raw('COUNT(reviews.id) as review_count'))
+                ->leftJoin('reviews', 'reviews.recipe_id', '=', 'recipes.id')
+                ->groupBy('recipes.id')
+                ->orderBy('average_rating', $request->order ? $request->order : 'desc');
+
+        })->when($request->ingredients, function ($query, $ingredients) {
+            $query->whereHas('ingredients', function ($query) use ($ingredients) {
+                $query->whereIn('ingredient_id', $ingredients);
+            });
+        })->when($request->collections, function ($query, $collections) {
+            $query->whereHas('collections', function ($query) use ($collections) {
+                $query->whereIn('collection_id', $collections);
+            });
+        })->when($request->categories, function ($query, $categories) {
+            $query->whereHas('categories', function ($query) use ($categories) {
+                $query->whereIn('category_id', $categories);
+            });
+        })->when($request->favorites, function ($query, $favorites) {
+            if ($favorites == "true") {
+                $favorites = 1;
+                $query->where("is_favorite", $favorites)->where("recipes.user_id", Auth::user()->id);
+            } else {
+                $favorites = [0, 1];
+                $query->whereIn("is_favorite", $favorites);
+            }
+
+        });
+    }
+
 
     use HasFactory;
 
 
-
-protected $fillable = ['title', 'description','instructions', 'user_id','is_favorite'];
+    protected $fillable = ['title', 'description', 'instructions', 'user_id', 'is_favorite'];
 }

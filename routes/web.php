@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\FollowController;
+use App\Http\Controllers\LikeController;
 use App\Http\Controllers\RecipeController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\UserController;
@@ -33,9 +35,12 @@ Route::middleware('auth')->group(function () {
     Route::resource('/user', UserController::class);
     Route::resource('/review', ReviewController::class);
     Route::resource('/collection', CollectionController::class);
+    Route::resource('/follow', FollowController::class);
+    Route::resource('/like', LikeController::class);
 
 
 //Rate routes
+    Route::put('/recipe/{id}/rate', [RecipeController::class, 'rate'])->name('rate');
     Route::put('/recipe/{id}/rate', [RecipeController::class, 'rate'])->name('rate');
     Route::get('/recipe/{id}/rate', function () {
         return Inertia::location("/recipe/");
@@ -56,6 +61,13 @@ Route::middleware('auth')->group(function () {
     Route::get('/recipe/{id}/favorite', function () {
         return Inertia::location("/recipe/");
     });
+    //Comment route
+    Route::put('/recipe/{id}/comment', [RecipeController::class, 'comment'])->name('comment');
+    //Follow route
+    Route::put('/user/{id}/follow', [UserController::class, 'follow'])->name('follow');
+    //Like route
+    Route::put('/recipe/{id}/like', [RecipeController::class, 'like'])->name('like');
+
 });
 
 Auth::routes();

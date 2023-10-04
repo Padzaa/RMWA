@@ -10,6 +10,9 @@ class Collection extends Model
     public function recipes(){
         return $this->belongsToMany(Recipe::class,'collection_recipes');
     }
+    public function user(){
+        return $this->belongsTo(User::class);
+    }
 
     use HasFactory;
     protected $fillable = ['name','user_id'];
