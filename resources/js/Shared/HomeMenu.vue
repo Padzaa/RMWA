@@ -73,6 +73,26 @@
 
         </div>
       </Link>
+
+      <Link href="/shared">
+        <div class="card">
+          <h2>I Shared</h2>
+          <img
+              src="../../../public/shared.svg"
+              alt="picture">
+
+        </div>
+      </Link>
+
+      <Link href="/sharedtome">
+        <div class="card">
+          <h2>Shared To Me</h2>
+          <img
+              src="../../../public/shared.svg"
+              alt="picture">
+
+        </div>
+      </Link>
     </div>
 </template>
 

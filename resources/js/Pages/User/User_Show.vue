@@ -88,4 +88,7 @@ div.follow{
 div.follow > a {
   padding: 0.25em 5em
 }
+.profile-pic img{
+  object-fit: cover;
+}
 </style>

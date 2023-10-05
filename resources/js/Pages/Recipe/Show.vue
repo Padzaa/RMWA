@@ -5,6 +5,7 @@
     </Head>
     <div class="show-recipe">
         <div class="recipe">
+            <span>Created by: <Link class="owner" :href="'/user/' + recipe.user_id">{{recipe.user.firstname + " " + recipe.user.lastname}}</Link> </span>
             <Link v-if="this.$attrs.auth.user.id == recipe.user_id" class="heart" method="PUT" :href="'/recipe/' + recipe.id + '/favorite'" preserve-scroll>
                 <svg width="48px" height="48px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path :class="{'heart-svg':recipe.is_favorite}"
@@ -201,6 +202,10 @@ export default {
 </script>
 
 <style scoped>
+.owner{
+    font-size:18px;
+    font-style: italic;
+}
 .leave-comment{
   width:750px;
   display:grid;

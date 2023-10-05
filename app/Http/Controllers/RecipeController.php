@@ -86,11 +86,9 @@ class RecipeController extends Controller
     public function show($id)
     {
 
-        $recipe = Recipe::findOrFail($id);
+        $recipe = Recipe::with('user')->findOrFail($id);
         $this->authorize("view",$recipe);
         $shared_to = $recipe->shared()->get();
-
-
 
         $review = $recipe->reviews()->where('user_id', Auth::user()->id)->first();
         $average = round($recipe->reviews()->avg("rating", 2), 2);

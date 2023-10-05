@@ -4,7 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreSharedRecipeRequest;
 use App\Http\Requests\UpdateSharedRecipeRequest;
+use App\Models\Recipe;
 use App\Models\SharedRecipe;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Inertia\Inertia;
 
 class SharedRecipeController extends Controller
 {
@@ -13,7 +17,26 @@ class SharedRecipeController extends Controller
      */
     public function index()
     {
-        //
+        $recipes = Recipe::where('user_id', Auth::user()->id)->whereExists(function ($query){
+            $query->select(DB::raw(1))
+                ->from('shared_recipes')
+                ->whereRaw('shared_recipes.recipe_id = recipes.id');
+        })->get();
+
+        return Inertia::render('User/Shared_Recipes', [
+            'recipes' => $recipes
+        ]);
+    }
+
+    public function sharedToMe()
+    {
+
+        $recipes = Recipe::whereHas('shared',function ($query){
+            $query->where('user_shared_to', Auth::user()->id);
+        })->get();
+        return Inertia::render('User/Shared_Recipes', [
+            'recipes' => $recipes
+        ]);
     }
 
     /**

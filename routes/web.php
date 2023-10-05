@@ -4,6 +4,7 @@ use App\Http\Controllers\FollowController;
 use App\Http\Controllers\LikeController;
 use App\Http\Controllers\RecipeController;
 use App\Http\Controllers\ReviewController;
+use App\Http\Controllers\SharedRecipeController;
 use App\Http\Controllers\UserController;
 use App\Models\Category;
 use App\Models\Ingredient;
@@ -37,6 +38,8 @@ Route::middleware('auth')->group(function () {
     Route::resource('/collection', CollectionController::class);
     Route::resource('/follow', FollowController::class);
     Route::resource('/like', LikeController::class);
+    Route::resource('/shared', SharedRecipeController::class);
+
 
 
 //Rate routes
@@ -48,7 +51,7 @@ Route::middleware('auth')->group(function () {
 
 //Share routes
     Route::put('/recipe/{id}/share', [RecipeController::class, 'share'])->name('share');
-
+    Route::get('/sharedtome', [SharedRecipeController::class, 'sharedToMe'])->name('sharedtome');
 
 //Favorites routes
     Route::get('/favorites', function () {
