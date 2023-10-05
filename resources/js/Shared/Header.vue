@@ -39,13 +39,16 @@ export default {
 
 <style scoped>
 header {
-    background-color: lightgray;
+
     display: grid;
     height: 100px;
     align-items: center;
     justify-content: space-between;
     grid-auto-flow: column;
     padding: 0 2em;
+  background: rgb(232,106,3);
+  background: linear-gradient(174deg, rgba(232,106,3,1) 0%, rgba(255,248,0,1) 100%);
+  border-bottom: 2px solid black;
 }
 
 h2 {

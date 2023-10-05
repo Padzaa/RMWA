@@ -238,6 +238,7 @@ div.picture{
  height:75px;
   width: 75px;
   border-radius: 50%;
+  object-fit:cover;
 }
 .leave-comment>textarea{
   max-height: 150px;

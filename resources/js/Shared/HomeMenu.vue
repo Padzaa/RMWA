@@ -88,6 +88,7 @@ export default {
 
 <style scoped>
 #recipes_menu {
+
     padding: 2em;
     display:grid;
 grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -99,16 +100,18 @@ grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
 
 h2 {
     text-align: center;
+
 }
 
 img {
+
     height: 100%;
     width: 100%;
 }
 
 div.card {
     height: 100%;
-    padding: 1em;
+  padding:1em 1.5em;
     width:300px
 
 }
