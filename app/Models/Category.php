@@ -7,9 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class Category extends Model
 {
+    use HasFactory;
+    protected $fillable=['name'];
     public function recipes(){
         return $this->belongsToMany(Recipe::class,'recipe_categories');
     }
-    use HasFactory;
-    protected $fillable=['name'];
+
+
 }

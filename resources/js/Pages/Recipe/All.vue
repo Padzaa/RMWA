@@ -172,9 +172,7 @@ export default {
     },
     methods: {
         submit() {
-
             Inertia.get('/recipe', this.form);
-
         },
 
 

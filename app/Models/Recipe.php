@@ -8,6 +8,10 @@ use Illuminate\Support\Facades\Auth;
 
 class Recipe extends Model
 {
+    use HasFactory;
+
+    protected $fillable = ['title', 'description', 'instructions', 'user_id', 'is_favorite'];
+
     public function ingredients()
     {
         return $this->belongsToMany(Ingredient::class, 'recipe_ingredients');
@@ -63,7 +67,7 @@ class Recipe extends Model
         $query->when($request->search, function ($query, $search) {
             $query->where(function ($query) use ($search) {
 
-                    $query->orWhere('description', 'like', '%' . $search . '%')->orWhere('title', 'like', '%' . $search . '%')->orWhere('instructions', 'like', '%' . $search . '%');
+                $query->orWhere('description', 'like', '%' . $search . '%')->orWhere('title', 'like', '%' . $search . '%')->orWhere('instructions', 'like', '%' . $search . '%');
 
             });
         })->when($request->ratings, function ($query, $ratings) use ($request) {
@@ -105,8 +109,4 @@ class Recipe extends Model
     }
 
 
-    use HasFactory;
-
-
-    protected $fillable = ['title', 'description', 'instructions', 'user_id', 'is_favorite'];
 }

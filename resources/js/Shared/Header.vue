@@ -4,14 +4,14 @@
         <div>
             <h2>{{ $page.props.auth.user.firstname }} {{ $page.props.auth.user.lastname }}</h2>
             <div class="links">
-                <Link class="links" href="/">Home</Link>|
-                <Link class="links" href="/recipe/create">Create Recipe</Link>|
+                <Link class="links" href="/" :class="this.$page.component == 'Welcome' ? 'active' : ''">Home</Link>|
+                <Link class="links" href="/recipe/create" :class="this.$page.component == 'Recipe/Recipe_Create' ? 'active' : ''">Create Recipe</Link>|
 
             </div>
 
         </div>
         <div class="profile-section">
-            <Link :href="'/user/'+$page.props.auth.user.id+'/edit'"><img :src="pic" alt="" class="profile-pic"/></Link>
+            <Link :href="'/user/'+$page.props.auth.user.id+'/edit'" ><img :src="pic" alt="" class="profile-pic"/></Link>
 
             <Link class="btn btn-danger" href="/logout" method="POST" as="button">Logout</Link>
         </div>
@@ -31,7 +31,8 @@ export default {
         return {
             pic: this.$page.props.auth.user.picture ? this.$page.props.auth.user.picture : "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_640.png"
         }
-    }
+    },
+
 
 
 }
@@ -78,5 +79,12 @@ h2 {
 .profile-section>button{
     height:fit-content;
     align-self:center;
+}
+.active{
+  font-weight: bold;
+
+}
+.links a{
+  font-size:1.25rem;
 }
 </style>

@@ -6,9 +6,6 @@
         props:{
             recipes:Array
         },
-        data(){
-
-        }
     }
 </script>
 

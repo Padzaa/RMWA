@@ -52,9 +52,7 @@ class HandleInertiaRequests extends Middleware
 
             ] : null,
 
-            "categories" => Category::all() ? [
-                "categories" => Category::all()
-                ] : null,
+
 
 
 

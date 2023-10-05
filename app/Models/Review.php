@@ -8,8 +8,10 @@ use Illuminate\Database\Eloquent\Model;
 class Review extends Model
 {
     use HasFactory;
+
+    protected $fillable = ['user_id',"rating","message","recipe_id"];
+    
     public function recipe(){
         return $this->belongsTo(Recipe::class);
     }
-    protected $fillable = ['user_id',"rating","message","recipe_id"];
 }

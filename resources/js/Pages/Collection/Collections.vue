@@ -58,6 +58,7 @@ export default {
   min-height: fit-content;
   padding: 1em;
   max-height: 600px;
+  border-radius:15px;
 }
 div.actions {
   align-self: end;

@@ -7,10 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class Ingredient extends Model
 {
-    public function recipes(){
-        return $this->belongsToMany(Recipe::class,'recipe_ingredients');
-    }
+
     use HasFactory;
 
     protected $fillable=["name"];
+    public function recipes(){
+        return $this->belongsToMany(Recipe::class,'recipe_ingredients');
+    }
 }
