@@ -17,9 +17,16 @@ export default {
   <Head>
     <title>Liked Recipes</title>
   </Head>
-  <GridNet :recipes="likes" :auth="this.$attrs.auth"></GridNet>
+    <div class="container">
+        <h1>Liked recipes</h1>
+        <GridNet :recipes="likes" :auth="this.$attrs.auth"></GridNet>
+    </div>
+
+
 </template>
 
 <style scoped>
-
+.container{
+    padding: 2em 0;
+}
 </style>

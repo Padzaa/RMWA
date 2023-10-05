@@ -33,7 +33,7 @@ export default{
                 {{recipe.title}}
             </template>
             <template v-slot:instructions>
-                {{ recipe.instructions }} Lorem ipsum dolor sit amet con et element nulla par
+                {{ recipe.instructions }}
             </template>
             <template v-slot:actions>
                 <div class="actions">

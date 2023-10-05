@@ -89,11 +89,11 @@ export default {
 <style scoped>
 #recipes_menu {
     padding: 2em;
-    display:flex;
-    flex-wrap:wrap;
+    display:grid;
+grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 1.5em;
     height: fit-content;
-    justify-content:center;
+    justify-items:center;
 
 }
 

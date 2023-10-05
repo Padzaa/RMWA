@@ -108,21 +108,7 @@
           <br>
           <button @click="submitComment" type="submit" class="btn btn-danger" id="comment_recipe" >Comment</button>
         </div>
-      <div class="comments">
-        <template v-for="comment in comments">
-          <div class="comment form-control">
-            <div class="picture">
-              <Link :href="'/user/' + comment.user_id">
-                <img :src="comment.user.picture ? comment.user.picture : 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_640.png'" alt="user"/>
-              </Link>
-            </div>
-            <div class="body">
-              <h6>{{comment.user.firstname + " " +comment.user.lastname}}</h6>
-              <p>{{comment.comment}}</p>
-            </div>
-          </div>
-        </template>
-      </div>
+
         <div v-if="review" class="review alert alert-success">
             <h6>RATING:</h6>
             <p>You rated this recipe with <b>{{review.rating}}</b> stars</p>
@@ -138,7 +124,21 @@
                 <p class="comment">``{{review.message}}``</p>
             </div>
         </template>
-
+        <div class="comments">
+            <template v-for="comment in comments">
+                <div class="comment form-control">
+                    <div class="picture">
+                        <Link :href="'/user/' + comment.user_id">
+                            <img :src="comment.user.picture ? comment.user.picture : 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_640.png'" alt="user"/>
+                        </Link>
+                    </div>
+                    <div class="body">
+                        <h6>{{comment.user.firstname + " " +comment.user.lastname}}</h6>
+                        <p>{{comment.comment}}</p>
+                    </div>
+                </div>
+            </template>
+        </div>
     </div>
 
 
@@ -173,12 +173,12 @@ export default {
             Inertia.put('/recipe/'+this.recipe.id+'/share', this.share);
         },
       submitComment() {
-        $('.modal').modal("hide");
+
 
         Inertia.put('/recipe/'+this.recipe.id+'/comment', this.comment,{
           preserveScroll: true,
         });
-
+          this.comment.ccomment = "";
       }
     },
     data() {

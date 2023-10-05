@@ -113,7 +113,7 @@
     </form>
     <GridNet :recipes="recipes.data" :auth="this.$attrs.auth"></GridNet>
     <div id="paginator">
-        <p>Recipes from {{ recipes.from }} to {{ recipes.to }} of total {{ recipes.total }}</p>
+        <p>Recipes from {{ recipes.from ? recipes.from : 0 }} to {{ recipes.to ? recipes.to : 0 }} of total {{ recipes.total }}</p>
         Page:
         <template v-for="(link,index) in recipes.links">
 

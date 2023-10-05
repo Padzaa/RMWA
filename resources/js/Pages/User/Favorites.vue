@@ -17,8 +17,11 @@
     <Head>
         <title>Favorites</title>
     </Head>
-
+<div class="container">
+    <h1>Favorites</h1>
     <GridNet :recipes="recipes" :auth="this.$attrs.auth"></GridNet>
+</div>
+
 
 </template>
 
@@ -49,5 +52,8 @@ div.actions {
 div.actions>a{
     text-align: center;
     height:fit-content;
+}
+.container{
+    padding: 2em 0;
 }
 </style>

@@ -68,8 +68,11 @@
         </div>
         </form>
     </div>
-
+<div class="rec">
+    <h1>My recipes</h1>
     <GridNet :recipes="recipes" :auth="this.$attrs.auth"></GridNet>
+</div>
+
 
 </template>
 
@@ -202,5 +205,8 @@ p {
 form input[type="file"] {
     display: none;
     cursor: pointer;
+}
+.rec{
+    padding: 0 2em;
 }
 </style>

@@ -171,6 +171,7 @@ class RecipeController extends Controller
         $recipe->categories()->detach();
 
         $recipe->delete();
+        return redirect()->back();
     }
 
     public function favorite($id, Request $request)

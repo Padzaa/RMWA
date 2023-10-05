@@ -34,7 +34,7 @@ export default {
   </div>
 
   <div id="paginator">
-    <p>Recipes from {{ reviews.from }} to {{ reviews.to }} of total {{ reviews.total }}</p>
+    <p>Recipes from {{ reviews.from ? reviews.from : 0 }} to {{ reviews.to ? reviews.to : 0 }} of total {{ reviews.total }}</p>
     Page:
     <template v-for="(link,index) in reviews.links">
 
@@ -80,5 +80,8 @@ a {
 }
 h5{
   font-style: italic;
+}
+.container{
+  padding: 2em 0;
 }
 </style>

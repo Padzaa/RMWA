@@ -123,5 +123,6 @@ class CollectionController extends Controller
         $this->authorize('delete', $collection);
         $collection->delete();
 
+        return redirect()->route('collection.index');
     }
 }
