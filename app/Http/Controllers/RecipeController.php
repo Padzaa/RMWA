@@ -57,6 +57,7 @@ class RecipeController extends Controller
     {
         $ingredients = [];
         $categories = [];
+
         foreach ($request->ingredients as $ingredient) {
             if (isset($ingredient["id"])) {
                 $ingredients[] = $ingredient["id"];
