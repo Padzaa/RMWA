@@ -78,11 +78,19 @@
                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
                                 <div class="modal-body">
-                                    <input type="range" name="rating" v-model="rate.rating" id="rating" min="1" max="5">
+                                    <div class="text-center">
+                                        <v-rating style="justify-self: start;"
+                                                                       v-model="rate.rating"
+                                                                       bg-color="orange-lighten-1"
+                                                                       color="blue"
+
+                                    ></v-rating>
+                                    </div>
+
                                     &nbsp;<span class="text-danger text-center" v-if="$attrs.errors.rating">
                                     {{$attrs.errors.rating}}
                 </span>
-                                    <label for="rating"> Rating: {{rate.rating}}</label>
+
                                     <textarea name="comment" class="form-control" id="comment" cols="30" rows="10" placeholder="Leave a comment" maxlength="500" v-model="rate.comment"></textarea>
                                   <span class="text-danger text-center" v-if="$attrs.errors.comment">
                                     {{$attrs.errors.comment}}
@@ -110,8 +118,17 @@
           <button @click="submitComment" type="submit" class="btn btn-danger" id="comment_recipe" >Comment</button>
         </div>
 
-        <div v-if="review" class="review alert alert-success">
-            <h6>RATING:</h6>
+        <div v-if="review" class="review alert alert-success" style="padding-top:0;">
+
+            <div style="width:fit-content;display:grid;grid-template-columns:1fr 3fr;cursor:unset;">
+                <p style="height:fit-content;align-self:center;margin: 0;font-size:1.45rem">RATING:</p>
+                <v-rating style="justify-self: start;"
+                        v-model="review.rating"
+                        bg-color="orange-lighten-1"
+                        color="red"
+                          disabled="true"
+                ></v-rating>
+            </div>
             <p>You rated this recipe with <b>{{review.rating}}</b> stars</p>
             <h6>COMMENT :</h6>
             <p class="comment">``{{review.message}}``</p>
@@ -120,6 +137,13 @@
         <template v-for="review in reviews">
             <div class="review alert alert-danger">
                 <h6>RATING: {{review.rating}}</h6>
+                <div class="text-center">
+                    <v-rating
+                            v-model="review.rating"
+                            bg-color="orange-lighten-1"
+                            color="blue"
+                    ></v-rating>
+                </div>
 
                 <h6>COMMENT :</h6>
                 <p class="comment">``{{review.message}}``</p>
@@ -202,6 +226,7 @@ export default {
 </script>
 
 <style scoped>
+
 .owner{
     font-size:18px;
     font-style: italic;
@@ -274,6 +299,7 @@ div.picture{
     position: relative;
     display: flex;
     flex-direction: column;
+
 }
 
 .description {
@@ -315,4 +341,5 @@ h1 {
     gap:10px;
     justify-content:end;
 }
+
 </style>

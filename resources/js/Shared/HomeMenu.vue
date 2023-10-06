@@ -93,16 +93,23 @@
 
         </div>
       </Link>
+
+
+
     </div>
 </template>
 
 <script>
 
 import Card from "./Card.vue";
-
 export default {
     name: "HomeMenu.vue",
-    components: {}
+    data() {
+        return {
+            colors: ['green', 'purple', 'orange', 'indigo', 'red'],
+            rating: 4.5,
+        }
+    }
 }
 </script>
 
