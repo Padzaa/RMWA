@@ -66,7 +66,7 @@
 
       <Link href="/follow">
         <div class="card">
-          <h2>All follows</h2>
+          <h2>All followers</h2>
           <img
               src="../../../public/follow.svg"
               alt="picture">
@@ -104,12 +104,7 @@
 import Card from "./Card.vue";
 export default {
     name: "HomeMenu.vue",
-    data() {
-        return {
-            colors: ['green', 'purple', 'orange', 'indigo', 'red'],
-            rating: 4.5,
-        }
-    }
+
 }
 </script>
 

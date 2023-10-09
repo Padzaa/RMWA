@@ -16,9 +16,12 @@
 
                                 <div class="col-md-6">
                                     <input id="email" type="email" class="form-control " name="email"
-                                           v-model="form.email" required autocomplete="email" autofocus>
-
+                                           v-model="form.email"  autocomplete="email" autofocus>
+                                    <span class="text-danger text-center" v-if="$attrs.errors.email">
+                                    {{$attrs.errors.email}}
+                                </span>
                                 </div>
+
                             </div>
 
                             <div class="row mb-3">
@@ -26,11 +29,13 @@
 
                                 <div class="col-md-6">
                                     <input id="password" type="password" class="form-control" v-model="form.password"
-                                           name="password" required autocomplete="current-password">
-
+                                           name="password"  autocomplete="current-password">
+                                    <span class="text-danger text-center" v-if="$attrs.errors.password">
+                                    {{$attrs.errors.password}}
+                                </span>
                                 </div>
-                                <span class="text-danger text-center" v-if="$attrs.errors.error">
-                                    {{$attrs.errors.error}}
+                                <span class="text-danger text-center" v-if="$attrs.errors.failedToLogin">
+                                    {{$attrs.errors.failedToLogin}}
                                 </span>
                             </div>
 

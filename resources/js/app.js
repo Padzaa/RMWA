@@ -12,7 +12,7 @@ import * as directives from 'vuetify/directives';
 const vuetify = createVuetify({
     components,
     directives,
-styles,
+    styles,
     icons:{
         iconFont:'mdi'
     }

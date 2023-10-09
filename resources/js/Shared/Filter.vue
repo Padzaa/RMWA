@@ -40,7 +40,7 @@ button{
     font-weight: 500;
 }
 .dropdown-menu {
-    overflow: scroll;
+    overflow-y: auto;
     max-height: 400px;
 }
 

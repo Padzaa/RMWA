@@ -11,7 +11,7 @@
                     <template v-for="category in categories">
                         <div class="dropdown-item" onclick="event.stopPropagation()">
                             <input class="input-cat" v-model="form.categories" type="checkbox" :value="category.id"
-                                   :id="category.name"> <label :for="category.name">{{ category.name }}</label>
+                                   :id="category.name"> <label class="dr-lb" :for="category.name">{{ category.name }}</label>
                         </div>
                     </template>
 
@@ -24,7 +24,7 @@
                     <template v-for="collection in collections">
                         <div class="dropdown-item" onclick="event.stopPropagation()">
                             <input class="input-cat" v-model="form.collections" type="checkbox" :value="collection.id"
-                                   :id="collection.name"> <label :for="collection.name">{{ collection.name }}</label>
+                                   :id="collection.name"> <label class="dr-lb" :for="collection.name">{{ collection.name }}</label>
                         </div>
                     </template>
 
@@ -38,7 +38,7 @@
                     <template v-for="ingredient in ingredients">
                         <div class="dropdown-item" onclick="event.stopPropagation()">
                             <input class="input-cat" v-model="form.ingredients" type="checkbox" :value="ingredient.id"
-                                   :id="ingredient.name"> <label :for="ingredient.name">{{ ingredient.name }}</label>
+                                   :id="ingredient.name"> <label class="dr-lb" :for="ingredient.name">{{ ingredient.name }}</label>
                         </div>
                     </template>
                 </template>
@@ -271,6 +271,9 @@ button[name="submit"] {
 }
 input#search{
   font-size:1.2em;
+}
+.dr-lb{
+  width:calc(100% - 1px);
 }
 
 </style>

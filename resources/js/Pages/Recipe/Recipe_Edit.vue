@@ -7,7 +7,7 @@
         <form @submit.prevent="submit">
             <div class="form-group">
                 <label for="recipe_title">Recipe Title</label>
-                <input type="text" class="form-control" id="recipe_title" name="title" v-model="form.title" placeholder="Enter recipe name" required>
+                <input type="text" class="form-control" id="recipe_title" name="title" v-model="form.title" placeholder="Enter recipe name" >
                 <span class="text-danger text-center" v-if="$attrs.errors.title">
                                     {{$attrs.errors.title}}
                                 </span>
@@ -16,12 +16,6 @@
 
                 <label for="ingredients">Ingredients</label>
 
-                <!--                            <select id="ingredients" class="form-select">-->
-                <!--                                <option selected>Select a favorite activity or create a new one</option>-->
-
-                <!--                                    <option v-for="(ingredient,index) in ingredients" :value="ingredient.id" class="ingredient">{{ingredient.name}}</option>-->
-
-                <!--                            </select>-->
                 <v-container fluid style="padding:0 !important;">
                     <v-row>
                         <v-col cols="12" style="padding:15px 12px 0 12px !important;">
@@ -46,12 +40,6 @@
 
                 <label for="categories">Categories</label>
 
-                <!--                            <select id="ingredients" class="form-select">-->
-                <!--                                <option selected>Select a favorite activity or create a new one</option>-->
-
-                <!--                                    <option v-for="(ingredient,index) in ingredients" :value="ingredient.id" class="ingredient">{{ingredient.name}}</option>-->
-
-                <!--                            </select>-->
                 <v-container fluid style="padding:0 !important;">
                     <v-row>
                         <v-col cols="12" style="padding:15px 12px 0 12px !important;">
@@ -80,14 +68,14 @@
             </div>
             <div class="form-group">
                 <label for="description">Description</label>
-                <textarea class="form-control" id="description" maxlength="512" v-model="form.description" placeholder="Write recipe description" required></textarea>
+                <textarea class="form-control" id="description" maxlength="512" v-model="form.description" placeholder="Write recipe description" ></textarea>
                 <span class="text-danger text-center" v-if="$attrs.errors.description">
                                     {{$attrs.errors.description}}
                                 </span>
             </div>
             <div class="form-group">
                 <label for="instructions">Instructions</label>
-                <textarea class="form-control" id="instructions" maxlength="3000" v-model="form.instructions" placeholder="Write recipe instructions" required></textarea>
+                <textarea class="form-control" id="instructions" maxlength="3000" v-model="form.instructions" placeholder="Write recipe instructions" ></textarea>
                 <span class="text-danger text-center" v-if="$attrs.errors.instructions">
                                     {{$attrs.errors.instructions}}
                                 </span>
