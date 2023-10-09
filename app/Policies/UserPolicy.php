@@ -4,6 +4,7 @@ namespace App\Policies;
 
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
+use Illuminate\Support\Facades\Auth;
 
 class UserPolicy
 {
@@ -20,7 +21,13 @@ class UserPolicy
      */
     public function view(User $user, User $model): bool
     {
-        //
+        $exist = $user->follow()->where('followed_user_id', $model->id)->get();
+        if($exist->count() > 0){
+            return true;
+        }
+        else{
+            return false;
+        }
     }
 
     /**
@@ -36,7 +43,7 @@ class UserPolicy
      */
     public function update(User $user, User $model): bool
     {
-        //
+       return $user->id === $model->id;
     }
 
     /**

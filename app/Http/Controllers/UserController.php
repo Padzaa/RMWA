@@ -43,9 +43,10 @@ class UserController extends Controller
      */
     public function show(User $user)
     {
-        if(Auth::user()->follow()->where('followed_user_id', $user->id)->count() > 0){
+        $this->authorize('view', $user);
+        if (Auth::user()->follow()->where('followed_user_id', $user->id)->count() > 0) {
             $is_following = true;
-        }else{
+        } else {
             $is_following = false;
         }
         return Inertia::render('User/User_Show', [
@@ -61,12 +62,14 @@ class UserController extends Controller
      */
     public function edit(User $user)
     {
+
+        $this->authorize('update', $user);
         $recipes = $user->recipes()
             ->orWhereHas('shared', function ($query) use ($user) {
                 $query->where('shared_recipes.user_shared_to', $user->id);
             })->get();
-        return Inertia::render('User/User_Edit',[
-            "recipes" => $recipes
+        return Inertia::render('User/User_Edit', [
+                "recipes" => $recipes
             ]
         );
     }
@@ -84,7 +87,7 @@ class UserController extends Controller
             $uploadedFile = $request->file('file');
             $filename = time() . '_' . $uploadedFile->getClientOriginalName();
             $path = $uploadedFile->storeAs('public', $filename);
-            $user->picture = "/storage/".$filename;
+            $user->picture = "/storage/" . $filename;
         }
 
         $user->firstname = $request->firstname;
@@ -103,11 +106,12 @@ class UserController extends Controller
     }
 
 
-    public function follow(Request $request,$id){
+    public function follow(Request $request, $id)
+    {
         $user = User::findOrFail($id);
-        if(Auth::user()->follow()->where('followed_user_id', $user->id)->count() > 0){
+        if (Auth::user()->follow()->where('followed_user_id', $user->id)->count() > 0) {
             Auth::user()->follow()->detach($user->id);
-        }else{
+        } else {
             Auth::user()->follow()->attach($user->id);
 
         }

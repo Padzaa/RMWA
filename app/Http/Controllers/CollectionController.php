@@ -9,6 +9,7 @@ use App\Models\Recipe;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
+
 class CollectionController extends Controller
 {
     /**
@@ -19,7 +20,7 @@ class CollectionController extends Controller
         $collections = Collection::where("user_id", Auth::user()->id)->with('recipes')->get();
 
 
-        return Inertia::render('Collection/Collections',[
+        return Inertia::render('Collection/Collections', [
             "collections" => $collections
         ]);
     }
@@ -29,7 +30,7 @@ class CollectionController extends Controller
      */
     public function create()
     {
-        return Inertia::render('Collection/Collection_Create',[
+        return Inertia::render('Collection/Collection_Create', [
             "recipes" => Recipe::where("user_id", Auth::user()->id)->get(),
 
         ]);
@@ -41,8 +42,8 @@ class CollectionController extends Controller
     public function store(StoreCollectionRequest $request)
     {
 
-        $recipeIDs=[];
-        foreach($request->recipes as $recipe){
+        $recipeIDs = [];
+        foreach ($request->recipes as $recipe) {
             $recipeIDs[] = $recipe["id"];
         }
 
@@ -63,7 +64,7 @@ class CollectionController extends Controller
     {
         $this->authorize('view', $collection);
         $collection = Collection::where("id", $collection->id)->with('recipes')->first();
-        return Inertia::render('Collection/Collection_Show',[
+        return Inertia::render('Collection/Collection_Show', [
             "collection" => $collection
         ]);
     }
@@ -78,8 +79,7 @@ class CollectionController extends Controller
         $collection = Collection::where("id", $collection->id)->with('recipes')->first();
 
 
-
-        return Inertia::render('Collection/Collection_Edit',[
+        return Inertia::render('Collection/Collection_Edit', [
             "recipes" => Recipe::where("user_id", Auth::user()->id)->get(),
             "collection" => $collection
         ]);
@@ -91,9 +91,9 @@ class CollectionController extends Controller
     public function update(UpdateCollectionRequest $request, Collection $collection)
     {
         $this->authorize('update', $collection);
-        $recipeIDs=[];
+        $recipeIDs = [];
 
-        foreach($request->recipes as $recipe){
+        foreach ($request->recipes as $recipe) {
             $recipeIDs[] = $recipe["id"];
         }
         $request->attributes = $request->validate([

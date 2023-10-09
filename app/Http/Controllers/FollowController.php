@@ -7,6 +7,7 @@ use App\Http\Requests\UpdateFollowRequest;
 use App\Models\Follow;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
+
 class FollowController extends Controller
 {
     /**
@@ -14,7 +15,7 @@ class FollowController extends Controller
      */
     public function index()
     {
-        return Inertia::render('User/Follows',[
+        return Inertia::render('User/Follows', [
             'follows' => Auth::user()->follow()->get(),
             "my_followers" => Auth::user()->followed()->get()
         ]);

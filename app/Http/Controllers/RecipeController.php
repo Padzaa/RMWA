@@ -25,7 +25,7 @@ class RecipeController extends Controller
     public function index(Request $request)
     {
         $filteredRecipes = Recipe::forUser()
-                                   ->Filter($request);
+            ->Filter($request);
         $filteredRecipes = $filteredRecipes->paginate(10);
 
         return Inertia::render('Recipe/All', [
@@ -88,7 +88,7 @@ class RecipeController extends Controller
     {
 
         $recipe = Recipe::with('user')->findOrFail($id);
-        $this->authorize("view",$recipe);
+        $this->authorize("view", $recipe);
         $shared_to = $recipe->shared()->get();
 
         $review = $recipe->reviews()->where('user_id', Auth::user()->id)->first();
@@ -195,10 +195,10 @@ class RecipeController extends Controller
             "rating" => ['required', 'integer', 'max:5', 'min:1'],
             "comment" => ['required', 'string', 'max:500', 'min:1']
         ],
-        [
-            "rating.required" => "Rating is required!",
-            "comment.required" => "Comment is required!",
-        ]);
+            [
+                "rating.required" => "Rating is required!",
+                "comment.required" => "Comment is required!",
+            ]);
         if ($rating) {
             $rating->rating = $request->rating;
             $rating->message = $request->comment;
@@ -219,13 +219,14 @@ class RecipeController extends Controller
     }
 
 
-    public function share($id, Request $request){
+    public function share($id, Request $request)
+    {
 
         $userIDs = [];
         $recipe = Recipe::findOrFail($id);
         $this->authorize('update', $recipe);
 
-        foreach($request->users as $user){
+        foreach ($request->users as $user) {
             $userIDs[] = $user["id"];
         }
 
@@ -234,16 +235,17 @@ class RecipeController extends Controller
         return redirect()->back();
     }
 
-    public function comment($id, Request $request){
+    public function comment($id, Request $request)
+    {
         $recipe = Recipe::findOrFail($id);
         $this->authorize('view', $recipe);
 
         $request->request = $request->validate([
             "ccomment" => ['required', 'string', 'max:500', 'min:1']
         ],
-        [
-            "ccomment.required" => "Comment is required!",
-        ]);
+            [
+                "ccomment.required" => "Comment is required!",
+            ]);
 
         $recipe->comments()->create([
             "comment" => $request->ccomment,
@@ -252,13 +254,15 @@ class RecipeController extends Controller
 
         return redirect()->back();
     }
-    public function like($id){
+
+    public function like($id)
+    {
         $recipe = Recipe::findOrFail($id);
         $this->authorize('view', $recipe);
 
-        if($recipe->likes()->where('user_id', Auth::user()->id)->count() > 0){
+        if ($recipe->likes()->where('user_id', Auth::user()->id)->count() > 0) {
             $recipe->likes()->detach(Auth::user()->id);
-        }else{
+        } else {
             $recipe->likes()->attach(Auth::user()->id);
 
         }
