@@ -24,18 +24,20 @@ class SharedRecipeController extends Controller
         })->get();
 
         return Inertia::render('User/Shared_Recipes', [
-            'recipes' => $recipes
+            'recipes' => $recipes,
+            'title' => "My Shared Recipes"
         ]);
     }
 
-    public function sharedToMe()
+    public function sharedWithMe()
     {
 
         $recipes = Recipe::whereHas('shared',function ($query){
             $query->where('user_shared_to', Auth::user()->id);
         })->get();
         return Inertia::render('User/Shared_Recipes', [
-            'recipes' => $recipes
+            'recipes' => $recipes,
+            'title' => "Recipes shared with me"
         ]);
     }
 

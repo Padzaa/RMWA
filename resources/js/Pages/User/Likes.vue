@@ -18,7 +18,7 @@ export default {
     <title>Liked Recipes</title>
   </Head>
     <div class="container">
-        <h1>Liked recipes</h1>
+        <h1 class="text-center">Liked recipes</h1>
         <GridNet :recipes="likes" :auth="this.$attrs.auth"></GridNet>
     </div>
 

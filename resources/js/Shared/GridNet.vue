@@ -24,10 +24,11 @@ export default{
 
 <template>
     <div class="grid-net">
+        <p v-if="recipes.length == 0" class="records text-center">0 records found</p>
         <Card v-for="(recipe,index) in recipes">
             <template v-slot:title1>
 
-                <h5><i>Rating: </i><b>{{ recipe.average_rating }}</b> </h5>based on {{recipe.review_count}} reviews
+                <h5><i>Rating: </i><b>{{ recipe.average_rating ? recipe.average_rating : 0 }}</b> </h5>based on {{recipe.review_count ? recipe.review_count : 0}} reviews
             </template>
             <template v-slot:title>
                 {{recipe.title}}
@@ -122,5 +123,10 @@ div.actions > a {
 h5{
     text-align:center;
     margin:0;
+}
+.records{
+    grid-column: 2/3;
+
+    font-size: 1.65rem;
 }
 </style>

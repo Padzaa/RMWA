@@ -84,9 +84,9 @@
         </div>
       </Link>
 
-      <Link href="/sharedtome">
+      <Link href="/sharedwithme">
         <div class="card">
-          <h2>Shared To Me</h2>
+          <h2>Shared With Me</h2>
           <img
               src="../../../public/shared.svg"
               alt="picture">

@@ -15,7 +15,7 @@
         <title>Favorites</title>
     </Head>
 <div class="container">
-    <h1>Favorites</h1>
+    <h1 class="text-center">Favorites</h1>
     <GridNet :recipes="recipes" :auth="this.$attrs.auth"></GridNet>
 </div>
 

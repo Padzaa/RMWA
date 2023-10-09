@@ -51,7 +51,7 @@ Route::middleware('auth')->group(function () {
 
 //Share routes
     Route::put('/recipe/{id}/share', [RecipeController::class, 'share'])->name('share');
-    Route::get('/sharedtome', [SharedRecipeController::class, 'sharedToMe'])->name('sharedtome');
+    Route::get('/sharedwithme', [SharedRecipeController::class, 'sharedWithMe'])->name('sharedwithme');
 
 //Favorites routes
     Route::get('/favorites', function () {

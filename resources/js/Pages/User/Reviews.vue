@@ -1,17 +1,17 @@
-<script >
+<script>
 import Header from "../../Shared/Header.vue";
 
 export default {
   components: {Header},
-    props:{
-        reviews: Object,
+  props: {
+    reviews: Object,
 
-    },
-    data(){
-        return {
-            rating: 0,
-        }
+  },
+  data() {
+    return {
+      rating: 0,
     }
+  }
 }
 </script>
 
@@ -25,16 +25,27 @@ export default {
     <h1>Reviews</h1>
     <template v-for="review in reviews.data">
       <div class="alert alert-success">
-        <h1>Rating: {{review.rating}} </h1>
-        <h3>Recipe Name: <Link class="recipe_name" :href="'/recipe/'+review.recipe.id">{{review.recipe.title}}</Link> </h3>
-        <h5>Review Message: "{{review.message}}"</h5>
+        <div class="rating-hdr text-center">
+          <h1>Rating:</h1>
+          <v-rating
+              v-model="review.rating"
+              bg-color="orange-lighten-1"
+              color="red"
+          ></v-rating>
+        </div>
+        <h3>Recipe Name:
+          <Link class="recipe_name" :href="'/recipe/'+review.recipe.id">{{ review.recipe.title }}</Link>
+        </h3>
+        <h5>Review Message: "{{ review.message }}"</h5>
       </div>
 
     </template>
   </div>
 
   <div id="paginator">
-    <p>Recipes from {{ reviews.from ? reviews.from : 0 }} to {{ reviews.to ? reviews.to : 0 }} of total {{ reviews.total }}</p>
+    <p>Recipes from {{ reviews.from ? reviews.from : 0 }} to {{ reviews.to ? reviews.to : 0 }} of total {{
+        reviews.total
+      }}</p>
     Page:
     <template v-for="(link,index) in reviews.links">
 
@@ -74,14 +85,23 @@ a {
   font-size: 1.1rem;
   width: fit-content;
 }
-.recipe_name{
+
+.recipe_name {
   font-weight: bold;
   font-size: 1.1em;
 }
-h5{
+
+h5 {
   font-style: italic;
 }
-.container{
+
+.container {
   padding: 2em 0;
+}
+
+.rating-hdr {
+  display: flex;
+  align-items: center;
+
 }
 </style>

@@ -120,7 +120,7 @@
 
         <div v-if="review" class="review alert alert-success" style="padding-top:0;">
 
-            <div style="width:fit-content;display:grid;grid-template-columns:1fr 3fr;cursor:unset;">
+            <div style="width:fit-content;display:grid;grid-template-columns:1fr 3fr;">
                 <p style="height:fit-content;align-self:center;margin: 0;font-size:1.45rem">RATING:</p>
                 <v-rating style="justify-self: start;"
                         v-model="review.rating"
