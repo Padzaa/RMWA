@@ -33,7 +33,7 @@ export default {
               color="red"
           ></v-rating>
         </div>
-        <h3>Recipe Name:
+        <h3>Rated:
           <Link class="recipe_name" :href="'/recipe/'+review.recipe.id">{{ review.recipe.title }}</Link>
         </h3>
         <h5>Review Message: "{{ review.message }}"</h5>

@@ -24,7 +24,7 @@ export default{
 
 <template>
     <div class="grid-net">
-        <p v-if="recipes.length == 0" class="records text-center">0 records found</p>
+        <p v-if="recipes.length == 0 && this.$page.component !== 'Recipe/All'" class="records text-center">0 records found</p>
         <Card v-for="(recipe,index) in recipes">
             <template v-slot:title1>
 

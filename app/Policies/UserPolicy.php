@@ -22,7 +22,7 @@ class UserPolicy
     public function view(User $user, User $model): bool
     {
         $exist = $user->follow()->where('followed_user_id', $model->id)->get();
-        if($exist->count() > 0){
+        if($exist->count() > 0 || Auth::user()->id === $model->id){
             return true;
         }
         else{
@@ -43,6 +43,7 @@ class UserPolicy
      */
     public function update(User $user, User $model): bool
     {
+        dd($user->id, $model->id);
        return $user->id === $model->id;
     }
 
