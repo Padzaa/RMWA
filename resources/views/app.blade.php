@@ -14,6 +14,7 @@
 
     @inertiaHead
     @vite("resources/js/app.js")
+{{--    @vite("resources/css/global.css")--}}
     <style>
         body{
             min-height: 100vh;

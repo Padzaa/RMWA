@@ -1,110 +1,76 @@
 <template>
 
     <div id="recipes_menu">
-        <Link href="/favorites">
+        <Link v-for="link in links" :href="link.link">
             <div class="card">
-                <h2>Favorites</h2>
+                <h2>{{ link.title }}</h2>
                 <img
 
-                    src="../../../public/heartmenu.svg/"
+                    :src="link.icon"
                     alt="picture">
 
             </div>
         </Link>
-
-      <Link href="/like">
-        <div class="card">
-          <h2>Liked Recipes</h2>
-          <img
-
-              src="../../../public/likes.svg/"
-              alt="picture">
-
-        </div>
-      </Link>
-
-        <Link href="/recipe/create">
-            <div class="card">
-                <h2>Add Recipe</h2>
-                <img
-                    src="../../../public/addrecipe.svg"
-                    alt="picture">
-
-            </div>
-        </Link>
-
-
-        <Link href="/recipe">
-            <div class="card">
-                <h2>See All Recipes</h2>
-                <img
-                    src="../../../public/recipes.svg"
-                    alt="picture">
-
-            </div>
-        </Link>
-
-        <Link href="/review">
-            <div class="card">
-                <h2>My reviews</h2>
-                <img
-                    src="../../../public/review.svg"
-                    alt="picture">
-
-            </div>
-        </Link>
-
-      <Link href="/collection">
-        <div class="card">
-          <h2>My Collections</h2>
-          <img
-              src="../../../public/collections.svg"
-              alt="picture">
-
-        </div>
-      </Link>
-
-      <Link href="/follow">
-        <div class="card">
-          <h2>All followers</h2>
-          <img
-              src="../../../public/follow.svg"
-              alt="picture">
-
-        </div>
-      </Link>
-
-      <Link href="/shared">
-        <div class="card">
-          <h2>I Shared</h2>
-          <img
-              src="../../../public/shared.svg"
-              alt="picture">
-
-        </div>
-      </Link>
-
-      <Link href="/sharedwithme">
-        <div class="card">
-          <h2>Shared With Me</h2>
-          <img
-              src="../../../public/shared.svg"
-              alt="picture">
-
-        </div>
-      </Link>
-
-
 
     </div>
 </template>
 
 <script>
 
-import Card from "./Card.vue";
+
 export default {
     name: "HomeMenu.vue",
-
+    data() {
+        return {
+            links: [
+                {
+                    link: "/favorites",
+                    title: "Favorites",
+                    icon: "/heartmenu.svg"
+                },
+                {
+                    link: "/like",
+                    title: "Liked Recipes",
+                    icon: "/likes.svg"
+                },
+                {
+                    link: "/recipe/create",
+                    title: "Add Recipe",
+                    icon: "/addrecipe.svg"
+                },
+                {
+                    link: "/recipe",
+                    title: "See All Recipes",
+                    icon: "/recipes.svg"
+                },
+                {
+                    link: "/review",
+                    title: "My reviews",
+                    icon: "/review.svg"
+                },
+                {
+                    link: "/collection",
+                    title: "My Collections",
+                    icon: "/collections.svg"
+                },
+                {
+                    link: "/follow",
+                    title: "All followers",
+                    icon: "/follow.svg"
+                },
+                {
+                    link: "/shared",
+                    title: "I Shared",
+                    icon: "/shared.svg"
+                },
+                {
+                    link: "/sharedwithme",
+                    title: "Shared With Me",
+                    icon: "/shared.svg"
+                }
+            ]
+        }
+    }
 }
 </script>
 
@@ -112,11 +78,11 @@ export default {
 #recipes_menu {
 
     padding: 2em;
-    display:grid;
-grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 1.5em;
     height: fit-content;
-    justify-items:center;
+    justify-items: center;
 
 }
 
@@ -133,8 +99,8 @@ img {
 
 div.card {
     height: 100%;
-  padding:1em 1.5em;
-    width:300px
+    padding: 1em 1.5em;
+    width: 300px
 
 }
 </style>

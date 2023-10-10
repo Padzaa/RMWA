@@ -8,9 +8,15 @@ use Illuminate\Database\Eloquent\Model;
 class Category extends Model
 {
     use HasFactory;
-    protected $fillable=['name'];
-    public function recipes(){
-        return $this->belongsToMany(Recipe::class,'recipe_categories');
+
+    protected $fillable = ['name'];
+
+    /*
+    Retrieve every recipe that has certain category
+    */
+    public function recipes()
+    {
+        return $this->belongsToMany(Recipe::class, 'recipe_categories');
     }
 
 

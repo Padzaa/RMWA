@@ -41,12 +41,7 @@ class CollectionController extends Controller
      */
     public function store(StoreCollectionRequest $request)
     {
-
-        $recipeIDs = [];
-        foreach ($request->recipes as $recipe) {
-            $recipeIDs[] = $recipe["id"];
-        }
-
+        $recipeIDs = collect($request->recipes)->pluck("id");
 
         $collection = Collection::create([
             'name' => $request->name,
@@ -91,11 +86,7 @@ class CollectionController extends Controller
     public function update(UpdateCollectionRequest $request, Collection $collection)
     {
         $this->authorize('update', $collection);
-        $recipeIDs = [];
-
-        foreach ($request->recipes as $recipe) {
-            $recipeIDs[] = $recipe["id"];
-        }
+        $recipeIDs = collect($request->recipes)->pluck("id");
         $collection->update([
             'name' => $request->name,
         ]);

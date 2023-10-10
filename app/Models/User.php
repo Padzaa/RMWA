@@ -49,41 +49,67 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
+    /*
+     Retrieve all recipes that a user owns
+     */
     public function recipes()
     {
         return $this->hasMany(Recipe::class);
     }
+
+    /*
+     Retrieve all recipes that are favorite to a user
+     */
 
     public function favorites()
     {
         return Recipe::where('is_favorite', true)->where('user_id', Auth::user()->id)->get();
     }
 
+    /*
+     Retrieve all recipes that are shared to a user
+     */
     public function sharedRecipes()
     {
         return $this->belongsToMany(Recipe::class, 'shared_recipes', 'user_shared_to', 'recipe_id');
     }
 
+    /*
+     Retrieve every collection that a certain user owns
+     */
     public function collections()
     {
         return $this->hasMany(Collection::class);
     }
+
+    /*
+     Retrieve every comment that a certain user has written
+     */
 
     public function comments()
     {
         return $this->hasMany(Comment::class);
     }
 
+    /*
+     Retrieve every user that a certain user follows
+     */
     public function follow()
     {
         return $this->belongsToMany(User::class, 'follows', 'user_id', 'followed_user_id');
     }
 
+    /*
+     Retrieve every user that follows a certain user
+     */
     public function followed()
     {
         return $this->belongsToMany(User::class, 'follows', 'followed_user_id', 'user_id');
     }
 
+    /*
+     Retrieve every like that a certain user has
+     */
     public function likes()
     {
         return $this->belongsToMany(Recipe::class, 'likes', 'user_id', 'recipe_id');

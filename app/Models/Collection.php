@@ -12,9 +12,16 @@ class Collection extends Model
     use HasFactory;
     protected $fillable = ['name','user_id'];
 
+    /*
+     Retrieve every recipe that has certain collection
+     */
     public function recipes(){
         return $this->belongsToMany(Recipe::class,'collection_recipes');
     }
+
+    /*
+     Retrieve the user that owns this collection
+     */
     public function user(){
         return $this->belongsTo(User::class);
     }

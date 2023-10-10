@@ -44,16 +44,12 @@ class UserController extends Controller
     public function show(User $user)
     {
         $this->authorize('view', $user);
-        if (Auth::user()->follow()->where('followed_user_id', $user->id)->count() > 0) {
-            $is_following = true;
-        } else {
-            $is_following = false;
-        }
+
+        Auth::user()->follow()->where('followed_user_id', $user->id)->count() ? $is_following = true : $is_following = false;
+
         return Inertia::render('User/User_Show', [
             "user" => $user,
             "is_following" => $is_following,
-
-
         ]);
     }
 
@@ -77,11 +73,9 @@ class UserController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateUserRequest $request, $id)
+    public function update(UpdateUserRequest $request, User $user)
     {
-        $validator = $request->all();
-
-        $user = User::findOrFail($id);
+        $this->authorize('update', $user);
 
         if ($request->hasFile('file')) {
             $uploadedFile = $request->file('file');
@@ -106,15 +100,14 @@ class UserController extends Controller
     }
 
 
-    public function follow(Request $request, $id)
+    public function follow(Request $request, User $user)
     {
-        $user = User::findOrFail($id);
-        if (Auth::user()->follow()->where('followed_user_id', $user->id)->count() > 0) {
-            Auth::user()->follow()->detach($user->id);
-        } else {
-            Auth::user()->follow()->attach($user->id);
 
-        }
+
+        Auth::user()->follow()->where('followed_user_id', $user->id)->count() ?
+            Auth::user()->follow()->detach($user->id)
+            :
+            Auth::user()->follow()->attach($user->id);
 
         return redirect()->back();
     }

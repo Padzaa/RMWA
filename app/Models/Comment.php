@@ -9,13 +9,23 @@ class Comment extends Model
 {
 
     protected $fillable = [
-        'recipe_id','user_id', 'comment'
+        'recipe_id', 'user_id', 'comment'
     ];
     use HasFactory;
-    public function recipe(){
+
+    /*
+     Retrieve a recipe that has certain comment
+     */
+    public function recipe()
+    {
         return $this->belongsTo(Recipe::class);
     }
-    public function user(){
+
+    /*
+     Retrieve a user that owns this comment
+     */
+    public function user()
+    {
         return $this->belongsTo(User::class);
     }
 }

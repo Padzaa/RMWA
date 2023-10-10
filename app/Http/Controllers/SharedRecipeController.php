@@ -17,7 +17,7 @@ class SharedRecipeController extends Controller
      */
     public function index()
     {
-        $recipes = Recipe::where('user_id', Auth::user()->id)->whereExists(function ($query){
+        $recipes = Recipe::where('user_id', Auth::user()->id)->whereExists(function ($query) {
             $query->select(DB::raw(1))
                 ->from('shared_recipes')
                 ->whereRaw('shared_recipes.recipe_id = recipes.id');
@@ -31,8 +31,7 @@ class SharedRecipeController extends Controller
 
     public function sharedWithMe()
     {
-
-        $recipes = Recipe::whereHas('shared',function ($query){
+        $recipes = Recipe::whereHas('shared', function ($query) {
             $query->where('user_shared_to', Auth::user()->id);
         })->get();
         return Inertia::render('User/Shared_Recipes', [

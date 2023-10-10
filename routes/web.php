@@ -26,54 +26,48 @@ use App\Http\Controllers\CollectionController;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
-Route::middleware('auth')->group(function () {
+/*------------ONLY ACCESSABLE WHEN USER LOGGED IN--------------*/
+Route::middleware(['auth'])->group(function () {
 
     Route::get('/', function () {
         return Inertia::render('Welcome');
     })->name('welcome');
 //Resource routes
     Route::resource('/recipe', RecipeController::class);
+
     Route::resource('/user', UserController::class);
     Route::resource('/review', ReviewController::class);
     Route::resource('/collection', CollectionController::class);
     Route::resource('/follow', FollowController::class);
     Route::resource('/like', LikeController::class);
     Route::resource('/shared', SharedRecipeController::class);
-
-
-
 //Rate routes
-    Route::put('/recipe/{id}/rate', [RecipeController::class, 'rate'])->name('rate');
-    Route::put('/recipe/{id}/rate', [RecipeController::class, 'rate'])->name('rate');
-    Route::get('/recipe/{id}/rate', function () {
+    Route::put('/recipe/{recipe}/rate', [RecipeController::class, 'rate'])->name('rate');
+    Route::put('/recipe/{recipe}/rate', [RecipeController::class, 'rate'])->name('rate');
+    Route::get('/recipe/{recipe}/rate', function () {
         return Inertia::location("/recipe/");
     });
-
 //Share routes
-    Route::put('/recipe/{id}/share', [RecipeController::class, 'share'])->name('share');
+    Route::put('/recipe/{recipe}/share', [RecipeController::class, 'share'])->name('share');
     Route::get('/sharedwithme', [SharedRecipeController::class, 'sharedWithMe'])->name('sharedwithme');
-
 //Favorites routes
-    Route::get('/favorites', function () {
-        $favorites = Auth::user()->favorites();
-        return Inertia::render('User/Favorites', [
-            "recipes" => $favorites
-        ]);
-    });
-    Route::put('/recipe/{id}/favorite', [RecipeController::class, 'favorite'])->name('favorite');
-    Route::get('/recipe/{id}/favorite', function () {
+    Route::get('/favorites', [RecipeController::class, 'favorites'])->name('favorites');
+    Route::put('/recipe/{recipe}/favorite', [RecipeController::class, 'favorite'])->name('favorite');
+    Route::get('/recipe/{recipe}/favorite', function () {
         return Inertia::location("/recipe/");
     });
     //Comment route
-    Route::put('/recipe/{id}/comment', [RecipeController::class, 'comment'])->name('comment');
+    Route::put('/recipe/{recipe}/comment', [RecipeController::class, 'comment'])->name('comment');
     //Follow route
-    Route::put('/user/{id}/follow', [UserController::class, 'follow'])->name('follow');
+    Route::put('/user/{user}/follow', [UserController::class, 'follow'])->name('follow');
     //Like route
-    Route::put('/recipe/{id}/like', [RecipeController::class, 'like'])->name('like');
+    Route::put('/recipe/{recipe}/like', [RecipeController::class, 'like'])->name('like');
 
 });
-
+/*------------END OF (ONLY ACCESSABLE WHEN USER LOGGED IN) ROUTES------------------------*/
 Auth::routes();
+//Guest can access show route of this resource
+Route::resource('/recipe', RecipeController::class)->only("show");
+//Public page of the site, so mainly guest can access
+Route::get("/public", [RecipeController::class,"public"])->name("public");
 
-
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

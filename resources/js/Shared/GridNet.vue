@@ -43,12 +43,12 @@ export default{
                           method="GET"
                     >Show
                     </Link>
-                    <Link v-if="auth.user.id == recipe.user_id" class="btn btn-primary"
+                    <Link v-if="auth ? auth.user.id == recipe.user_id : false" class="btn btn-primary"
                           :href="'/recipe/' + recipe.id + '/edit'"
                           method="GET"
                     >Edit
                     </Link>
-                    <button v-if="auth.user.id == recipe.user_id" type="button" class="btn btn-danger"
+                    <button v-if="auth ? auth.user.id == recipe.user_id : false" type="button" class="btn btn-danger"
                             data-bs-toggle="modal" :data-bs-target="'#exampleModal'+recipe.id">
                         Delete
                     </button>
@@ -75,7 +75,7 @@ export default{
                         </div>
                     </div>
 
-                    <Link v-if="auth.user.id == recipe.user_id" class="heart" method="PUT"
+                    <Link v-if="auth ? auth.user.id == recipe.user_id : false" class="heart" method="PUT"
                           :href="'/recipe/' + recipe.id + '/favorite'" preserve-scroll>
                         <svg width="48px" height="48px" viewBox="0 0 24 24" fill="none"
                              xmlns="http://www.w3.org/2000/svg">

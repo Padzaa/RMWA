@@ -13,7 +13,7 @@ export default {
 </script>
 
 <template>
-<Header></Header>
+
   <Head>
     <title>Liked Recipes</title>
   </Head>

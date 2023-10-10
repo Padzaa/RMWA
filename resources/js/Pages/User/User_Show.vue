@@ -8,7 +8,7 @@
 </script>
 
 <template>
-  <Header></Header>
+
   <Head>
     <title>{{user.firstname + " " + user.lastname}}</title>
   </Head>

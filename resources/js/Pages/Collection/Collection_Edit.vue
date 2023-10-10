@@ -28,7 +28,7 @@ export default {
 </script>
 
 <template>
-    <Header/>
+
     <Head>
         <title>Edit Collection</title>
     </Head>

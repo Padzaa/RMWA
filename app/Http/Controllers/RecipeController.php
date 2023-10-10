@@ -25,10 +25,11 @@ class RecipeController extends Controller
     public function index(Request $request)
     {
         $filteredRecipes = Recipe::forUser()
-            ->Filter($request);
-        $filteredRecipes = $filteredRecipes->paginate(10);
-
+            ->Filter($request)
+            ->paginate(10);
+//dd($filteredRecipes->toSql());
         return Inertia::render('Recipe/All', [
+            "title" => "Recipes",
             'recipes' => $filteredRecipes,
             'categories' => Category::all(),
             'ingredients' => Ingredient::all(),
@@ -55,26 +56,17 @@ class RecipeController extends Controller
      */
     public function store(StoreRecipeRequest $request)
     {
-        $ingredients = [];
-        $categories = [];
 
-        foreach ($request->ingredients as $ingredient) {
-            if (isset($ingredient["id"])) {
-                $ingredients[] = $ingredient["id"];
-            }
-        }
-        foreach ($request->categories as $category) {
-            if (isset($category["id"])) {
-                $categories[] = $category["id"];
-            }
-        }
+        $ingredients = collect($request->ingredients)->pluck("id");
+        $categories = collect($request->categories)->pluck("id");
 
         $recipe = Recipe::create([
             'title' => $request->title,
             'description' => $request->description,
             'instructions' => $request->instructions,
             'user_id' => Auth::user()->id,
-            'is_favorite' => +$request->favorite
+            'is_favorite' => +$request->favorite,
+            'is_public' => +$request->public
         ]);
         $recipe->ingredients()->attach($ingredients);
         $recipe->categories()->attach($categories);
@@ -84,38 +76,43 @@ class RecipeController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show($id)
+    public function show(Recipe $recipe)
     {
-
-        $recipe = Recipe::with('user')->findOrFail($id);
+        $review=$reviews=$users=$shared_to=$is_liked = null;
+        $recipe = $recipe->load('user');
+        if(Auth::user()){
+            $shared_to =  $recipe->shared()->get();
+            $review = $recipe->reviews()->where('user_id', Auth::user()->id)->first();
+            $reviews = $recipe->reviews()->where("user_id", "!=", Auth::user()->id)->get();
+            $is_liked = $recipe->likes()->where('user_id', Auth::user()->id)->count();
+            $users = User::all()->except(Auth::user()->id);
+        }
         $this->authorize("view", $recipe);
-        $shared_to = $recipe->shared()->get();
-
-        $review = $recipe->reviews()->where('user_id', Auth::user()->id)->first();
+//        $shared_to = Auth::user() ? $recipe->shared()->get() : null;
+//
+//        $review = Auth::user() ? $recipe->reviews()->where('user_id', Auth::user()->id)->first() : null;
         $average = round($recipe->reviews()->avg("rating", 2), 2);
-        $reviews = $recipe->reviews()->where("user_id", "!=", Auth::user()->id)->get();
+//        $reviews = Auth::user() ? $recipe->reviews()->where("user_id", "!=", Auth::user()->id)->get() : $recipe->reviews()->get();
 
         return Inertia::render('Recipe/Show',
             [
                 "recipe" => $recipe,
                 "ingredients" => $recipe->ingredients,
-                "review" => $review,
+                "review" => $review ? $review : null,
                 "average" => $average ? $average : "No Rating Yet",
-                "reviews" => $reviews,
-                "users" => User::all()->except(Auth::user()->id),
-                "shared_to" => $shared_to,
+                "reviews" => $reviews ? $reviews : [],
+                "users" => $users ? $users : User::all(),
+                "shared_to" => $shared_to ? $shared_to : null,
                 "comments" => $recipe->comments()->with('user')->get(),
-                "is_liked" => $recipe->likes()->where('user_id', Auth::user()->id)->count() > 0,
+                "is_liked" => $is_liked ? $is_liked : false,
             ]);
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit($id)
+    public function edit(Recipe $recipe)
     {
-
-        $recipe = Recipe::findOrFail($id);
         $this->authorize('update', $recipe);
 
         return Inertia::render('Recipe/Recipe_Edit', [
@@ -130,28 +127,19 @@ class RecipeController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateRecipeRequest $request, $id)
+    public function update(UpdateRecipeRequest $request, Recipe $recipe)
     {
-        $recipe = Recipe::findOrFail($id);
-        $this->authorize('update', $recipe);
-        $ingredients = [];
-        $categories = [];
 
-        foreach ($request->ingredients as $ingredient) {
-            if (isset($ingredient["id"])) {
-                $ingredients[] = $ingredient["id"];
-            }
-        }
-        foreach ($request->categories as $category) {
-            if (isset($category["id"])) {
-                $categories[] = $category["id"];
-            }
-        }
+        $this->authorize('update', $recipe);
+
+        $ingredients = collect($request->ingredients)->pluck("id");
+        $categories = collect($request->categories)->pluck("id");
 
         $recipe->title = $request->title;
         $recipe->description = $request->description;
         $recipe->instructions = $request->instructions;
         $recipe->is_favorite = $request->favorite;
+        $recipe->is_public = $request->public;
         $recipe->ingredients()->sync($ingredients);
         $recipe->categories()->sync($categories);
         $recipe->save();
@@ -162,9 +150,9 @@ class RecipeController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($id)
+    public function destroy(Recipe $recipe)
     {
-        $recipe = Recipe::findOrFail($id);
+
         $this->authorize('delete', $recipe);
         $recipe->ingredients()->detach();
         $recipe->categories()->detach();
@@ -173,10 +161,13 @@ class RecipeController extends Controller
         return redirect()->back();
     }
 
-    public function favorite($id, Request $request)
+    /*
+    Makes a recipe favorite to a user
+   */
+    public function favorite(Recipe $recipe, Request $request)
     {
 
-        $recipe = Recipe::findOrFail($id);
+
         $this->authorize('update', $recipe);
         $recipe->is_favorite = !$recipe->is_favorite;
         $recipe->save();
@@ -184,10 +175,12 @@ class RecipeController extends Controller
 
 
     }
-
-    public function rate($id, Request $request)
+    /*
+        Creates a review(rate the recipe)
+       */
+    public function rate(Recipe $recipe, Request $request)
     {
-        $recipe = Recipe::findOrFail($id);
+
         $this->authorize('view', $recipe);
         $rating = $recipe->reviews()->where("user_id", Auth::user()->id)->first();
 
@@ -218,26 +211,26 @@ class RecipeController extends Controller
 
     }
 
-
-    public function share($id, Request $request)
+    /*
+       Share a recipe with other users
+       */
+    public function share(Recipe $recipe, Request $request)
     {
-
-        $userIDs = [];
-        $recipe = Recipe::findOrFail($id);
         $this->authorize('update', $recipe);
 
-        foreach ($request->users as $user) {
-            $userIDs[] = $user["id"];
-        }
+        $userIDs = collect($request->users)->pluck("id");
 
         $recipe->shared()->sync($userIDs);
 
         return redirect()->back();
     }
 
-    public function comment($id, Request $request)
+    /*
+     Adds a comment for the recipe
+    */
+    public function comment(Recipe $recipe, Request $request)
     {
-        $recipe = Recipe::findOrFail($id);
+
         $this->authorize('view', $recipe);
 
         $request->request = $request->validate([
@@ -255,20 +248,49 @@ class RecipeController extends Controller
         return redirect()->back();
     }
 
-    public function like($id)
+    /*
+     Likes the recipe for a user
+    */
+    public function like(Recipe $recipe)
     {
-        $recipe = Recipe::findOrFail($id);
+
         $this->authorize('view', $recipe);
 
-        if ($recipe->likes()->where('user_id', Auth::user()->id)->count() > 0) {
-            $recipe->likes()->detach(Auth::user()->id);
-        } else {
+        $recipe->likes()->where('user_id', Auth::user()->id)->count() ?
+            $recipe->likes()->detach(Auth::user()->id)
+            :
             $recipe->likes()->attach(Auth::user()->id);
 
-        }
 
         return redirect()->back();
     }
 
+    /*
+     Goes to favorites page
+     */
+    public function favorites()
+    {
+        $favorites = Auth::user()->favorites();
+        return Inertia::render('User/Favorites', [
+            "recipes" => $favorites
+        ]);
+    }
+
+    /*
+     //Public page of the site, so mainly guest can access
+     */
+    public function public(Request $request){
+        $filteredRecipes = Recipe::query()->Public()->Filter($request)->paginate(10);
+
+        return Inertia::render('Recipe/All', [
+            "title" => "Public Recipes",
+            "recipes" => $filteredRecipes,
+            'categories' => Category::all(),
+            'ingredients' => Ingredient::all(),
+            'filterData' => $request->query->all(),
+            'collections' => Auth::user() ? Auth::user()->collections()->get() : null
+
+        ]);
+    }
 
 }

@@ -2,7 +2,7 @@
     <Head>
         <title>Welcome</title>
     </Head>
-    <Header/>
+
 
     <HomeMenu/>
 

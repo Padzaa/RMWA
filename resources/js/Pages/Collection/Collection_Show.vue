@@ -7,7 +7,7 @@ export default{
 </script>
 
 <template>
-    <Header></Header>
+
     <Head>
         <title>{{collection.name}}</title>
     </Head>

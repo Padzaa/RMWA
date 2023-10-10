@@ -10,7 +10,7 @@
 </script>
 
 <template>
-    <Header />
+
     <Head>
         <title>Favorites</title>
     </Head>

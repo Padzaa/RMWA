@@ -1,5 +1,5 @@
 <template>
-    <Header></Header>
+
     <Head>
         <title>Edit Profile</title>
     </Head>

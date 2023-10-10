@@ -2,7 +2,7 @@
     <Head>
         <title>Create Recipe</title>
     </Head>
-    <Header/>
+
     <div class="form">
         <form @submit.prevent="submit">
             <div class="form-group">
@@ -61,7 +61,14 @@
                                 </span>
             </div>
             <div class="form-group d-grid" style="">
-                <label>Favorite</label>
+                <label >Public</label>
+                <input v-model="form.public" type="checkbox" class="btn-check" id="btn-check-outlined" autocomplete="off">
+                <label class="btn btn-outline-primary" for="btn-check-outlined">Make This Recipe Public</label><br>
+
+            </div>
+
+            <div class="form-group d-grid" style="">
+                <label >Favorite</label>
                 <input v-model="form.favorite" type="checkbox" class="btn-check" id="btn-check-outlined" autocomplete="off">
                 <label class="btn btn-outline-primary" for="btn-check-outlined">Make This Recipe Your Favorite</label><br>
 
@@ -103,6 +110,7 @@ let form = reactive({
     ingredients: selectIngredients,
     categories: selectCategories,
     favorite: recipe.is_favorite ? true : false,
+    public: recipe.is_public ? true : false,
 });
 let submit = () =>{
     Inertia.put('/recipe/'+recipe.id,form);

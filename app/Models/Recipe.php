@@ -12,63 +12,100 @@ class Recipe extends Model
 
     protected $fillable = ['title', 'description', 'instructions', 'user_id', 'is_favorite'];
 
+    /*
+     Retrieve every ingredient that is associated to certain recipe
+     */
     public function ingredients()
     {
         return $this->belongsToMany(Ingredient::class, 'recipe_ingredients');
     }
 
+    /*
+         Retrieve every category that is associated to certain recipe
+         */
     public function categories()
     {
         return $this->belongsToMany(Category::class, 'recipe_categories');
     }
 
+    /*
+         Retrieve a user that owns this recipe
+         */
     public function user()
     {
         return $this->belongsTo(User::class);
     }
 
+    /*
+     Retrieve every review that belongs to certain recipe
+     */
     public function reviews()
     {
         return $this->hasMany(Review::class);
     }
 
+    /*
+     Retrieve every record where a certain recipe appears to be shared
+     */
     public function shared()
     {
         return $this->belongsToMany(User::class, "shared_recipes", 'recipe_id', 'user_shared_to');
     }
 
+    /*
+     Retrieve every collection that is associated to certain recipe
+     */
     public function collections()
     {
         return $this->belongsToMany(Collection::class, "collection_recipes");
     }
 
-    public function comments(){
+    /*
+     Retrieve every comment that belongs to certain recipe
+     */
+    public function comments()
+    {
         return $this->hasMany(Comment::class);
     }
 
-    public function likes(){
+    /*
+     Retrieve every like that belongs to certain recipe
+     */
+    public function likes()
+    {
         return $this->belongsToMany(User::class, "likes", 'recipe_id', 'user_id');
     }
+
+    /*
+    Retrieve every recipe that a certain user can access(His own Recipes and Recipes shared with him)
+     */
     public function scopeForUser($query)
     {
         $user = Auth::user();
+        if ($user) {
+            return $query->whereHas('user', function ($query) use ($user) {
+                $query->where('id', $user->id);
+            })->orWhereHas('shared', function ($query) use ($user) {
+                $query->where('user_shared_to', $user->id);
+            });
+        } else {
+            return $query->get();
+        }
 
-        return $query->whereHas('user', function ($query) use ($user) {
-            $query->where('id', $user->id);
-        })->orWhereHas('shared', function ($query) use ($user) {
-            $query->where('user_shared_to', $user->id);
-        });
     }
 
+    /*
+        Filtering through recipes
+         */
     public function scopeFilter($query, $request)
     {
         $filters = $request->query();
 
         $query->when($request->search, function ($query, $search) {
             $query->where(function ($query) use ($search) {
-
-                $query->orWhere('description', 'like', '%' . $search . '%')->orWhere('title', 'like', '%' . $search . '%')->orWhere('instructions', 'like', '%' . $search . '%');
-
+                $query->orWhere('description', 'like', '%' . $search . '%')
+                    ->orWhere('title', 'like', '%' . $search . '%')
+                    ->orWhere('instructions', 'like', '%' . $search . '%');
             });
         })->when($request->ratings, function ($query, $ratings) use ($request) {
 
@@ -88,7 +125,7 @@ class Recipe extends Model
             $query->whereHas('ingredients', function ($query) use ($ingredients) {
                 $query->whereIn('ingredient_id', $ingredients);
             });
-        })->when($request->collections, function ($query, $collections) {
+        })->when($request->collections && Auth::user(), function ($query, $collections) {
             $query->whereHas('collections', function ($query) use ($collections) {
                 $query->whereIn('collection_id', $collections);
             });
@@ -97,16 +134,15 @@ class Recipe extends Model
                 $query->whereIn('category_id', $categories);
             });
         })->when($request->favorites, function ($query, $favorites) {
-            if ($favorites == "true") {
-                $favorites = 1;
-                $query->where("is_favorite", $favorites)->where("recipes.user_id", Auth::user()->id);
-            } else {
-                $favorites = [0, 1];
-                $query->whereIn("is_favorite", $favorites);
+            if(Auth::user()){
+                $favorites === "true" ? $query->where("is_favorite", 1)->where("recipes.user_id", Auth::user()->id) : null;
             }
-
         });
     }
 
+    public function scopePublic($query)
+    {
+        return $query->where("is_public", 1);
+    }
 
 }

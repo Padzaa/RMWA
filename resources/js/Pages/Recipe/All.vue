@@ -1,7 +1,7 @@
 <template>
-    <Header/>
+
     <Head>
-        <title>All Recipes</title>
+        <title>{{title}}</title>
     </Head>
     <form @submit.prevent="submit" class="filter-form">
         <div class="pickers">
@@ -11,20 +11,24 @@
                     <template v-for="category in categories">
                         <div class="dropdown-item" onclick="event.stopPropagation()">
                             <input class="input-cat" v-model="form.categories" type="checkbox" :value="category.id"
-                                   :id="category.name"> <label class="dr-lb" :for="category.name">{{ category.name }}</label>
+                                   :id="category.name"> <label class="dr-lb" :for="category.name">{{
+                                category.name
+                            }}</label>
                         </div>
                     </template>
 
                 </template>
             </Filter>
 
-            <Filter>
+            <Filter v-if="$page.props.auth">
                 <template v-slot:button_name>Select Collections</template>
                 <template v-slot:filter_slot>
                     <template v-for="collection in collections">
                         <div class="dropdown-item" onclick="event.stopPropagation()">
                             <input class="input-cat" v-model="form.collections" type="checkbox" :value="collection.id"
-                                   :id="collection.name"> <label class="dr-lb" :for="collection.name">{{ collection.name }}</label>
+                                   :id="collection.name"> <label class="dr-lb" :for="collection.name">{{
+                                collection.name
+                            }}</label>
                         </div>
                     </template>
 
@@ -38,17 +42,19 @@
                     <template v-for="ingredient in ingredients">
                         <div class="dropdown-item" onclick="event.stopPropagation()">
                             <input class="input-cat" v-model="form.ingredients" type="checkbox" :value="ingredient.id"
-                                   :id="ingredient.name"> <label class="dr-lb" :for="ingredient.name">{{ ingredient.name }}</label>
+                                   :id="ingredient.name"> <label class="dr-lb" :for="ingredient.name">{{
+                                ingredient.name
+                            }}</label>
                         </div>
                     </template>
                 </template>
             </Filter>
 
-            <div class="for-fav" style="">
+            <div class="for-fav" v-if="$page.props.auth" style="">
 
                 <input v-model="form.favorites" type="checkbox" class="btn-check" id="btn-check-outlined"
                        autocomplete="off">
-                <label class="btn btn-outline-primary" for="btn-check-outlined" >Only Favorites</label>
+                <label class="btn btn-outline-primary" for="btn-check-outlined">Only Favorites</label>
 
             </div>
             <div class="rating">
@@ -57,28 +63,28 @@
                     <input class="form-check-input" v-model="form.ratings" name="rating" type="checkbox" value="1"
                            id="flexCheckDefault">
                     <label class="form-check-label" for="flexCheckDefault">
-                        1
+                        1 - 2 |
                     </label>
                 </div>
                 <div class="form-check">
                     <input class="form-check-input" v-model="form.ratings" name="rating" type="checkbox" value="2"
                            id="flexCheckChecked">
                     <label class="form-check-label" for="flexCheckChecked">
-                        2
+                        2 - 3 |
                     </label>
                 </div>
                 <div class="form-check">
                     <input class="form-check-input" v-model="form.ratings" name="rating" type="checkbox" value="3"
                            id="flexCheckDefault">
                     <label class="form-check-label" for="flexCheckDefault">
-                        3
+                        3 - 4 |
                     </label>
                 </div>
                 <div class="form-check">
                     <input class="form-check-input" v-model="form.ratings" name="rating" type="checkbox" value="4"
                            id="flexCheckChecked">
                     <label class="form-check-label" for="flexCheckChecked">
-                        4
+                        4 - 5 |
                     </label>
                 </div>
                 <div class="form-check">
@@ -91,37 +97,41 @@
             </div>
             <div class="order">
                 <div class="form-check">
-                <input class="form-check-input" type="radio" name="order" id="asc" value="asc" v-model="form.order">
-                <label class="form-check-label" for="asc">Ascending Rating</label>
+                    <input class="form-check-input" type="radio" name="order" id="asc" value="asc" v-model="form.order">
+                    <label class="form-check-label" for="asc">Ascending Rating</label>
                 </div>
                 <div class="form-check">
-                <input class="form-check-input" type="radio" name="order" id="desc" value="desc" v-model="form.order">
-                <label class="form-check-label" for="desc">Descending Rating</label>
+                    <input class="form-check-input" type="radio" name="order" id="desc" value="desc"
+                           v-model="form.order">
+                    <label class="form-check-label" for="desc">Descending Rating</label>
                 </div>
             </div>
-          <div class="search">
+            <div class="search">
 
-            <input placeholder="Search recipes" v-model="form.search" type="search" name="search" id="search" class="form-input form-control">
+                <input placeholder="Search recipes" v-model="form.search" type="search" name="search" id="search"
+                       class="form-input form-control">
 
 
-          </div>
+            </div>
         </div>
 
-        <button type="submit" name="submit" class="btn btn-primary">Filter Recipes</button>
+        <button type="submit" name="submit" class="btn btn-primary fr">Filter Recipes</button>
 
 
     </form>
     <GridNet :recipes="recipes.data" :auth="this.$attrs.auth"></GridNet>
     <div id="paginator">
-        <p>Recipes from {{ recipes.from ? recipes.from : 0 }} to {{ recipes.to ? recipes.to : 0 }} of total {{ recipes.total }}</p>
+        <p>Recipes from {{ recipes.from ? recipes.from : 0 }} to {{ recipes.to ? recipes.to : 0 }} of total {{
+                recipes.total
+            }}</p>
         Page:
         <template v-for="(link,index) in recipes.links">
 
             <Link v-if="index !== 0 && index !== (recipes.links.length - 1)"
                   :style="{
-                'font-weight' : link.active ? 'bold' : 400,
-                'color' : link.active ? 'red' : 'inherit'
-                            }"
+                      'font-weight' : link.active ? 'bold' : 400,
+                      'color' : link.active ? 'red' : 'inherit'
+                      }"
                   :href="link.url"
 
             >
@@ -149,8 +159,8 @@ export default {
         ingredients: Object,
         filterData: Object,
         rating: 0,
-        collections:Object
-
+        collections: Object,
+        title: String,
     },
 
     components: {
@@ -166,17 +176,19 @@ export default {
                 order: this.filterData.order ? this.filterData.order : 'desc',
                 search: this.filterData.search ? this.filterData.search : '',
                 collections: this.filterData.collections ? this.filterData.collections : [],
-        },
+            },
 
-    }
+        }
     },
     methods: {
         submit() {
-            Inertia.get('/recipe', this.form);
+            let url = this.$page.url.includes('/recipe') ? '/recipe' : '/public';
+
+            Inertia.get(url, this.form);
         },
 
 
-    },
+    }
 
 }
 </script>
@@ -229,19 +241,21 @@ div.actions > a {
 }
 
 .pickers {
-   display: flex;
-   flex-wrap: wrap;
+    display: flex;
+    flex-wrap: wrap;
     justify-content: center;
     width: 85%;
     justify-self: center;
     place-items: center;
-    padding:1.5em 2em;
-    column-gap:4em;
+    padding: 1.5em 2em;
+    column-gap: 4em;
     row-gap: 2em;
 }
-.search{
-  width:100%;
+
+.search {
+    width: 100%;
 }
+
 button[name="submit"] {
     width: 85%;
     justify-self: center;
@@ -264,16 +278,22 @@ button[name="submit"] {
     font-size: 20px;
 }
 
-.btn-check:checked+.btn, .btn.active, .btn.show, .btn:first-child:active, :not(.btn-check)+.btn:active {
+.btn-check:checked + .btn, .btn.active, .btn.show, .btn:first-child:active, :not(.btn-check) + .btn:active {
     color: var(--bs-btn-active-color);
     background-color: var(--bs-btn-active-bg);
     border-color: var(--bs-btn-active-border-color);
 }
-input#search{
-  font-size:1.2em;
-}
-.dr-lb{
-  width:calc(100% - 1px);
+
+input#search {
+    font-size: 1.2em;
 }
 
+.dr-lb {
+    width: calc(100% - 1px);
+}
+
+button.fr {
+    color: white;
+    font-size: 1.1em;
+}
 </style>

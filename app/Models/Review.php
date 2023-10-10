@@ -9,9 +9,14 @@ class Review extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['user_id',"rating","message","recipe_id"];
-    
-    public function recipe(){
+    protected $fillable = ['user_id', "rating", "message", "recipe_id"];
+
+    /*
+     Retrieve a recipe that is associated to certain review
+     */
+
+    public function recipe()
+    {
         return $this->belongsTo(Recipe::class);
     }
 }

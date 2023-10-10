@@ -16,7 +16,7 @@ export default {
 </script>
 
 <template>
-  <Header></Header>
+
   <Head>
     <title>Reviews
     </title>

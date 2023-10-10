@@ -27,7 +27,7 @@ export default {
 </script>
 
 <template>
-<Header/>
+
     <Head>
         <title>Create new Collection</title>
     </Head>
