@@ -8,6 +8,7 @@ use App\Models\Recipe;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
@@ -44,7 +45,6 @@ class UserController extends Controller
     public function show(User $user)
     {
         $this->authorize('view', $user);
-
         Auth::user()->follow()->where('followed_user_id', $user->id)->count() ? $is_following = true : $is_following = false;
 
         return Inertia::render('User/User_Show', [
@@ -63,9 +63,9 @@ class UserController extends Controller
         $recipes = $user->recipes()
             ->orWhereHas('shared', function ($query) use ($user) {
                 $query->where('shared_recipes.user_shared_to', $user->id);
-            })->get();
+            })->paginate(10);
         return Inertia::render('User/User_Edit', [
-                "recipes" => $recipes
+                "recipes" => $recipes,
             ]
         );
     }
@@ -78,6 +78,9 @@ class UserController extends Controller
         $this->authorize('update', $user);
 
         if ($request->hasFile('file')) {
+            if($user->picture) {
+                Storage::disk("public")->delete(basename($user->picture));
+            }
             $uploadedFile = $request->file('file');
             $filename = time() . '_' . $uploadedFile->getClientOriginalName();
             $path = $uploadedFile->storeAs('public', $filename);
@@ -99,11 +102,9 @@ class UserController extends Controller
         //
     }
 
-
+//Follow/Unfollow a certain user
     public function follow(Request $request, User $user)
     {
-
-
         Auth::user()->follow()->where('followed_user_id', $user->id)->count() ?
             Auth::user()->follow()->detach($user->id)
             :

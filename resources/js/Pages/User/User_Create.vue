@@ -7,96 +7,120 @@
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-md-8">
-                <div class="card">
-                    <div class="card-header">
-                        <h2>Register</h2>
-                    </div>
+                <div class="card-body">
+                    <form @submit.prevent="submit">
+                        <div>
+                            <v-card
+                                class="mx-auto pa-12 pb-8"
+                                elevation="8"
+                                max-width="448"
+                                rounded="lg"
+                            >
+                                <div class="text-subtitle-1 text-medium-emphasis">Firstname</div>
 
-                    <div class="card-body">
-                        <form @submit.prevent="submit">
+                                <v-text-field
+                                    name="firstname"
+                                    density="compact"
+                                    placeholder="First name"
+                                    prepend-inner-icon="mdi-account-outline"
+                                    variant="outlined"
+                                    v-model="form.firstname"
+                                    type="email"
+                                    :error-messages="$attrs.errors.firstname"
+
+                                ></v-text-field>
+
+                                <div class="text-subtitle-1 text-medium-emphasis">Lastname</div>
+
+                                <v-text-field
+                                    name="lastname"
+                                    density="compact"
+                                    placeholder="Last name"
+                                    prepend-inner-icon="mdi-account-outline"
+                                    variant="outlined"
+                                    v-model="form.lastname"
+                                    type="email"
+                                    :error-messages="$attrs.errors.lastname"
+
+                                ></v-text-field>
+
+                                <div class="text-subtitle-1 text-medium-emphasis">Email</div>
+
+                                <v-text-field
+                                    name="email"
+                                    density="compact"
+                                    placeholder="Email address"
+                                    prepend-inner-icon="mdi-email-outline"
+                                    variant="outlined"
+                                    v-model="form.email"
+                                    type="email"
+                                    :error-messages="$attrs.errors.email"
+
+                                ></v-text-field>
 
 
-                            <div class="row mb-3">
-                                <label for="firstname" class="col-md-4 col-form-label text-md-end">Firstname</label>
-
-                                <div class="col-md-6">
-                                    <input v-model="form.firstname" id="firstname" type="text" class="form-control "
-                                           name="firstname"  autocomplete="firstname" autofocus>
-
-                                    <span class="text-danger text-center" v-if="$attrs.errors.firstname">
-                                    {{$attrs.errors.firstname}}
-                                </span>
+                                <div
+                                    class="text-subtitle-1 text-medium-emphasis d-flex align-center justify-space-between">
+                                    Password
                                 </div>
 
-                            </div>
+                                <v-text-field
+                                    name="password"
+                                    :append-inner-icon="visible ? 'mdi-eye-off' : 'mdi-eye'"
+                                    :type="visible ? 'text' : 'password'"
+                                    density="compact"
+                                    placeholder="Enter your password"
+                                    prepend-inner-icon="mdi-lock-outline"
+                                    variant="outlined"
+                                    @click:append-inner="visible = !visible"
+                                    v-model="form.password"
+                                    :error-messages="$attrs.errors.password"
+                                ></v-text-field>
 
-                            <div class="row mb-3">
-                                <label for="lastname" class="col-md-4 col-form-label text-md-end">Lastname</label>
+                                <div class="text-subtitle-1 text-medium-emphasis">Confirm password</div>
 
-                                <div class="col-md-6">
-                                    <input id="lastname" type="text" class="form-control" name="lastname"
-                                           v-model="form.lastname"  autocomplete="lastname" autofocus>
+                                <v-text-field
+                                    name="password_confirmation"
+                                    :append-inner-icon="visible ? 'mdi-eye-off' : 'mdi-eye'"
+                                    :type="visible ? 'text' : 'password'"
+                                    density="compact"
+                                    placeholder="Confirm your password"
+                                    prepend-inner-icon="mdi-lock-outline"
+                                    variant="outlined"
+                                    @click:append-inner="visible = !visible"
+                                    v-model="form.password_confirmation"
 
-                                    <span class="text-danger text-center" v-if="$attrs.errors.lastname">
-                                    {{$attrs.errors.lastname}}
-                                </span>
-                                </div>
+                                ></v-text-field>
 
-                            </div>
 
-                            <div class="row mb-3">
-                                <label for="email" class="col-md-4 col-form-label text-md-end">Email Address</label>
+                                <v-btn
+                                    block
+                                    class="mb-8"
+                                    color="blue"
+                                    size="large"
+                                    variant="tonal"
+                                    :disabled="form.processing"
+                                    type="submit"
+                                >
+                                    Sign up
+                                </v-btn>
 
-                                <div class="col-md-6">
-                                    <input id="email" type="email" class="form-control" v-model="form.email"
-                                           name="email"  autocomplete="email">
+                                <v-card-text class="text-center">
+                                    <a
+                                        class="text-blue text-decoration-none"
+                                        href="/login"
+                                        rel="noopener noreferrer"
 
-                                    <span class="text-danger text-center" v-if="$attrs.errors.email">
-                                    {{$attrs.errors.email}}
-                                </span>
-                                </div>
+                                    >
+                                        Already have an account?
+                                        <v-icon icon="mdi-chevron-right"></v-icon>
+                                    </a>
+                                </v-card-text>
+                            </v-card>
+                        </div>
+                    </form>
 
-                            </div>
 
-                            <div class="row mb-3">
-                                <label for="password" class="col-md-4 col-form-label text-md-end">Password</label>
-
-                                <div class="col-md-6">
-                                    <input id="password" type="password" class="form-control" v-model="form.password"
-                                           name="password"  autocomplete="new-password">
-                                    <span class="text-danger text-center" v-if="$attrs.errors.password">
-                                    {{$attrs.errors.password}}
-                                </span>
-                                </div>
-
-                            </div>
-
-                            <div class="row mb-3">
-                                <label for="password-confirm" class="col-md-4 col-form-label text-md-end">Confirm
-                                    Password</label>
-
-                                <div class="col-md-6">
-                                    <input id="password-confirm" type="password" class="form-control"
-                                           v-model="form.password_confirmation" name="password_confirmation"
-                                           autocomplete="new-password">
-                                    <span class="text-danger text-center" v-if="$attrs.errors.password_confirmation">
-                                    {{$attrs.errors.password_confirmation}}
-                                </span>
-                                </div>
-
-                            </div>
-
-                            <div class="row mb-0">
-                                <div class="col-md-6 offset-md-4 gap-2 d-flex">
-                                    <button type="submit" name="submit" :disabled="form.processing"
-                                            class="btn btn-primary">
-                                        Register
-                                    </button>
-                                    <Link class="btn btn-danger" href="/login">Login</Link>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
                 </div>
             </div>
         </div>
@@ -106,9 +130,9 @@
 </template>
 
 <script setup>
-import {reactive} from 'vue';
+import {reactive, ref} from 'vue';
 import {Inertia} from '@inertiajs/inertia';
-
+let visible = ref(false);
 let form = reactive({
     firstname: "",
     lastname: "",

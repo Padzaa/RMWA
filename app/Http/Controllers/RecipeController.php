@@ -27,14 +27,13 @@ class RecipeController extends Controller
         $filteredRecipes = Recipe::forUser()
             ->Filter($request)
             ->paginate(10);
-//dd($filteredRecipes->toSql());
         return Inertia::render('Recipe/All', [
             "title" => "Recipes",
             'recipes' => $filteredRecipes,
             'categories' => Category::all(),
-            'ingredients' => Ingredient::all(),
+            'ingredients' => Ingredient::orderBy('name')->get(),
             'filterData' => $request->query->all(),
-            'collections' => Auth::user()->collections()->get()
+            'collections' => Auth::user()->collections()->orderBy('name')->get()
 
         ]);
     }
@@ -44,9 +43,8 @@ class RecipeController extends Controller
      */
     public function create()
     {
-
         return Inertia::render('Recipe/Recipe_Create', [
-            "ingredients" => Ingredient::all(),
+            "ingredients" => Ingredient::orderBy('name')->get(),
             "categories" => Category::all()
         ]);
     }
@@ -78,21 +76,18 @@ class RecipeController extends Controller
      */
     public function show(Recipe $recipe)
     {
+        $this->authorize("view", $recipe);
         $review=$reviews=$users=$shared_to=$is_liked = null;
-        $recipe = $recipe->load('user');
+        $recipe->load('user');
+
         if(Auth::user()){
-            $shared_to =  $recipe->shared()->get();
+            $shared_to = $recipe->shared()->get();
             $review = $recipe->reviews()->where('user_id', Auth::user()->id)->first();
             $reviews = $recipe->reviews()->where("user_id", "!=", Auth::user()->id)->get();
             $is_liked = $recipe->likes()->where('user_id', Auth::user()->id)->count();
             $users = User::all()->except(Auth::user()->id);
         }
-        $this->authorize("view", $recipe);
-//        $shared_to = Auth::user() ? $recipe->shared()->get() : null;
-//
-//        $review = Auth::user() ? $recipe->reviews()->where('user_id', Auth::user()->id)->first() : null;
         $average = round($recipe->reviews()->avg("rating", 2), 2);
-//        $reviews = Auth::user() ? $recipe->reviews()->where("user_id", "!=", Auth::user()->id)->get() : $recipe->reviews()->get();
 
         return Inertia::render('Recipe/Show',
             [
@@ -114,12 +109,11 @@ class RecipeController extends Controller
     public function edit(Recipe $recipe)
     {
         $this->authorize('update', $recipe);
-
         return Inertia::render('Recipe/Recipe_Edit', [
             "recipe" => $recipe,
             "recipe_ingredients" => $recipe->ingredients,
             "recipe_categories" => $recipe->categories,
-            "ingredients" => Ingredient::all(),
+            "ingredients" => Ingredient::orderBy('name')->get(),
             "categories" => Category::all()
         ]);
     }
@@ -129,9 +123,7 @@ class RecipeController extends Controller
      */
     public function update(UpdateRecipeRequest $request, Recipe $recipe)
     {
-
         $this->authorize('update', $recipe);
-
         $ingredients = collect($request->ingredients)->pluck("id");
         $categories = collect($request->categories)->pluck("id");
 
@@ -152,11 +144,9 @@ class RecipeController extends Controller
      */
     public function destroy(Recipe $recipe)
     {
-
         $this->authorize('delete', $recipe);
         $recipe->ingredients()->detach();
         $recipe->categories()->detach();
-
         $recipe->delete();
         return redirect()->back();
     }
@@ -166,21 +156,16 @@ class RecipeController extends Controller
    */
     public function favorite(Recipe $recipe, Request $request)
     {
-
-
         $this->authorize('update', $recipe);
         $recipe->is_favorite = !$recipe->is_favorite;
         $recipe->save();
         return redirect()->back();
-
-
     }
     /*
         Creates a review(rate the recipe)
        */
     public function rate(Recipe $recipe, Request $request)
     {
-
         $this->authorize('view', $recipe);
         $rating = $recipe->reviews()->where("user_id", Auth::user()->id)->first();
 
@@ -213,15 +198,16 @@ class RecipeController extends Controller
 
     /*
        Share a recipe with other users
-       */
+     */
     public function share(Recipe $recipe, Request $request)
     {
         $this->authorize('update', $recipe);
-
         $userIDs = collect($request->users)->pluck("id");
-
+        $request->request = $request->validate([
+            "users" => ['required', 'min:1'],
+        ],[
+            "users.required" => "Users are required!"]);
         $recipe->shared()->sync($userIDs);
-
         return redirect()->back();
     }
 
@@ -230,21 +216,16 @@ class RecipeController extends Controller
     */
     public function comment(Recipe $recipe, Request $request)
     {
-
         $this->authorize('view', $recipe);
-
         $request->request = $request->validate([
             "ccomment" => ['required', 'string', 'max:500', 'min:1']
-        ],
-            [
+        ],[
                 "ccomment.required" => "Comment is required!",
             ]);
-
         $recipe->comments()->create([
             "comment" => $request->ccomment,
             "user_id" => Auth::user()->id,
         ]);
-
         return redirect()->back();
     }
 
@@ -253,15 +234,11 @@ class RecipeController extends Controller
     */
     public function like(Recipe $recipe)
     {
-
         $this->authorize('view', $recipe);
-
         $recipe->likes()->where('user_id', Auth::user()->id)->count() ?
             $recipe->likes()->detach(Auth::user()->id)
             :
             $recipe->likes()->attach(Auth::user()->id);
-
-
         return redirect()->back();
     }
 
@@ -272,12 +249,12 @@ class RecipeController extends Controller
     {
         $favorites = Auth::user()->favorites();
         return Inertia::render('User/Favorites', [
-            "recipes" => $favorites
+            "recipes" => $favorites,
         ]);
     }
 
     /*
-     //Public page of the site, so mainly guest can access
+     Public page of the site, so mainly guest can access
      */
     public function public(Request $request){
         $filteredRecipes = Recipe::query()->Public()->Filter($request)->paginate(10);
@@ -286,9 +263,9 @@ class RecipeController extends Controller
             "title" => "Public Recipes",
             "recipes" => $filteredRecipes,
             'categories' => Category::all(),
-            'ingredients' => Ingredient::all(),
+            'ingredients' => Ingredient::orderBy('name')->get(),
             'filterData' => $request->query->all(),
-            'collections' => Auth::user() ? Auth::user()->collections()->get() : null
+            'collections' => Auth::user() ? Auth::user()->collections()->orderBy('name')->get() : null
 
         ]);
     }

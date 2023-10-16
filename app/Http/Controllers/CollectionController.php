@@ -19,7 +19,6 @@ class CollectionController extends Controller
     {
         $collections = Collection::where("user_id", Auth::user()->id)->with('recipes')->get();
 
-
         return Inertia::render('Collection/Collections', [
             "collections" => $collections
         ]);
@@ -32,7 +31,6 @@ class CollectionController extends Controller
     {
         return Inertia::render('Collection/Collection_Create', [
             "recipes" => Recipe::where("user_id", Auth::user()->id)->get(),
-
         ]);
     }
 
@@ -42,13 +40,11 @@ class CollectionController extends Controller
     public function store(StoreCollectionRequest $request)
     {
         $recipeIDs = collect($request->recipes)->pluck("id");
-
         $collection = Collection::create([
             'name' => $request->name,
             'user_id' => Auth::user()->id
         ]);
         $collection->recipes()->sync($recipeIDs);
-
         return redirect()->route('collection.index');
     }
 
@@ -58,9 +54,8 @@ class CollectionController extends Controller
     public function show(Collection $collection)
     {
         $this->authorize('view', $collection);
-        $collection = Collection::where("id", $collection->id)->with('recipes')->first();
         return Inertia::render('Collection/Collection_Show', [
-            "collection" => $collection
+            "collection" => $collection->load('recipes')
         ]);
     }
 
@@ -69,14 +64,10 @@ class CollectionController extends Controller
      */
     public function edit(Collection $collection)
     {
-
         $this->authorize('update', $collection);
-        $collection = Collection::where("id", $collection->id)->with('recipes')->first();
-
-
         return Inertia::render('Collection/Collection_Edit', [
             "recipes" => Recipe::where("user_id", Auth::user()->id)->get(),
-            "collection" => $collection
+            "collection" => $collection->load('recipes')
         ]);
     }
 
@@ -91,7 +82,6 @@ class CollectionController extends Controller
             'name' => $request->name,
         ]);
         $collection->recipes()->sync($recipeIDs);
-
         return redirect()->route('collection.index');
     }
 
@@ -100,10 +90,8 @@ class CollectionController extends Controller
      */
     public function destroy(Collection $collection)
     {
-        $collection = Collection::findOrFail($collection->id);
         $this->authorize('delete', $collection);
         $collection->delete();
-
         return redirect()->route('collection.index');
     }
 }

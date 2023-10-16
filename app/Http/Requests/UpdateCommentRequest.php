@@ -12,11 +12,8 @@ class UpdateCommentRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        if(Auth::user()){
-            return true;
-        }else{
-            return false;
-        }    }
+        return true;
+    }
 
     /**
      * Get the validation rules that apply to the request.

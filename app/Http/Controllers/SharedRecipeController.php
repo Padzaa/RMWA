@@ -21,7 +21,7 @@ class SharedRecipeController extends Controller
             $query->select(DB::raw(1))
                 ->from('shared_recipes')
                 ->whereRaw('shared_recipes.recipe_id = recipes.id');
-        })->get();
+        })->paginate(10);
 
         return Inertia::render('User/Shared_Recipes', [
             'recipes' => $recipes,
@@ -33,7 +33,7 @@ class SharedRecipeController extends Controller
     {
         $recipes = Recipe::whereHas('shared', function ($query) {
             $query->where('user_shared_to', Auth::user()->id);
-        })->get();
+        })->paginate(10);
         return Inertia::render('User/Shared_Recipes', [
             'recipes' => $recipes,
             'title' => "Recipes shared with me"

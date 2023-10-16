@@ -8,8 +8,8 @@ import '@mdi/font/css/materialdesignicons.min.css';
 import * as directives from 'vuetify/directives';
 import Layout from "./Shared/Layout.vue";
 import {Inertia} from "@inertiajs/inertia";
-
-
+import Filter from "./Shared/Filter.vue";
+import Filtering from "./Shared/Filtering.vue";
 const vuetify = createVuetify({
     components,
     directives,
@@ -44,7 +44,8 @@ createInertiaApp({
             .use(plugin)
             .component("Link",Link)
             .component("Head",Head)
-
+            .component("Filter",Filter)
+            .component("Filtering",Filtering)
             .use(vuetify)
             .mount(el)
     },

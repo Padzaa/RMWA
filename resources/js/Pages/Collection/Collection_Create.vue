@@ -67,7 +67,7 @@ export default {
                                     {{$attrs.errors.recipes}}
                                 </span>
             </div>
-            <button type="submit" class="btn btn-primary" :disabled="form.processing">Create new Collection</button>
+            <button type="submit" class="btn btn-primary text-white" :disabled="form.processing">Create new Collection</button>
 
         </form>
     </div>
@@ -86,6 +86,6 @@ form{
     gap: 1em;
 }
 form>button{
-    color:white;
+    width: fit-content;
 }
 </style>

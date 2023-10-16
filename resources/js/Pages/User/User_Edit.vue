@@ -6,7 +6,7 @@
     <div class="container rounded bg-white mt-5 mb-5">
         <form enctype="multipart/form-data" @submit.prevent="submit">
 
-        <div class="row justify-content-center">
+        <div class="row justify-content-center" >
             <h2 class="text-center">Profile Settings</h2>
 
             <div class="col-md-3 border-right">
@@ -60,7 +60,7 @@
                 </span>
                     </div>
                     <div class="mt-5 text-center">
-                        <button @click="submit" class="btn btn-primary profile-button" name="submit" type="submit">Save Profile</button>
+                        <button @click="submit" class="btn btn-primary profile-button text-white" name="submit" type="submit">Save Profile</button>
                     </div>
                 </div>
             </div>
@@ -69,8 +69,9 @@
         </form>
     </div>
 <div class="rec">
-    <h1>My recipes</h1>
-    <GridNet :recipes="recipes" :auth="this.$attrs.auth"></GridNet>
+    <h1 class="text-center">My recipes</h1>
+    <GridNet :recipes="recipes.data" :auth="this.$attrs.auth"></GridNet>
+    <Paginator :recipes="recipes"></Paginator>
 </div>
 
 
@@ -80,11 +81,13 @@
 import { Inertia } from "@inertiajs/inertia";
 import Card from '../../Shared/Card.vue';
 import GridNet from "../../Shared/GridNet.vue";
+import Paginator from "../../Shared/Paginator.vue";
 export default {
     props: {
         recipes:Object
     },
     components: {
+        Paginator,
         Card,GridNet
     },
     data() {

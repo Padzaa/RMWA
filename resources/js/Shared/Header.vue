@@ -1,30 +1,36 @@
 <template>
 
     <header>
-        <div v-if="$page.props.auth">
+        <div class="left-side" >
 
-            <h2>{{$page.props.auth.user.firstname + " " + $page.props.auth.user.lastname}}</h2>
-            <div class="links">
-                <Link class="links" href="/" :class="this.$page.component == 'Welcome' ? 'active' : ''">Home</Link>|
-                <Link class="links" href="/recipe/create" :class="this.$page.component == 'Recipe/Recipe_Create' ? 'active' : ''">Create Recipe</Link>|
+            <img src="https://png.pngtree.com/png-vector/20220709/ourmid/pngtree-hat-chef-logo-png-image_5820915.png" alt="">
+            <div class="links" v-if="$page.props.auth">
+                <Link class="link" href="/" :class="this.$page.component == 'Welcome' ? 'active' : ''">Home</Link>
+                <Link class="link" href="/recipe" :class="this.$page.url.includes('/recipe') && this.$page.component == 'Recipe/All' ? 'active' : ''">Recipes</Link>
+                <Link class="link" href="/collection" :class="this.$page.component == 'Collection/Collections' ? 'active' : ''">Collections</Link>
+                <Link class="link" href="/favorites" :class="this.$page.component == 'User/Favorites' ? 'active' : ''">Favorites</Link>
+                <Link class="link" href="/public" :class="this.$page.url.includes('/public') ? 'active' : ''">Public</Link>
+
+                <Link class="link" href="/recipe/create"
+                      :class="this.$page.component == 'Recipe/Recipe_Create' ? 'active' : ''">Create Recipe
+                </Link>
+
             </div>
 
         </div>
-      <div v-else="$page.props.auth">
 
-      </div>
         <div v-if="$page.props.auth" class="profile-section">
-            <Link :href="'/user/'+$page.props.auth.user.id+'/edit'" ><img :src="pic" alt="" class="profile-pic"/></Link>
-            <Link as="button" class="btn btn-light" href="/public" >Public</Link>
-            <Link class="btn btn-danger" href="/logout" method="POST" as="button">Logout</Link>
+            <Link :href="'/user/'+$page.props.auth.user.id+'/edit'"><img :src="pic" alt="" class="profile-pic"/></Link>
+
+            <Link class="btn btn-outline-light" href="/logout" method="POST" as="button">Logout</Link>
         </div>
-      <div v-else="$page.props.auth" class="profile-section">
+        <div v-else="$page.props.auth" class="profile-section">
 
+            <Link class="btn btn-outline-light" href="/public">Public</Link>
+            <Link class="btn btn-outline-light" href="/login">Login</Link>
+            <Link class="btn btn-outline-light" href="/register">Register</Link>
 
-        <Link class="btn btn-primary" href="/login" >Login</Link>
-        <Link class="btn btn-light" href="/public" >Public</Link>
-        <Link class="btn btn-dark" href="/register" >Register</Link>
-      </div>
+        </div>
     </header>
 </template>
 
@@ -37,12 +43,11 @@ export default {
         title: String,
 
     },
-    data(){
+    data() {
         return {
             pic: this.$page.props.auth && this.$page.props.auth.user.picture ? this.$page.props.auth.user.picture : "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_640.png"
         }
     },
-
 
 
 }
@@ -58,9 +63,8 @@ header {
     justify-content: space-between;
     grid-auto-flow: column;
     padding: 0 2em;
-  background: rgb(232,106,3);
-  background: linear-gradient(174deg, rgba(232,106,3,1) 0%, rgba(255,248,0,1) 100%);
-  border-bottom: 2px solid black;
+    background-color: #791212;
+    border-bottom: 2px solid black;
 }
 
 h2 {
@@ -70,33 +74,60 @@ h2 {
 }
 
 .links {
-    font-size: 1.15rem;
-    display: flex;
-    gap: 10px;
+
+    display: grid;
+    gap: 25px;
+    grid-auto-flow: column;
+    place-items: center;
+    padding: 1em;
 }
-.profile-pic,.profile-section>a[href="/logout"]{
-    width:60px;
-    height:60px;
-    border-radius:50%;
+
+.profile-pic, .profile-section > a[href="/logout"] {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+
 }
-.profile-pic{
-  object-fit: cover;
+
+.profile-pic {
+    object-fit: cover;
+    outline:2px solid white;
 }
-.profile-section{
-    display:grid;
-    gap:10px;
+
+.profile-section {
+    display: grid;
+    gap: 20px;
     grid-auto-flow: column;
 
 }
-.profile-section>button{
-    height:fit-content;
-    align-self:center;
-}
-.active{
-  font-weight: bold;
 
+.profile-section > button {
+    height: fit-content;
+    align-self: center;
+    font-size: 1.25rem;
 }
-.links a{
-  font-size:1.25rem;
+
+.active {
+    font-weight: bold;
+    color:#03d1f5 !important;
+    border: 3px solid #03d1f5 !important;
+}
+.profile-section > a {
+    font-size: 1.25rem;
+}
+.links a {
+    font-size: 1.5rem;
+    color: white;
+    padding: 5px 10px;
+    border: 2px solid white;
+    border-radius: 8px;
+    font-family: roboto, sans-serif;
+}
+.left-side{
+    display: grid;
+    grid-template-columns: 1fr auto;
+}
+.left-side > img{
+    height: 100px;
 }
 </style>

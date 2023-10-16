@@ -12,11 +12,7 @@ class StoreSharedRecipeRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        if(Auth::user()){
-            return true;
-        }else{
-            return false;
-        }
+        return true;
     }
 
     /**

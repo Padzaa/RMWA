@@ -26,9 +26,11 @@ use App\Http\Controllers\CollectionController;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
-/*------------ONLY ACCESSABLE WHEN USER LOGGED IN--------------*/
+/*---------------------------------------------------------------------------------------*/
+/*--------------------------ONLY ACCESSABLE WHEN USER LOGGED IN--------------------------*/
+/*---------------------------------------------------------------------------------------*/
 Route::middleware(['auth'])->group(function () {
-
+//Home page
     Route::get('/', function () {
         return Inertia::render('Welcome');
     })->name('welcome');
@@ -64,7 +66,10 @@ Route::middleware(['auth'])->group(function () {
     Route::put('/recipe/{recipe}/like', [RecipeController::class, 'like'])->name('like');
 
 });
+/*---------------------------------------------------------------------------------------*/
 /*------------END OF (ONLY ACCESSABLE WHEN USER LOGGED IN) ROUTES------------------------*/
+/*---------------------------------------------------------------------------------------*/
+
 Auth::routes();
 //Guest can access show route of this resource
 Route::resource('/recipe', RecipeController::class)->only("show");

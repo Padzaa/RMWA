@@ -5,70 +5,95 @@
     <div class="container">
         <div class="row justify-content-center d-flex">
             <div class="col-md-8 form">
-                <div class="card">
-                    <div class="card-header"><h2>Login</h2></div>
 
-                    <div class="card-body">
-                        <form @submit.prevent="submit">
 
-                            <div class="row mb-3">
-                                <label for="email" class="col-md-4 col-form-label text-md-end">Email Address</label>
+                <div class="card-body">
+                    <form @submit.prevent="submit">
+                        <div>
+                            <v-card
+                                class="mx-auto pa-12 pb-8"
+                                elevation="8"
+                                max-width="448"
+                                rounded="lg"
+                            >
+                                <div class="text-subtitle-1 text-medium-emphasis">Account</div>
 
-                                <div class="col-md-6">
-                                    <input id="email" type="email" class="form-control " name="email"
-                                           v-model="form.email"  autocomplete="email" autofocus>
-                                    <span class="text-danger text-center" v-if="$attrs.errors.email">
-                                    {{$attrs.errors.email}}
-                                </span>
+                                <v-text-field
+                                    density="compact"
+                                    placeholder="Email address"
+                                    prepend-inner-icon="mdi-email-outline"
+                                    variant="outlined"
+                                    v-model="form.email"
+                                    type="email"
+                                    :error-messages="$attrs.errors.email"
+                                    autocomplete="email"
+
+                                ></v-text-field>
+
+                                <div
+                                    class="text-subtitle-1 text-medium-emphasis d-flex align-center justify-space-between">
+                                    Password
+
+<!--                                    <a-->
+<!--                                        class="text-caption text-decoration-none text-blue"-->
+<!--                                        href="#"-->
+<!--                                        rel="noopener noreferrer"-->
+<!--                                        target="_blank"-->
+<!--                                    >-->
+<!--                                        Forgot login password?</a>-->
                                 </div>
 
-                            </div>
+                                <v-text-field
+                                    :append-inner-icon="visible ? 'mdi-eye-off' : 'mdi-eye'"
+                                    :type="visible ? 'text' : 'password'"
+                                    density="compact"
+                                    placeholder="Enter your password"
+                                    prepend-inner-icon="mdi-lock-outline"
+                                    variant="outlined"
+                                    @click:append-inner="visible = !visible"
+                                    v-model="form.password"
+                                    :error-messages="$attrs.errors.password"
+                                ></v-text-field>
+                                    <span class="text-danger text-center" style="display:block;" v-if="$attrs.errors.failedToLogin">
+                                        {{$attrs.errors.failedToLogin}}
+                                    </span>
+                                <v-card
+                                    class="mb-12 mt-8"
+                                    color="surface-variant"
+                                    variant="tonal"
+                                >
+                                    <v-card-text class="text-medium-emphasis text-caption">
+                                        Warning: After 5 consecutive failed login attempts, you account will be
+                                        temporarily suspended for <b>30 seconds</b>.
+                                    </v-card-text>
+                                </v-card>
 
-                            <div class="row mb-3">
-                                <label for="password" class="col-md-4 col-form-label text-md-end">Password</label>
+                                <v-btn
+                                    block
+                                    class="mb-8"
+                                    color="blue"
+                                    size="large"
+                                    variant="tonal"
+                                    :disabled="form.processing"
+                                    type="submit"
+                                >
+                                    Log In
+                                </v-btn>
 
-                                <div class="col-md-6">
-                                    <input id="password" type="password" class="form-control" v-model="form.password"
-                                           name="password"  autocomplete="current-password">
-                                    <span class="text-danger text-center" v-if="$attrs.errors.password">
-                                    {{$attrs.errors.password}}
-                                </span>
-                                </div>
-                                <span class="text-danger text-center" v-if="$attrs.errors.failedToLogin">
-                                    {{$attrs.errors.failedToLogin}}
-                                </span>
-                            </div>
+                                <v-card-text class="text-center">
+                                    <a
+                                        class="text-blue text-decoration-none"
+                                        href="/register"
+                                        rel="noopener noreferrer"
 
-                            <div class="row mb-3">
-                                <div class="col-md-6 offset-md-4">
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" name="remember" id="remember">
-
-                                        <label class="form-check-label" for="remember">
-                                            Remember me
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="row mb-0">
-                                <div class="col-md-8 offset-md-4 gap-2 d-flex">
-                                    <button type="submit" name="submit" :disabled="form.processing"
-                                            class="btn btn-primary">
-                                        Login
-                                    </button>
-                                    <Link class="btn btn-danger" href="/register">Register</Link>
-
-
-                                    <!--                                    @if (Route::has('password.request'))-->
-                                    <!--                                    <a class="btn btn-link" href="{{ route('password.request') }}">-->
-                                    <!--                                        {{ __('Forgot Your Password?') }}-->
-                                    <!--                                    </a>-->
-                                    <!--                                    @endif-->
-                                </div>
-                            </div>
-                        </form>
-                    </div>
+                                    >
+                                        Sign up now
+                                        <v-icon icon="mdi-chevron-right"></v-icon>
+                                    </a>
+                                </v-card-text>
+                            </v-card>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
@@ -77,8 +102,10 @@
 
 </template>
 <script setup>
-import {reactive} from 'vue';
+import {reactive, ref} from 'vue';
 import {Inertia} from '@inertiajs/inertia';
+
+let visible = ref(false);
 
 let form = reactive({
     email: "",
@@ -92,12 +119,13 @@ let submit = () => {
 </script>
 
 <style scoped>
-button{
-    color:white;
+button {
+    color: white;
 }
-.container{
-    height: 100%;
-    padding:5em
+
+.container {
+
+    padding: 5em
 
 }
 

@@ -5,13 +5,28 @@
 
     <div class="form">
         <form @submit.prevent="submit">
-            <div class="form-group">
-                <label for="recipe_title">Recipe Title</label>
-                <input type="text" class="form-control" id="recipe_title" name="title" v-model="form.title" placeholder="Enter recipe name" >
-                <span class="text-danger text-center" v-if="$attrs.errors.title">
+            <div class="el">
+                <div class="form-group">
+                    <label for="recipe_title">Recipe Title</label>
+                    <input type="text" class="form-control" id="recipe_title" name="title" v-model="form.title" placeholder="Enter recipe name" >
+                    <span class="text-danger text-center" v-if="$attrs.errors.title">
                                     {{$attrs.errors.title}}
                                 </span>
+                </div>
+                <div class="optionals">
+                    <div class="form-group" style="">
+                        <v-checkbox-btn v-model="form.public" label="Public"></v-checkbox-btn>
+
+                    </div>
+
+                    <div class="form-group" style="">
+                        <v-checkbox-btn v-model="form.favorite" label="Favorite"></v-checkbox-btn>
+
+                    </div>
+                </div>
+
             </div>
+<div class="el">
             <div class="form-group">
 
                 <label for="ingredients">Ingredients</label>
@@ -60,35 +75,27 @@
                                     {{$attrs.errors.categories}}
                                 </span>
             </div>
-            <div class="form-group d-grid" style="">
-                <label >Public</label>
-                <input v-model="form.public" type="checkbox" class="btn-check" id="btn-check-outlined" autocomplete="off">
-                <label class="btn btn-outline-primary" for="btn-check-outlined">Make This Recipe Public</label><br>
+</div>
 
-            </div>
-
-            <div class="form-group d-grid" style="">
-                <label >Favorite</label>
-                <input v-model="form.favorite" type="checkbox" class="btn-check" id="btn-check-outlined" autocomplete="off">
-                <label class="btn btn-outline-primary" for="btn-check-outlined">Make This Recipe Your Favorite</label><br>
-
-            </div>
-            <div class="form-group">
-                <label for="description">Description</label>
-                <textarea class="form-control" id="description" maxlength="512" v-model="form.description" placeholder="Write recipe description" ></textarea>
-                <span class="text-danger text-center" v-if="$attrs.errors.description">
+            <div class="el">
+                <div class="form-group">
+                    <label for="description">Description</label>
+                    <textarea class="form-control" id="description" maxlength="512" v-model="form.description" placeholder="Write recipe description" ></textarea>
+                    <span class="text-danger text-center" v-if="$attrs.errors.description">
                                     {{$attrs.errors.description}}
                                 </span>
-            </div>
-            <div class="form-group">
-                <label for="instructions">Instructions</label>
-                <textarea class="form-control" id="instructions" maxlength="3000" v-model="form.instructions" placeholder="Write recipe instructions" ></textarea>
-                <span class="text-danger text-center" v-if="$attrs.errors.instructions">
+                </div>
+                <div class="form-group">
+                    <label for="instructions">Instructions</label>
+                    <textarea class="form-control" id="instructions" maxlength="3000" v-model="form.instructions" placeholder="Write recipe instructions" ></textarea>
+                    <span class="text-danger text-center" v-if="$attrs.errors.instructions">
                                     {{$attrs.errors.instructions}}
                                 </span>
                 </div>
+            </div>
 
-            <button type="submit" class="btn btn-primary" :disabled="form.processing">Update Recipe</button>
+
+            <button type="submit" class="btn btn-primary text-white" :disabled="form.processing">Update Recipe</button>
         </form>
     </div>
 
@@ -136,5 +143,24 @@ textarea#description{
 textarea#instructions{
     min-height:150px;
     max-height:500px;
+}
+form>button[type="submit"]{
+  width: fit-content;
+}
+.v-checkbox-btn >>> label {
+    font-size: 1.30rem;
+    color:black;
+}
+.el{
+    display: grid;
+    grid-template-columns: repeat(2,1fr);
+    gap: 3em;
+
+}
+.optionals{
+    display: flex;
+    align-items: center;
+
+    justify-content: center;
 }
 </style>

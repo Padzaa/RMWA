@@ -5,100 +5,98 @@
 
     <div class="form">
         <form @submit.prevent="submit">
-            <div class="form-group">
+            <div class="el">
+            <div class="">
                 <label for="recipe_title">Recipe Title</label>
                 <input type="text" class="form-control" id="recipe_title" name="title" v-model="form.title" placeholder="Enter recipe name">
                 <span class="text-danger text-center" v-if="$attrs.errors.title">
                                     {{$attrs.errors.title}}
                 </span>
             </div>
-            <div class="form-group">
+        <div class="optionals">
+            <div class="form-group" style="">
+                <v-checkbox-btn v-model="form.public" label="Public"></v-checkbox-btn>
 
-                <label for="ingredients">Ingredients</label>
+            </div>
 
-<!--                            <select id="ingredients" class="form-select">-->
-<!--                                <option selected>Select a favorite activity or create a new one</option>-->
+            <div class="form-group" style="">
+                <v-checkbox-btn v-model="form.favorite" label="Favorite"></v-checkbox-btn>
 
-<!--                                    <option v-for="(ingredient,index) in ingredients" :value="ingredient.id" class="ingredient">{{ingredient.name}}</option>-->
+            </div>
 
-<!--                            </select>-->
-                <v-container fluid style="padding:0 !important;">
-                    <v-row>
-                <v-col cols="12" style="padding:15px 12px 0 12px !important;">
-                    <v-combobox
-                        id="ingredients"
-                        v-model="selectIngredients"
-                        :items="ingredients"
-                        item-title="name"
-                        item-value="id"
-                        label="Select ingredients"
-                        multiple
+        </div>
+            </div>
 
-                    ></v-combobox>
-                </v-col>
-                    </v-row>
-                </v-container>
-                <span class="text-danger text-center" v-if="$attrs.errors.ingredients">
+
+            <div class="el">
+                <div class="">
+
+                    <label for="ingredients">Ingredients</label>
+
+                    <v-container fluid style="padding:0 !important;">
+                        <v-row>
+                            <v-col cols="12" style="padding:15px 12px 0 12px !important;">
+                                <v-combobox
+                                        id="ingredients"
+                                        v-model="selectIngredients"
+                                        :items="ingredients"
+                                        item-title="name"
+                                        item-value="id"
+                                        label="Select ingredients"
+                                        multiple
+
+                                ></v-combobox>
+                            </v-col>
+                        </v-row>
+                    </v-container>
+                    <span class="text-danger text-center" v-if="$attrs.errors.ingredients">
                                     {{$attrs.errors.ingredients}}
                                 </span>
-            </div>
-            <div class="form-group">
+                </div>
 
-                <label for="categories">Categories</label>
 
-                <!--                            <select id="ingredients" class="form-select">-->
-                <!--                                <option selected>Select a favorite activity or create a new one</option>-->
+                <div class="form-group">
 
-                <!--                                    <option v-for="(ingredient,index) in ingredients" :value="ingredient.id" class="ingredient">{{ingredient.name}}</option>-->
+                    <label for="categories">Categories</label>
 
-                <!--                            </select>-->
-                <v-container fluid style="padding:0 !important;">
-                    <v-row>
-                        <v-col cols="12" style="padding:15px 12px 0 12px !important;">
-                            <v-combobox
-                                id="categories"
-                                v-model="selectCategories"
-                                :items="categories"
-                                item-title="name"
-                                item-value="id"
-                                label="Select categories"
-                                multiple
+                    <v-container fluid style="padding:0 !important;">
+                        <v-row>
+                            <v-col cols="12" style="padding:15px 12px 0 12px !important;">
+                                <v-combobox
+                                        id="categories"
+                                        v-model="selectCategories"
+                                        :items="categories"
+                                        item-title="name"
+                                        item-value="id"
+                                        label="Select categories"
+                                        multiple
 
-                            ></v-combobox>
-                        </v-col>
-                    </v-row>
-                </v-container>
-                <span class="text-danger text-center" v-if="$attrs.errors.categories">
+                                ></v-combobox>
+                            </v-col>
+                        </v-row>
+                    </v-container>
+                    <span class="text-danger text-center" v-if="$attrs.errors.categories">
                                     {{$attrs.errors.categories}}
                                 </span>
-            </div>
-            <div class="form-group d-grid" style="">
-                <label >Public</label>
-                <input v-model="form.public" type="checkbox" class="btn-check" id="btn-check-outlined" autocomplete="off">
-                <label class="btn btn-outline-primary" for="btn-check-outlined">Make This Recipe Public</label><br>
-
+                </div>
             </div>
 
-            <div class="form-group d-grid" style="">
-                <label >Favorite</label>
-                <input v-model="form.favorite" type="checkbox" class="btn-check" id="btn-check-outlined" autocomplete="off">
-                <label class="btn btn-outline-primary" for="btn-check-outlined">Make This Recipe Your Favorite</label><br>
-
-            </div>
-            <div class="form-group">
+            <div class="el">
+                <div class="form-group">
                 <label for="description">Description</label>
                 <textarea class="form-control" id="description" maxlength="512" v-model="form.description" placeholder="Write recipe description" ></textarea>
                 <span class="text-danger text-center" v-if="$attrs.errors.description">
                                     {{$attrs.errors.description}}
                                 </span>
             </div>
-            <div class="form-group">
-                <label for="instructions">Instructions</label>
-                <textarea class="form-control" id="instructions" maxlength="3000" v-model="form.instructions" placeholder="Write recipe instructions" ></textarea>
-                <span class="text-danger text-center" v-if="$attrs.errors.instructions">
+                <div class="form-group">
+                    <label for="instructions">Instructions</label>
+                    <textarea class="form-control" id="instructions" maxlength="3000" v-model="form.instructions" placeholder="Write recipe instructions" ></textarea>
+                    <span class="text-danger text-center" v-if="$attrs.errors.instructions">
                                     {{$attrs.errors.instructions}}
                                 </span>
-            </div>
+                </div></div>
+
 
             <button style="color:white;" type="submit" class="btn btn-primary" :disabled="form.processing">Create Recipe</button>
         </form>
@@ -148,5 +146,24 @@ textarea#description{
 textarea#instructions{
     min-height:150px;
     max-height:500px;
+}
+form>button[type="submit"] {
+    width: fit-content;
+}
+.v-checkbox-btn >>> label {
+    font-size: 1.3rem;
+    color:black;
+}
+.el{
+    display: grid;
+    grid-template-columns: repeat(2,1fr);
+    gap: 3em;
+
+}
+.optionals{
+    display: flex;
+    align-items: center;
+
+    justify-content: center;
 }
 </style>

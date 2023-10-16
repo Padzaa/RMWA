@@ -100,7 +100,7 @@ img {
 div.card {
     height: 100%;
     padding: 1em 1.5em;
-    width: 300px
+    width: 300px;
 
 }
 </style>

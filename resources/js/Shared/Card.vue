@@ -1,6 +1,6 @@
 <template>
 
-    <div class="card bg-light mb-3" style="max-width: 18rem;">
+    <v-card class="card">
         <div class="card-header">
             <slot name="title1"></slot>
 
@@ -12,9 +12,12 @@
             <p class="card-text">
                 <slot name="instructions"></slot>
             </p>
+
             <slot name="actions"></slot>
+
+
         </div>
-    </div>
+    </v-card>
 
 
 </template>
@@ -30,57 +33,71 @@ export default {
 
 <style scoped>
 ::-webkit-scrollbar {
-  width: 10px;
+    width: 7px;
 }
 
 /* Track */
 ::-webkit-scrollbar-track {
-  background: #f1f1f1;
+    background: #f1f1f1;
 }
 
 /* Handle */
 ::-webkit-scrollbar-thumb {
-  background: #888;
+    background: #888;
 }
 
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
-  background: #555;
-}
-div.card {
-    min-width: 330px;
-    max-height: 450px;
-    min-height: 450px;
+    background: #555;
 }
 
-.card-header{
+div.card {
+    min-width: 330px;
+    max-width: 370px;
+    width: 100%;
+    max-height: 450px;
+    min-height: 450px;
+    display: grid;
+    grid-template-rows: min-content 1fr;
+    border-radius: 7px;
+    box-shadow: rgba(17, 17, 26, 0.1) 0px 1px 0px, rgba(17, 17, 26, 0.1) 0px 8px 24px, rgba(17, 17, 26, 0.1) 0px 16px 48px;}
+
+.card-header {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-   text-align: center;
+    text-align: center;
+    background-color: orange;
 }
-.card-title{
+
+.card-title {
     overflow: hidden;
     text-overflow: ellipsis !important;
     white-space: nowrap;
-  font-size:1.3rem;
+    font-size: 1.55rem;
 
 }
+
 .card-text {
     width: 100%;
-
     overflow-y: auto;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 5;
     display: -webkit-box;
+    font-size: 1.1rem;
+    padding-right: 10px;
 
-
+    margin: 0;
+    //border-bottom: 1px solid white;
+    color: #414141;
 }
 
 .card-body {
     display: grid;
-    height: 100%;
-    padding-bottom:10px;
-    grid-template-rows: min-content auto min-content;
+    grid-template-rows: min-content auto 65px;
+    padding: 15px 15px 8px 15px;
+    background-color: #efefef;
+    border-top: 1px solid #e5e5e5;
+
 }
 </style>

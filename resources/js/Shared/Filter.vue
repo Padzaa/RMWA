@@ -3,7 +3,7 @@
 
         <div class="form-group">
             <div class="btn-group">
-                <button type="button" class="btn btn-primary dropdown-toggle"
+                <button style="font-size: 1.1rem" type="button" class="text-black  font-italic text-blue-accent-4 dropdown-toggle"
                         aria-haspopup="true" data-bs-toggle="dropdown" aria-expanded="false">
                     <slot name="button_name"></slot>
                 </button>

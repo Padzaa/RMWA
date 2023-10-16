@@ -1,8 +1,9 @@
 <script>
     import Header from "../../Shared/Header.vue";
     import GridNet from "../../Shared/GridNet.vue";
+    import Paginator from "../../Shared/Paginator.vue";
     export default {
-        components: {GridNet, Header},
+        components: {Paginator, GridNet, Header},
         props:{
             recipes:Array
         },
@@ -16,7 +17,8 @@
     </Head>
 <div class="container">
     <h1 class="text-center">Favorites</h1>
-    <GridNet :recipes="recipes" :auth="this.$attrs.auth"></GridNet>
+    <GridNet :recipes="recipes.data" :auth="this.$attrs.auth"></GridNet>
+    <Paginator :recipes="recipes"></Paginator>
 </div>
 
 
