@@ -7,7 +7,7 @@ export default {
         collections: Object,
         recipes: Object,
         ingredients: Object,
-        form: Object,
+        filters: Object,
     },
     methods: {
         submit() {
@@ -15,7 +15,21 @@ export default {
 
             Inertia.get(url, this.form);
         }
-    }
+    },
+    data() {
+        return {
+            form: {
+                categories: this.filters.categories ? this.filters.categories : [],
+                ingredients: this.filters.ingredients ? this.filters.ingredients : [],
+                favorites: this.filters.favorites ? JSON.parse(this.filters.favorites) : null,
+                ratings: this.filters.ratings ? this.filters.ratings : [],
+                order: this.filters.order ? this.filters.order : 'desc',
+                search: this.filters.search ? this.filters.search : '',
+                collections: this.filters.collections ? this.filters.collections : [],
+            },
+
+        }
+    },
 }
 </script>
 
@@ -82,7 +96,7 @@ export default {
             <div class="order">
                 <div class="form-check">
                     <input class="form-check-input" type="radio" name="order" id="asc" value="asc" v-model="form.order">
-                    <label class="form-check-label" for="asc">  Asc. Rating<img src="../../../public/ascending.svg" alt=""></label>
+                    <label class="form-check-label" for="asc">  Asc. Rating <v-icon>mdi-sort-ascending</v-icon></label>
                 </div>
                 <div class="form-check">
                     <input class="form-check-input" type="radio" name="order" id="desc" value="desc"
@@ -90,7 +104,7 @@ export default {
                     <label class="form-check-label" for="desc">
 
                         Desc. Rating
-                        <img src="../../../public/descending.svg" alt="">
+                        <v-icon>mdi-sort-descending</v-icon>
                     </label>
                 </div>
             </div>

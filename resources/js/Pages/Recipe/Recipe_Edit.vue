@@ -8,9 +8,10 @@
             <div class="el">
                 <div class="form-group">
                     <label for="recipe_title">Recipe Title</label>
-                    <input type="text" class="form-control" id="recipe_title" name="title" v-model="form.title" placeholder="Enter recipe name" >
+                    <input type="text" class="form-control" id="recipe_title" name="title" v-model="form.title"
+                           placeholder="Enter recipe name">
                     <span class="text-danger text-center" v-if="$attrs.errors.title">
-                                    {{$attrs.errors.title}}
+                                    {{ $attrs.errors.title }}
                                 </span>
                 </div>
                 <div class="optionals">
@@ -26,70 +27,73 @@
                 </div>
 
             </div>
-<div class="el">
-            <div class="form-group">
+            <div class="el">
+                <div class="form-group">
 
-                <label for="ingredients">Ingredients</label>
+                    <label for="ingredients">Ingredients</label>
 
-                <v-container fluid style="padding:0 !important;">
-                    <v-row>
-                        <v-col cols="12" style="padding:15px 12px 0 12px !important;">
-                            <v-combobox
-                                id="ingredients"
-                                v-model="selectIngredients"
-                                :items="ingredients"
-                                item-title="name"
-                                item-value="id"
-                                label="Select ingredients"
-                                multiple
+                    <v-container fluid style="padding:0 !important;">
+                        <v-row>
+                            <v-col cols="12" style="padding:15px 12px 0 12px !important;">
+                                <v-select
+                                    id="ingredients"
+                                    v-model="selectIngredients"
+                                    :items="ingredients"
+                                    item-title="name"
+                                    item-value="id"
+                                    label="Select ingredients"
+                                    multiple="true"
+                                    clearable="true"
 
-                            ></v-combobox>
-                        </v-col>
-                    </v-row>
-                </v-container>
-                <span class="text-danger text-center" v-if="$attrs.errors.ingredients">
-                                    {{$attrs.errors.ingredients}}
+                                ></v-select>
+                            </v-col>
+                        </v-row>
+                    </v-container>
+                    <span class="text-danger text-center" v-if="$attrs.errors.ingredients">
+                                    {{ $attrs.errors.ingredients }}
                                 </span>
-            </div>
-            <div class="form-group">
+                </div>
+                <div class="form-group">
 
-                <label for="categories">Categories</label>
+                    <label for="categories">Categories</label>
 
-                <v-container fluid style="padding:0 !important;">
-                    <v-row>
-                        <v-col cols="12" style="padding:15px 12px 0 12px !important;">
-                            <v-combobox
-                                id="categories"
-                                v-model="selectCategories"
-                                :items="categories"
-                                item-title="name"
-                                item-value="id"
-                                label="Select categories"
-                                multiple
-
-                            ></v-combobox>
-                        </v-col>
-                    </v-row>
-                </v-container>
-                <span class="text-danger text-center" v-if="$attrs.errors.categories">
-                                    {{$attrs.errors.categories}}
+                    <v-container fluid style="padding:0 !important;">
+                        <v-row>
+                            <v-col cols="12" style="padding:15px 12px 0 12px !important;">
+                                <v-select
+                                    id="categories"
+                                    v-model="selectCategories"
+                                    :items="categories"
+                                    item-title="name"
+                                    item-value="id"
+                                    label="Select categories"
+                                    multiple="true"
+                                    clearable="true"
+                                ></v-select>
+                            </v-col>
+                        </v-row>
+                    </v-container>
+                    <span class="text-danger text-center" v-if="$attrs.errors.categories">
+                                    {{ $attrs.errors.categories }}
                                 </span>
+                </div>
             </div>
-</div>
 
             <div class="el">
                 <div class="form-group">
                     <label for="description">Description</label>
-                    <textarea class="form-control" id="description" maxlength="512" v-model="form.description" placeholder="Write recipe description" ></textarea>
+                    <textarea class="form-control" id="description" maxlength="512" v-model="form.description"
+                              placeholder="Write recipe description"></textarea>
                     <span class="text-danger text-center" v-if="$attrs.errors.description">
-                                    {{$attrs.errors.description}}
+                                    {{ $attrs.errors.description }}
                                 </span>
                 </div>
                 <div class="form-group">
                     <label for="instructions">Instructions</label>
-                    <textarea class="form-control" id="instructions" maxlength="3000" v-model="form.instructions" placeholder="Write recipe instructions" ></textarea>
+                    <textarea class="form-control" id="instructions" maxlength="3000" v-model="form.instructions"
+                              placeholder="Write recipe instructions"></textarea>
                     <span class="text-danger text-center" v-if="$attrs.errors.instructions">
-                                    {{$attrs.errors.instructions}}
+                                    {{ $attrs.errors.instructions }}
                                 </span>
                 </div>
             </div>
@@ -102,16 +106,16 @@
 </template>
 
 <script setup>
-import { reactive } from 'vue';
-import { Inertia } from '@inertiajs/inertia';
-import { ref } from 'vue';
+import {reactive} from 'vue';
+import {Inertia} from '@inertiajs/inertia';
+import {ref} from 'vue';
 
 const selectIngredients = ref(recipe.ingredients);
-const selectCategories = ref(recipe.categories);
+const selectCategories = ref(recipe.categories.id);
 
 
 let form = reactive({
-    title:recipe.title,
+    title: recipe.title,
     description: recipe.description,
     instructions: recipe.instructions,
     ingredients: selectIngredients,
@@ -119,45 +123,52 @@ let form = reactive({
     favorite: recipe.is_favorite ? true : false,
     public: recipe.is_public ? true : false,
 });
-let submit = () =>{
-    Inertia.put('/recipe/'+recipe.id,form);
+let submit = () => {
+    Inertia.put('/recipe/' + recipe.id, form);
 }
-let { ingredients,categories,recipe } = defineProps(['ingredients','categories','recipe']);
+let {ingredients, categories, recipe} = defineProps(['ingredients', 'categories', 'recipe']);
 
 
 </script>
 
 <style scoped>
-div.form{
+div.form {
     padding: 2em;
 
 }
-form{
+
+form {
     display: grid;
     gap: 1em;
 }
-textarea#description{
-    min-height:150px;
-    max-height:150px;
+
+textarea#description {
+    min-height: 150px;
+    max-height: 150px;
 }
-textarea#instructions{
-    min-height:150px;
-    max-height:500px;
+
+textarea#instructions {
+    min-height: 150px;
+    max-height: 500px;
 }
-form>button[type="submit"]{
-  width: fit-content;
+
+form > button[type="submit"] {
+    width: fit-content;
 }
+
 .v-checkbox-btn >>> label {
     font-size: 1.30rem;
-    color:black;
+    color: black;
 }
-.el{
+
+.el {
     display: grid;
-    grid-template-columns: repeat(2,1fr);
+    grid-template-columns: repeat(2, 1fr);
     gap: 3em;
 
 }
-.optionals{
+
+.optionals {
     display: flex;
     align-items: center;
 

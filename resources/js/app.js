@@ -1,6 +1,5 @@
 import { createApp, h } from 'vue'
 import {createInertiaApp,Link,Head} from "@inertiajs/inertia-vue3";
-
 import * as styles from  'vuetify/styles';
 import { createVuetify } from 'vuetify';
 import * as components from 'vuetify/components';
@@ -10,6 +9,8 @@ import Layout from "./Shared/Layout.vue";
 import {Inertia} from "@inertiajs/inertia";
 import Filter from "./Shared/Filter.vue";
 import Filtering from "./Shared/Filtering.vue";
+import Alert from "./Shared/Alert.vue";
+
 const vuetify = createVuetify({
     components,
     directives,
@@ -28,6 +29,7 @@ createInertiaApp({
 
         if(page){
             page.default.layout = Layout;
+
             return page;
         }else{
 
@@ -46,6 +48,7 @@ createInertiaApp({
             .component("Head",Head)
             .component("Filter",Filter)
             .component("Filtering",Filtering)
+            .component("Alert",Alert)
             .use(vuetify)
             .mount(el)
     },

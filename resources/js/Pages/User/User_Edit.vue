@@ -152,7 +152,7 @@ export default {
 </script>
 <style scoped>
 .profile-pic {
-    border:1px solid black;
+    border:5px solid red;
     border-radius: 50%;
     height: 150px;
     width: 150px;

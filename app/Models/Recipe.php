@@ -125,16 +125,18 @@ class Recipe extends Model
             $query->whereHas('ingredients', function ($query) use ($ingredients) {
                 $query->whereIn('ingredient_id', $ingredients);
             });
-        })->when($request->collections && Auth::user(), function ($query, $collections) {
-            $query->whereHas('collections', function ($query) use ($collections) {
-                $query->whereIn('collection_id', $collections);
-            });
+        })->when($request->collections, function ($query, $collections) {
+            if (Auth::user()) {
+                $query->whereHas('collections', function ($query) use ($collections) {
+                    $query->whereIn('collection_id', $collections);
+                });
+            }
         })->when($request->categories, function ($query, $categories) {
             $query->whereHas('categories', function ($query) use ($categories) {
                 $query->whereIn('category_id', $categories);
             });
         })->when($request->favorites, function ($query, $favorites) {
-            if(Auth::user()){
+            if (Auth::user()) {
                 $favorites === "true" ? $query->where("is_favorite", 1)->where("recipes.user_id", Auth::user()->id) : null;
             }
         });

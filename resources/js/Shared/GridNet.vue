@@ -7,7 +7,17 @@ export default{
       submit() {
         $('.modal').modal("hide");
 
-      }
+      },
+        normalDate(recipeDate) {
+          const dateObject = new Date(recipeDate);
+            const year = dateObject.getFullYear();
+            const month = dateObject.getMonth() + 1; // Month is zero-based
+            const day = dateObject.getDate();
+            return `${year}-${month < 10 ? '0' : ''}${month}-${day < 10 ? '0' : ''}${day}`;
+
+        },
+
+
     },
     props: {
         recipes: {
@@ -22,7 +32,8 @@ export default{
         this.recipes.forEach(recipe => {
             recipe.dialog = false;
         })
-    },
+    }
+
 
 }
 
@@ -43,7 +54,12 @@ export default{
             </template>
 
             <template v-slot:instructions>
-                {{ recipe.instructions }}
+
+                <span>{{ recipe.description }}</span>
+            </template>
+
+            <template v-slot:posted_at>
+                <span>Posted at: {{normalDate(recipe.created_at)}}</span>
             </template>
 
             <template v-slot:actions>

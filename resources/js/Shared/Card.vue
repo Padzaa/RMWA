@@ -9,9 +9,16 @@
             <h5 class="card-title">
                 <slot name="title"></slot>
             </h5>
+
+
+            <b>Short Description:</b>
+
             <p class="card-text">
-                <slot name="instructions"></slot>
+                <slot name="instructions">
+
+                </slot>
             </p>
+            <slot name="posted_at"></slot>
 
             <slot name="actions"></slot>
 
@@ -60,7 +67,8 @@ div.card {
     display: grid;
     grid-template-rows: min-content 1fr;
     border-radius: 7px;
-    box-shadow: rgba(17, 17, 26, 0.1) 0px 1px 0px, rgba(17, 17, 26, 0.1) 0px 8px 24px, rgba(17, 17, 26, 0.1) 0px 16px 48px;}
+    box-shadow: rgba(17, 17, 26, 0.1) 0px 1px 0px, rgba(17, 17, 26, 0.1) 0px 8px 24px, rgba(17, 17, 26, 0.1) 0px 16px 48px;
+}
 
 .card-header {
     overflow: hidden;
@@ -88,13 +96,12 @@ div.card {
     padding-right: 10px;
 
     margin: 0;
-    //border-bottom: 1px solid white;
-    color: #414141;
+//border-bottom: 1px solid white; color: #414141;
 }
 
 .card-body {
     display: grid;
-    grid-template-rows: min-content auto 65px;
+    grid-template-rows: min-content min-content auto min-content 65px;
     padding: 15px 15px 8px 15px;
     background-color: #efefef;
     border-top: 1px solid #e5e5e5;

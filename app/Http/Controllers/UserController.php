@@ -6,6 +6,7 @@ use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 use App\Models\Recipe;
 use App\Models\User;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -45,6 +46,9 @@ class UserController extends Controller
     public function show(User $user)
     {
         $this->authorize('view', $user);
+        if(Auth::user()->id === $user->id){
+            return redirect()->route('user.edit', $user->id);
+        }
         Auth::user()->follow()->where('followed_user_id', $user->id)->count() ? $is_following = true : $is_following = false;
 
         return Inertia::render('User/User_Show', [
@@ -76,22 +80,36 @@ class UserController extends Controller
     public function update(UpdateUserRequest $request, User $user)
     {
         $this->authorize('update', $user);
-
-        if ($request->hasFile('file')) {
-            if($user->picture) {
-                Storage::disk("public")->delete(basename($user->picture));
+        try {
+            if ($request->hasFile('file')) {
+                if($user->picture) {
+                    Storage::disk("public")->delete(basename($user->picture));
+                }
+                $uploadedFile = $request->file('file');
+                $filename = time() . '_' . $uploadedFile->getClientOriginalName();
+                $path = $uploadedFile->storeAs('public', $filename);
+                $user->picture = "/storage/" . $filename;
             }
-            $uploadedFile = $request->file('file');
-            $filename = time() . '_' . $uploadedFile->getClientOriginalName();
-            $path = $uploadedFile->storeAs('public', $filename);
-            $user->picture = "/storage/" . $filename;
+
+            $user->firstname = $request->firstname;
+            $user->lastname = $request->lastname;
+            $user->email = $request->email;
+            $user->save();
+            session()->flash("alert",[
+                "title" => "Success!",
+                "message" => "Your profile has been updated!",
+                "type" => "success"
+            ]);
+            return Inertia::location('/');
+        }catch (Exception $e) {
+            session()->flash("alert",[
+                "title" => "Error!",
+                "message" => $e->getMessage(),
+                "type" => "error"
+            ]);
+            return Inertia::location('/');
         }
 
-        $user->firstname = $request->firstname;
-        $user->lastname = $request->lastname;
-        $user->email = $request->email;
-        $user->save();
-        return Inertia::location('/');
     }
 
     /**

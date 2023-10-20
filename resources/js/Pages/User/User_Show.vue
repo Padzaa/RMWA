@@ -16,7 +16,7 @@
 
 
       <div class="row justify-content-center">
-        <h2 class="text-center">Profile Settings</h2>
+
 
         <div class="col-md-3 border-right">
           <div class="d-flex flex-column align-items-center text-center p-3 py-5">

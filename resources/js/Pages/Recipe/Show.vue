@@ -65,16 +65,17 @@
                     <v-container fluid style="padding:0 !important;">
                       <v-row>
                         <v-col cols="12" style="padding:15px 12px 0 12px !important;">
-                          <v-combobox
+                          <v-select
                               id="share"
                               v-model="share.users"
                               :items="users"
                               item-title="firstname"
                               item-value="id"
                               label="Select users"
-                              multiple
+                              multiple="true"
+                              clearable="true"
                               required
-                          ></v-combobox>
+                          ></v-select>
                         </v-col>
                       </v-row>
                       <span class="text-danger text-center" v-if="$attrs.errors.users">
@@ -118,9 +119,9 @@
                 </span>
 
                     <textarea name="comment" class="form-control" id="comment" cols="30" rows="10"
-                              placeholder="Leave a comment" maxlength="500" required v-model="rate.comment"></textarea>
-                    <span class="text-danger text-center" v-if="$attrs.errors.comment">
-                                    {{ $attrs.errors.comment }}
+                              placeholder="Leave message" maxlength="500" required v-model="rate.msg"></textarea>
+                    <span class="text-danger text-center" v-if="$attrs.errors.msg">
+                                    {{ $attrs.errors.msg }}
                 </span>
                   </div>
                   <div class="modal-footer">
@@ -141,13 +142,31 @@
     <div v-if="this.$attrs.auth" class="leave-comment">
       <label for="comment">Leave a comment:
       </label>
-      <textarea name="comment" class="form-control" id="comment" placeholder="Leave a comment" maxlength="500"
-                v-model="comment.ccomment" required></textarea>
-      <span class="text-danger text-center" v-if="$attrs.errors.ccomment">
-                                    {{ $attrs.errors.ccomment }}
-                </span>
-      <br>
-      <button @click="submitComment" type="submit" class="btn btn-danger" id="comment_recipe">Comment</button>
+
+            <div class="textarea-container">
+                <v-textarea
+                        counter
+                        :rules="[comment.comment.length <= 500 || 'Character limit exceeded']"
+                        append-inner-icon="mdi"
+                        class="mx-2 vutext"
+                        label="Leave your comment"
+                        rows="1"
+                        v-model="comment.comment"
+                        required
+
+                ></v-textarea>
+                <button @click="submitComment" type="submit" class="submit-button">
+                    <v-icon>mdi-send</v-icon>
+                </button>
+            </div>
+
+
+
+      <span class="text-danger text-center" v-if="$attrs.errors.comment">
+                                    {{ $attrs.errors.comment }}
+      </span>
+
+
     </div>
 
     <div v-if="review" class="review alert alert-success" style="padding-top:0;">
@@ -222,6 +241,8 @@ export default {
     is_liked: Boolean
   },
   components: {},
+  //na click ikonice za slanje komentara submitvoati komentar
+
   methods: {
     submitReview() {
       $('.modal').modal("hide");
@@ -236,20 +257,21 @@ export default {
       Inertia.put('/recipe/' + this.recipe.id + '/comment', this.comment, {
         preserveScroll: true,
       });
-      this.comment.ccomment = "";
+      this.comment.comment = "";
     }
+
   },
   data() {
     return {
       rate: {
         rating: this.review ? this.review.rating : 0,
-        comment: this.review ? this.review.message : "",
+        msg: this.review ? this.review.message : "",
       },
       share: {
         users: this.shared_to ? this.shared_to : []
       },
       comment: {
-        ccomment: ""
+        comment: ""
       },
 
 
@@ -259,7 +281,22 @@ export default {
 </script>
 
 <style scoped>
+.textarea-container{
+    position: relative;
 
+
+
+}
+.textarea-container >>> textarea{
+
+}
+.submit-button{
+  font-size: 20px;
+    position: absolute;
+    right: 0;
+    top: calc(50% - 27px);
+    padding-right: 7px ;
+}
 .owner {
   font-size: 18px;
   font-style: italic;
@@ -410,5 +447,17 @@ h1 {
 .show-body h6{
   font-size: 1.35rem;
 }
-
+.vutext >>> * {
+  max-height: 150px;
+}
+.v-textarea {
+  margin: 0 !important;
+}
+.vutext >>> .v-field{
+  padding: 0 !important;
+}
+.vutext >>> .v-field__append-inner{
+  cursor: pointer;
+  padding: 0 12px !important;
+}
 </style>

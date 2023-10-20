@@ -52,10 +52,7 @@ class HandleInertiaRequests extends Middleware
 
             ] : null,
 
-
-
-
-
+            'alertFlash' => $request->session()->get('alert')
         ]);
     }
 }
