@@ -21,11 +21,14 @@ class UserPolicy
      */
     public function view(User $user, User $model): bool
     {
+        $shared = $model->recipes()->whereHas('shared', function ($query) use ($user) {
+            $query->where('user_shared_to', $user->id);
+        })->get();
         $exist = $user->follow()->where('followed_user_id', $model->id)->get();
-        if($exist->count() || Auth::user()->id === $model->id){
+
+        if ($exist->count() || $user->id === $model->id || $shared->count()) {
             return true;
-        }
-        else{
+        } else {
             return false;
         }
     }
@@ -44,7 +47,7 @@ class UserPolicy
     public function update(User $user, User $model): bool
     {
 
-       return $user->id === $model->id;
+        return $user->id === $model->id;
     }
 
     /**
