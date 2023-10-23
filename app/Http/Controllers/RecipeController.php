@@ -61,23 +61,23 @@ class RecipeController extends Controller
     {
 
         try {
-                $recipe = Recipe::create([
-                    'title' => $request->title,
-                    'description' => $request->description,
-                    'instructions' => $request->instructions,
-                    'user_id' => Auth::user()->id,
-                    'is_favorite' => +$request->favorite,
-                    'is_public' => +$request->public,
-                ]);
-                $recipe->ingredients()->attach($request->ingredients);
-                $recipe->categories()->attach($request->categories);
+            $recipe = Recipe::create([
+                'title' => $request->title,
+                'description' => $request->description,
+                'instructions' => $request->instructions,
+                'user_id' => Auth::user()->id,
+                'is_favorite' => +$request->favorite,
+                'is_public' => +$request->public,
+            ]);
+            $recipe->ingredients()->attach($request->ingredients);
+            $recipe->categories()->attach($request->categories);
 
-                session()->flash('alert', [
-                    'title' => 'Success!',
-                    'message' => 'Recipe created successfully.',
-                    'type' => 'success'
-                ]);
-                return redirect()->route('recipe.index');
+            session()->flash('alert', [
+                'title' => 'Success!',
+                'message' => 'Recipe created successfully.',
+                'type' => 'success'
+            ]);
+            return redirect()->route('recipe.index');
 
         } catch (Exception $e) {
             session()->flash('alert', [
@@ -96,31 +96,40 @@ class RecipeController extends Controller
      */
     public function show(Recipe $recipe)
     {
-        $this->authorize("view", $recipe);
-        $review = $reviews = $users = $shared_to = $is_liked = null;
-        $recipe->load('user');
+        try {
+            $this->authorize("view", $recipe);
+            $review = $reviews = $users = $shared_to = $is_liked = null;
+            $recipe->load('user');
 
-        if (Auth::user()) {
-            $shared_to = $recipe->shared()->get()->pluck("id");
-            $review = $recipe->reviews()->where('user_id', Auth::user()->id)->first();
-            $reviews = $recipe->reviews()->where("user_id", "!=", Auth::user()->id)->get();
-            $is_liked = $recipe->likes()->where('user_id', Auth::user()->id)->count();
-            $users = User::all()->except(Auth::user()->id);
-        }
-        $average = round($recipe->reviews()->avg("rating", 2), 2);
+            if (Auth::user()) {
+                $shared_to = $recipe->shared()->get()->pluck("id");
+                $review = $recipe->reviews()->where('user_id', Auth::user()->id)->first();
+                $reviews = $recipe->reviews()->where("user_id", "!=", Auth::user()->id)->get();
+                $is_liked = $recipe->likes()->where('user_id', Auth::user()->id)->count();
+                $users = User::all()->except(Auth::user()->id);
+            }
+            $average = round($recipe->reviews()->avg("rating", 2), 2);
 
-        return Inertia::render('Recipe/Show',
-            [
-                "recipe" => $recipe,
-                "ingredients" => $recipe->ingredients,
-                "review" => $review ? $review : null,
-                "average" => $average ? $average : "No Rating Yet",
-                "reviews" => $reviews ? $reviews : [],
-                "users" => $users ? $users : User::all(),
-                "shared_to" => $shared_to ? $shared_to : null,
-                "comments" => $recipe->comments()->with('user')->orderBy('created_at', 'desc')->get(),
-                "is_liked" => $is_liked ? $is_liked : false,
+            return Inertia::render('Recipe/Show',
+                [
+                    "recipe" => $recipe,
+                    "ingredients" => $recipe->ingredients,
+                    "review" => $review ? $review : null,
+                    "average" => $average ? $average : "No Rating Yet",
+                    "reviews" => $reviews ? $reviews : [],
+                    "users" => $users ? $users : User::all(),
+                    "shared_to" => $shared_to ? $shared_to : null,
+                    "comments" => $recipe->comments()->with('user')->orderBy('created_at', 'desc')->get(),
+                    "is_liked" => $is_liked ? $is_liked : false,
+                ]);
+        } catch (Exception $e) {
+            session()->flash('alert', [
+                'title' => 'Recipe Error',
+                'message' => $e->getMessage(),
+                'type' => 'error'
             ]);
+            return redirect()->route('recipe.index');
+        }
     }
 
     /**
@@ -128,14 +137,23 @@ class RecipeController extends Controller
      */
     public function edit(Recipe $recipe)
     {
-        $this->authorize('update', $recipe);
-        return Inertia::render('Recipe/Recipe_Edit', [
-            "recipe" => $recipe,
-            "recipe.ingredients" => $recipe->ingredients->pluck("id"),
-            "recipe.categories" => $recipe->categories->pluck("id"),
-            "ingredients" => Ingredient::orderBy('name')->get(),
-            "categories" => Category::all()
-        ]);
+        try {
+            $this->authorize('update', $recipe);
+            return Inertia::render('Recipe/Recipe_Edit', [
+                "recipe" => $recipe,
+                "recipe.ingredients" => $recipe->ingredients->pluck("id"),
+                "recipe.categories" => $recipe->categories->pluck("id"),
+                "ingredients" => Ingredient::orderBy('name')->get(),
+                "categories" => Category::all()
+            ]);
+        } catch (Exception $e) {
+            session()->flash('alert', [
+                'title' => 'Recipe Error',
+                'message' => $e->getMessage(),
+                'type' => 'error'
+            ]);
+            return redirect()->route('recipe.index');
+        }
     }
 
     /**
@@ -143,25 +161,25 @@ class RecipeController extends Controller
      */
     public function update(UpdateRecipeRequest $request, Recipe $recipe)
     {
-        $this->authorize('update', $recipe);
+
 
         try {
+            $this->authorize('update', $recipe);
+            $recipe->title = $request->title;
+            $recipe->description = $request->description;
+            $recipe->instructions = $request->instructions;
+            $recipe->is_favorite = $request->favorite;
+            $recipe->is_public = $request->public;
+            $recipe->ingredients()->sync($request->ingredients);
+            $recipe->categories()->sync($request->categories);
+            $recipe->save();
 
-                $recipe->title = $request->title;
-                $recipe->description = $request->description;
-                $recipe->instructions = $request->instructions;
-                $recipe->is_favorite = $request->favorite;
-                $recipe->is_public = $request->public;
-                $recipe->ingredients()->sync($request->ingredients);
-                $recipe->categories()->sync($request->categories);
-                $recipe->save();
-
-                session()->flash('alert', [
-                    'title' => 'Success!',
-                    'message' => 'Recipe updated successfully.',
-                    'type' => 'success'
-                ]);
-                return redirect()->route('recipe.show', $recipe);
+            session()->flash('alert', [
+                'title' => 'Success!',
+                'message' => 'Recipe updated successfully.',
+                'type' => 'success'
+            ]);
+            return redirect()->route('recipe.show', $recipe);
 
         } catch (Exception $e) {
             session()->flash('alert', [
@@ -180,13 +198,14 @@ class RecipeController extends Controller
      */
     public function destroy(Recipe $recipe)
     {
-        $this->authorize('delete', $recipe);
+
         try {
+            $this->authorize('delete', $recipe);
             $recipe->ingredients()->detach();
             $recipe->categories()->detach();
             $recipe->delete();
             return redirect()->back();
-        }catch (Exception $e) {
+        } catch (Exception $e) {
             session()->flash('alert', [
                 'title' => 'Error!',
                 'message' => $e->getMessage(),
@@ -202,10 +221,19 @@ class RecipeController extends Controller
    */
     public function favorite(Recipe $recipe, Request $request)
     {
-        $this->authorize('update', $recipe);
-        $recipe->is_favorite = !$recipe->is_favorite;
-        $recipe->save();
-        return redirect()->back();
+        try {
+            $this->authorize('update', $recipe);
+            $recipe->is_favorite = !$recipe->is_favorite;
+            $recipe->save();
+            return redirect()->back();
+        } catch (Exception $e) {
+            session()->flash('alert', [
+                'title' => 'Error!',
+                'message' => $e->getMessage(),
+                'type' => 'error'
+            ]);
+            return redirect()->back();
+        }
     }
 
     /*
@@ -213,27 +241,29 @@ class RecipeController extends Controller
        */
     public function rate(Recipe $recipe, Request $request)
     {
-        $this->authorize('view', $recipe);
-        $rating = $recipe->reviews()->where("user_id", Auth::user()->id)->first();
 
-        $request->request = $request->validate([
-            "rating" => ['required', 'integer', 'max:5', 'min:1'],
-            "msg" => ['required', 'string', 'max:500', 'min:1']
-        ],
-            [
-                "rating.required" => "Rating is required!",
-                "msg.required" => "Message is required!",
-            ]);
         try {
+            $this->authorize('view', $recipe);
+
+            $rating = $recipe->reviews()->where("user_id", Auth::user()->id)->first();
+
+            $request->request = $request->validate([
+                "rating" => ['required', 'integer', 'max:5', 'min:1'],
+                "msg" => ['required', 'string', 'max:500', 'min:1']
+            ],
+                [
+                    "rating.required" => "Rating is required!",
+                    "msg.required" => "Message is required!",
+                ]);
             if ($rating) {
                 $rating->rating = $request->rating;
-                $rating->message = $request->comment;
+                $rating->message = $request->msg;
                 $rating->save();
             }
             if ($rating === null) {
                 Review::create([
                     "rating" => $request->rating,
-                    "message" => $request->comment,
+                    "message" => $request->msg,
                     "user_id" => Auth::user()->id,
                     "recipe_id" => $recipe->id
                 ]);
@@ -244,8 +274,7 @@ class RecipeController extends Controller
                 'type' => 'success'
             ]);
             return Inertia::location('/recipe/' . $recipe->id);
-        }
-        catch (Exception $e) {
+        } catch (Exception $e) {
             session()->flash('alert', [
                 'title' => 'Error!',
                 'message' => $e->getMessage(),
@@ -262,13 +291,13 @@ class RecipeController extends Controller
      */
     public function share(Recipe $recipe, Request $request)
     {
-        $this->authorize('update', $recipe);
-        $request->request = $request->validate([
-            "users" => ['required', 'min:1'],
-        ], [
-            "users.required" => "Users are required!"]);
-        try {
 
+        try {
+            $this->authorize('update', $recipe);
+            $request->request = $request->validate([
+                "users" => ['required', 'min:1'],
+            ], [
+                "users.required" => "Users are required!"]);
             $recipe->shared()->sync($request->users);
             session()->flash('alert', [
                 'title' => 'Success!',
@@ -276,7 +305,7 @@ class RecipeController extends Controller
                 'type' => 'success'
             ]);
             return Inertia::location('/recipe/' . $recipe->id);
-        }catch (Exception $e) {
+        } catch (Exception $e) {
             session()->flash('alert', [
                 'title' => 'Error!',
                 'message' => $e->getMessage(),
@@ -293,13 +322,15 @@ class RecipeController extends Controller
     public function comment(Recipe $recipe, Request $request)
     {
 
-        $this->authorize('view', $recipe);
-        $request->request = $request->validate([
-            "comment" => ['required', 'string', 'max:500', 'min:1']
-        ], [
-            "comment.required" => "Comment is required!",
-        ]);
+
         try {
+            $this->authorize('view', $recipe);
+
+            $request->request = $request->validate([
+                "comment" => ['required', 'string', 'max:500', 'min:1']
+            ], [
+                "comment.required" => "Comment is required!",
+            ]);
             $recipe->comments()->create([
                 "comment" => $request->comment,
                 "user_id" => Auth::user()->id,
@@ -310,8 +341,7 @@ class RecipeController extends Controller
                 'type' => 'success'
             ]);
             return Inertia::location('/recipe/' . $recipe->id);
-        }
-        catch (Exception $e) {
+        } catch (Exception $e) {
             session()->flash('alert', [
                 'title' => 'Error!',
                 'message' => $e->getMessage(),
@@ -326,12 +356,22 @@ class RecipeController extends Controller
     */
     public function like(Recipe $recipe)
     {
-        $this->authorize('view', $recipe);
-        $recipe->likes()->where('user_id', Auth::user()->id)->count() ?
-            $recipe->likes()->detach(Auth::user()->id)
-            :
-            $recipe->likes()->attach(Auth::user()->id);
-        return redirect()->back();
+        try {
+            $this->authorize('view', $recipe);
+            $recipe->likes()->where('user_id', Auth::user()->id)->count() ?
+                $recipe->likes()->detach(Auth::user()->id)
+                :
+                $recipe->likes()->attach(Auth::user()->id);
+            return redirect()->back();
+        } catch (Exception $e) {
+            session()->flash('alert', [
+                'title' => 'Error!',
+                'message' => $e->getMessage(),
+                'type' => 'error'
+            ]);
+            return redirect()->back();
+        }
+
     }
 
     /*

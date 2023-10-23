@@ -11,19 +11,20 @@
             <v-app v-if="this.$page.props.auth" style="position:absolute;">
 
                 <v-navigation-drawer :key="$props.pageUrl"
-                                     style="top:0;width:320px;background-color: #5d4e4e;border: none;"
+                                     style="top:0;width:320px;background-color: rgb(43,43,43);border: none;"
                                      v-model="opener"
                                      temporary
 
                 >
                     <div class="space">
                         <Link as="button" @click="opener = !opener" class="opener">
-                            <img src="../../../public/menu.svg" alt="menu">
+                            <img src="../../../public/close.svg" alt="menu">
                         </Link>
                     </div>
                     <v-divider style="color:white;margin: 0;"></v-divider>
                     <div style="display: grid;">
-                        <Link style="display:grid;" :href="'/user/'+ this.$page.props.auth.user.id +'/edit'">
+                        <Link @click="opener = !opener" style="display:grid;"
+                              :href="'/user/'+ this.$page.props.auth.user.id +'/edit'">
                             <v-list-item value="user" class="side-user"
                                          :class="$props.pageUrl == '/user/'+ this.$page.props.auth.user.id +'/edit' ? 'v-list-item--active' : ''"
                                          style="padding: 15px 0 15px 1em;"
@@ -36,10 +37,12 @@
                         </Link>
                         <v-divider style="color:white;margin: 0;"></v-divider>
                         <div style="display: grid;padding: 10px 0;">
-                            <v-btn class="logout-btn" style="justify-self:center;font-size: 1em;width:90%;"
-                                   variant="outlined" color="white" href="/logout" method="POST"
-                                   append-icon="mdi-logout">Logout
-                            </v-btn>
+                            <Link href="/logout" method="POST" style="justify-self:center;width:90%;">
+                                <v-btn class="logout-btn" style="justify-self:center;font-size: 1em;width:100%;"
+                                       variant="outlined" color="white"
+                                       append-icon="mdi-logout">Logout
+                                </v-btn>
+                            </Link>
                         </div>
 
                     </div>
@@ -49,14 +52,15 @@
 
                     <v-list class="side-list" density="compact" nav>
 
-                        <Link class="link" href="/">
+
+                        <Link @click="opener = !opener" class="link" href="/">
                             <v-list-item value="1" prepend-icon="mdi-home"
                                          :class="$props.pageUrl== '/' ? 'v-list-item--active' : ''">Home
                             </v-list-item>
                         </Link>
 
 
-                        <Link class="link" href="/recipe"
+                        <Link @click="opener = !opener" class="link" href="/recipe"
                         >
                             <v-list-item value="2" prepend-icon="mdi-book-open-variant"
                                          :class="$props.pageUrl.includes('/recipe') && this.$page.component == 'Recipe/All' ? 'v-list-item--active' : ''">
@@ -65,7 +69,7 @@
                         </Link>
 
 
-                        <Link class="link" href="/collection"
+                        <Link @click="opener = !opener" class="link" href="/collection"
                         >
                             <v-list-item value="3" prepend-icon="mdi-bag-personal"
                                          :class="$props.pageUrl.includes('/collection') ? 'v-list-item--active' : ''">
@@ -74,7 +78,7 @@
                         </Link>
 
 
-                        <Link class="link" href="/favorites"
+                        <Link @click="opener = !opener" class="link" href="/favorites"
                         >
                             <v-list-item value="4" prepend-icon="mdi-heart"
                                          :class="$props.pageUrl == '/favorites' ? 'v-list-item--active' : ''">
@@ -83,7 +87,7 @@
                         </Link>
 
 
-                        <Link class="link" href="/public"
+                        <Link @click="opener = !opener" class="link" href="/public"
                         >
                             <v-list-item value="5" prepend-icon="mdi-earth"
                                          :class="$props.pageUrl.includes('/public') ? 'v-list-item--active' : ''">Public
@@ -91,7 +95,7 @@
                         </Link>
 
 
-                        <Link class="link" href="/recipe/create"
+                        <Link @click="opener = !opener" class="link" href="/recipe/create"
 
                         >
                             <v-list-item value="6" prepend-icon="mdi-receipt-text-plus-outline"
@@ -132,17 +136,85 @@ export default {
         return {
             pic: this.$page.props.auth && this.$page.props.auth.user.picture ? this.$page.props.auth.user.picture : "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_640.png",
             opener: false,
+            panel: [],
+            recipes: [
+                {
+                    link: "/recipe/create",
+                    title: "Create new recipe",
+                    icon: "mdi-plus-box"
+                },
+                {
+                    link: "/recipe",
+                    title: "List of all recipes",
+                    icon: "mdi-book-open-variant"
+                },
+                {
+                    link: "/favorites",
+                    title: "My favorites",
+                    icon: "mdi-heart"
+                },
+                {
+                    link: "/like",
+                    title: "Liked Recipes",
+                    icon: "mdi-thumb-up"
+                },
+                {
+                    link: "/shared",
+                    title: "Shared recipes",
+                    icon: "mdi-share"
+                },
+                {
+                    link: "/sharedwithme",
+                    title: "Recipes shared with me",
+                    icon: "mdi-reply"
+                }
+            ],
+            collections: [
+                {
+                    link: "/collection/create",
+                    title: "Create new collection",
+                    icon: "mdi-plus-box"
+                },
+                {
+                    link: "/collection",
+                    title: "My collections",
+                    icon: "mdi-bag-personal"
+                }
+            ],
+            user: [
+                {
+                    link: `/user/${this.$page.props.auth.user.id}/edit`,
+                    title: "My profile",
+                    icon: "mdi-account"
+                },
+                {
+                    link: "/follow",
+                    title: "Followers/Following",
+                    icon: "mdi-account-multiple"
+                },
+                {
+                    link: "/review",
+                    title: "My reviews",
+                    icon: "mdi-star"
+                },
+
+            ],
+            public: [
+                {
+                    link: "/public",
+                    title: "Public recipes",
+                    icon: "mdi-earth"
+                }
+            ],
+            selectedItem: 0,
+
         }
     }, watch: {
         "$page.url": function () {
             this.opener = false;
         }
     },
-    methods: {
-        logge() {
-            console.log("aaa");
-        }
-    }
+
 
 }
 </script>
@@ -197,6 +269,11 @@ export default {
     font-style: italic;
 }
 
+.side-user >>> .v-avatar {
+    height: 75px;
+    width: 75px;
+}
+
 header {
 
     display: grid;
@@ -234,14 +311,16 @@ header .logo {
 
 
 }
-.logo-holder{
+
+.logo-holder {
     height: 100px;
-    width:100px;
+    width: 100px;
     top: 0;
-    right:50%;
+    right: 50%;
 
     position: absolute;
 }
+
 h2 {
     font-family: roboto, sans-serif;
     margin: 0;
@@ -286,5 +365,36 @@ h2 {
 
 .logout-btn >>> .v-btn__append {
     margin-inline-start: 0 !important;
+}
+
+
+.link {
+
+    font-style: italic;
+
+    border-radius: 5px;
+    display: grid;
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
+}
+
+.link:hover {
+    background-color: rgb(0, 200, 255, 0.2);
+}
+
+.v-list-item {
+    font-size: 1.5rem !important;
+}
+
+.recipes-actions,
+.collections-actions,
+.user-actions,
+.public-actions {
+    display: grid;
+    gap: 10px;
+    grid-auto-rows: 75px;
+}
+
+.v-list-item >>> .v-list-item__spacer {
+    width: 10px !important;
 }
 </style>

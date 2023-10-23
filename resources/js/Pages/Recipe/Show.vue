@@ -114,15 +114,11 @@
                       ></v-rating>
                     </div>
 
-                    &nbsp;<span class="text-danger text-center" v-if="$attrs.errors.rating">
-                                    {{ $attrs.errors.rating }}
-                </span>
+                    &nbsp;
 
                     <textarea name="comment" class="form-control" id="comment" cols="30" rows="10"
                               placeholder="Leave message" maxlength="500" required v-model="rate.msg"></textarea>
-                    <span class="text-danger text-center" v-if="$attrs.errors.msg">
-                                    {{ $attrs.errors.msg }}
-                </span>
+
                   </div>
                   <div class="modal-footer">
                     <button type="button" class="btn btn-secondary text-white" data-bs-dismiss="modal">Cancel</button>
@@ -162,9 +158,7 @@
 
 
 
-      <span class="text-danger text-center" v-if="$attrs.errors.comment">
-                                    {{ $attrs.errors.comment }}
-      </span>
+
 
 
     </div>
@@ -241,7 +235,6 @@ export default {
     is_liked: Boolean
   },
   components: {},
-  //na click ikonice za slanje komentara submitvoati komentar
 
   methods: {
     submitReview() {
@@ -281,11 +274,15 @@ export default {
 </script>
 
 <style scoped>
+.description-div,
+.ingredients-div{
+    min-height: 100px;
+}
+.instructions-div{
+    min-height: 250px;
+}
 .textarea-container{
     position: relative;
-
-
-
 }
 .textarea-container >>> textarea{
 
@@ -459,5 +456,8 @@ h1 {
 .vutext >>> .v-field__append-inner{
   cursor: pointer;
   padding: 0 12px !important;
+}
+.review .v-rating >>> *{
+  cursor:unset;
 }
 </style>

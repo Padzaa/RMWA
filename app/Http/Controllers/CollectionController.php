@@ -6,6 +6,7 @@ use App\Http\Requests\StoreCollectionRequest;
 use App\Http\Requests\UpdateCollectionRequest;
 use App\Models\Collection;
 use App\Models\Recipe;
+use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
@@ -39,13 +40,27 @@ class CollectionController extends Controller
      */
     public function store(StoreCollectionRequest $request)
     {
-        $recipeIDs = collect($request->recipes)->pluck("id");
-        $collection = Collection::create([
-            'name' => $request->name,
-            'user_id' => Auth::user()->id
-        ]);
-        $collection->recipes()->sync($recipeIDs);
-        return redirect()->route('collection.index');
+        try {
+            $collection = Collection::create([
+                'name' => $request->name,
+                'user_id' => Auth::user()->id
+            ]);
+            $collection->recipes()->sync($request->recipes);
+            session()->flash('alert', [
+                'title' => 'Collection Created',
+                'message' => 'Collection created successfully',
+                'type' => 'success'
+            ]);
+            return redirect()->route('collection.index');
+        } catch (Exception $e) {
+            session()->flash('alert', [
+                'title' => 'Collection Error',
+                'message' => $e->getMessage(),
+                'type' => 'error'
+            ]);
+            return redirect()->route('collection.index');
+        }
+
     }
 
     /**
@@ -53,10 +68,20 @@ class CollectionController extends Controller
      */
     public function show(Collection $collection)
     {
-        $this->authorize('view', $collection);
-        return Inertia::render('Collection/Collection_Show', [
-            "collection" => $collection->load('recipes')
-        ]);
+        try {
+            $this->authorize('view', $collection);
+            return Inertia::render('Collection/Collection_Show', [
+                "collection" => $collection->load('recipes')
+            ]);
+        } catch (Exception $e) {
+            session()->flash('alert', [
+                'title' => 'Collection Error',
+                'message' => $e->getMessage(),
+                'type' => 'error'
+            ]);
+            return redirect()->route('collection.index');
+        }
+
     }
 
     /**
@@ -64,11 +89,24 @@ class CollectionController extends Controller
      */
     public function edit(Collection $collection)
     {
-        $this->authorize('update', $collection);
-        return Inertia::render('Collection/Collection_Edit', [
-            "recipes" => Recipe::where("user_id", Auth::user()->id)->get(),
-            "collection" => $collection->load('recipes')
-        ]);
+        try {
+            $this->authorize('update', $collection);
+
+            return Inertia::render('Collection/Collection_Edit', [
+                "recipes" => Recipe::where("user_id", Auth::user()->id)->get(),
+                "collection" => $collection,
+                "active" => $collection->load('recipes')->getRelation("recipes")->pluck("id"),
+
+            ]);
+        } catch (Exception $e) {
+            session()->flash('alert', [
+                'title' => 'Collection Error',
+                'message' => $e->getMessage(),
+                'type' => 'error'
+            ]);
+            return redirect()->route('collection.index');
+        }
+
     }
 
     /**
@@ -76,13 +114,28 @@ class CollectionController extends Controller
      */
     public function update(UpdateCollectionRequest $request, Collection $collection)
     {
-        $this->authorize('update', $collection);
-        $recipeIDs = collect($request->recipes)->pluck("id");
-        $collection->update([
-            'name' => $request->name,
-        ]);
-        $collection->recipes()->sync($recipeIDs);
-        return redirect()->route('collection.index');
+        try {
+            $this->authorize('update', $collection);
+            $collection->update([
+                'name' => $request->name,
+            ]);
+            $collection->recipes()->sync($request->recipes);
+            session()->flash('alert', [
+                'title' => 'Collection Updated',
+                'message' => 'Collection updated successfully',
+                'type' => 'success'
+            ]);
+            return redirect()->route('collection.index');
+        } catch (Exception $e) {
+            session()->flash('alert', [
+                'title' => 'Collection Error',
+                'message' => $e->getMessage(),
+                'type' => 'error'
+            ]);
+            return redirect()->route('collection.index');
+        }
+
+
     }
 
     /**
@@ -90,8 +143,21 @@ class CollectionController extends Controller
      */
     public function destroy(Collection $collection)
     {
-        $this->authorize('delete', $collection);
-        $collection->delete();
-        return redirect()->route('collection.index');
+
+        try {
+            $this->authorize('delete', $collection);
+            $collection->delete();
+            return redirect()->route('collection.index');
+        } catch (Exception $e) {
+            session()->flash('alert', [
+                'title' => 'Collection Error',
+                'message' => $e->getMessage(),
+                'type' => 'error'
+            ]);
+            return redirect()->route('collection.index');
+
+        }
+
+
     }
 }

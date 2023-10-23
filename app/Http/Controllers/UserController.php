@@ -46,7 +46,7 @@ class UserController extends Controller
     public function show(User $user)
     {
         $this->authorize('view', $user);
-        if(Auth::user()->id === $user->id){
+        if (Auth::user()->id === $user->id) {
             return redirect()->route('user.edit', $user->id);
         }
         Auth::user()->follow()->where('followed_user_id', $user->id)->count() ? $is_following = true : $is_following = false;
@@ -62,16 +62,25 @@ class UserController extends Controller
      */
     public function edit(User $user)
     {
+        try {
+            $this->authorize('update', $user);
+            $recipes = $user->recipes()
+                ->orWhereHas('shared', function ($query) use ($user) {
+                    $query->where('shared_recipes.user_shared_to', $user->id);
+                })->paginate(10);
+            return Inertia::render('User/User_Edit', [
+                    "recipes" => $recipes,
+                ]
+            );
+        } catch (Exception $e) {
+            session()->flash("alert", [
+                "title" => "Error!",
+                "message" => $e->getMessage(),
+                "type" => "error"
+            ]);
+            return Inertia::location('/');
+        }
 
-        $this->authorize('update', $user);
-        $recipes = $user->recipes()
-            ->orWhereHas('shared', function ($query) use ($user) {
-                $query->where('shared_recipes.user_shared_to', $user->id);
-            })->paginate(10);
-        return Inertia::render('User/User_Edit', [
-                "recipes" => $recipes,
-            ]
-        );
     }
 
     /**
@@ -79,10 +88,10 @@ class UserController extends Controller
      */
     public function update(UpdateUserRequest $request, User $user)
     {
-        $this->authorize('update', $user);
         try {
+            $this->authorize('update', $user);
             if ($request->hasFile('file')) {
-                if($user->picture) {
+                if ($user->picture) {
                     Storage::disk("public")->delete(basename($user->picture));
                 }
                 $uploadedFile = $request->file('file');
@@ -95,14 +104,14 @@ class UserController extends Controller
             $user->lastname = $request->lastname;
             $user->email = $request->email;
             $user->save();
-            session()->flash("alert",[
+            session()->flash("alert", [
                 "title" => "Success!",
                 "message" => "Your profile has been updated!",
                 "type" => "success"
             ]);
             return Inertia::location('/');
-        }catch (Exception $e) {
-            session()->flash("alert",[
+        } catch (Exception $e) {
+            session()->flash("alert", [
                 "title" => "Error!",
                 "message" => $e->getMessage(),
                 "type" => "error"
