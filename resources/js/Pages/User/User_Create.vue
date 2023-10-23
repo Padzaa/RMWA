@@ -25,7 +25,7 @@
                                     prepend-inner-icon="mdi-account-outline"
                                     variant="outlined"
                                     v-model="form.firstname"
-
+                                    type="email"
                                     :error-messages="$attrs.errors.firstname"
 
                                 ></v-text-field>
@@ -39,7 +39,7 @@
                                     prepend-inner-icon="mdi-account-outline"
                                     variant="outlined"
                                     v-model="form.lastname"
-
+                                    type="email"
                                     :error-messages="$attrs.errors.lastname"
 
                                 ></v-text-field>
