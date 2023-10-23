@@ -9,6 +9,7 @@ export default{
 
       },
         normalDate(recipeDate) {
+          //Converts a date to a string with the format YYYY-MM-DD
           const dateObject = new Date(recipeDate);
             const year = dateObject.getFullYear();
             const month = dateObject.getMonth() + 1; // Month is zero-based
@@ -59,7 +60,7 @@ export default{
             </template>
 
             <template v-slot:posted_at>
-                <span>Posted at: {{normalDate(recipe.created_at)}}</span>
+                <span style="font-style: italic;">Posted at: {{normalDate(recipe.created_at)}}</span>
             </template>
 
             <template v-slot:actions>

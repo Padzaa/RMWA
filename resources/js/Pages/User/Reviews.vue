@@ -15,6 +15,7 @@ export default {
     },
     methods: {
         normalDate(recipeDate) {
+            //Converts a date to a string with the format YYYY-MM-DD
             const dateObject = new Date(recipeDate);
             const year = dateObject.getFullYear();
             const month = dateObject.getMonth() + 1; // Month is zero-based
@@ -44,6 +45,7 @@ export default {
                         v-model="review.rating"
                         bg-color="orange-lighten-1"
                         color="green"
+                        disabled=""
                     ></v-rating>
                 </div>
                 <v-divider></v-divider>
@@ -161,7 +163,11 @@ h4 {
 
 .v-rating {
     gap: 20px;
+
     margin-right: 20px;
+}
+.v-rating >>> * {
+    cursor:unset;
 }
 
 

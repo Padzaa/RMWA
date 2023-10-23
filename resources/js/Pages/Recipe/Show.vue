@@ -156,7 +156,9 @@
                 </button>
             </div>
 
-
+        <span class="text-danger text-center" v-if="$attrs.errors.comment">
+            {{ $attrs.errors.comment }}
+        </span>
 
 
 

@@ -94,7 +94,7 @@ div.card {
     display: -webkit-box;
     font-size: 1.1rem;
     padding-right: 10px;
-
+    font-style: italic;
     margin: 0;
 //border-bottom: 1px solid white; color: #414141;
 }

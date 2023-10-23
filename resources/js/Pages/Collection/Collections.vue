@@ -25,11 +25,13 @@ export default {
         <div class="info">
           <h2>{{ collection.name }}</h2>
           <p>Number of recipes: {{ collection.recipes.length }}</p>
+            <div>
+                <h4>Recipes:</h4>
+                <template v-for="recipe in collection.recipes">
+                    <p class="titles">{{ recipe.title }}</p>
+                </template>
+            </div>
 
-          <h4>Recipes:</h4>
-          <template v-for="recipe in collection.recipes">
-            <p class="titles">{{ recipe.title }}</p>
-          </template>
 
           <div class="actions">
             <Link
@@ -97,6 +99,7 @@ div.actions > a {
 .info {
   height: 100%;
   display: grid;
+    grid-template-rows: min-content min-content 1fr min-content;
 }
 
 .info > h2 {
@@ -112,5 +115,10 @@ div.actions > a {
 .add-new{
   background-color: #0080ff;
 
+}
+h2{
+    overflow: hidden;
+    text-overflow: ellipsis !important;
+    white-space: nowrap;
 }
 </style>

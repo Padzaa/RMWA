@@ -16,12 +16,12 @@
                 </div>
                 <div class="optionals">
                     <div class="form-group" style="">
-                        <v-checkbox-btn v-model="form.public" label="Public"></v-checkbox-btn>
+                        <v-checkbox-btn v-model="form.public"  label="Public"></v-checkbox-btn>
 
                     </div>
 
                     <div class="form-group" style="">
-                        <v-checkbox-btn v-model="form.favorite" label="Favorite"></v-checkbox-btn>
+                        <v-checkbox-btn v-model="form.favorite"  label="Favorite"></v-checkbox-btn>
 
                     </div>
                 </div>
@@ -111,7 +111,7 @@ import {Inertia} from '@inertiajs/inertia';
 import {ref} from 'vue';
 
 const selectIngredients = ref(recipe.ingredients);
-const selectCategories = ref(recipe.categories.id);
+const selectCategories = ref(recipe.categories);
 
 
 let form = reactive({
@@ -120,8 +120,8 @@ let form = reactive({
     instructions: recipe.instructions,
     ingredients: selectIngredients,
     categories: selectCategories,
-    favorite: recipe.is_favorite ? true : false,
-    public: recipe.is_public ? true : false,
+    favorite: recipe.is_favorite == 1 ?? 0,
+    public: recipe.is_public == 1 ?? 0,
 });
 let submit = () => {
     Inertia.put('/recipe/' + recipe.id, form);

@@ -322,19 +322,19 @@ class RecipeController extends Controller
     public function comment(Recipe $recipe, Request $request)
     {
 
-
+        $request->request = $request->validate([
+            "comment" => ['required', 'string', 'max:500', 'min:1']
+        ], [
+            "comment.required" => "Comment is required!",
+        ]);
+        $recipe->comments()->create([
+            "comment" => $request->comment,
+            "user_id" => Auth::user()->id,
+        ]);
         try {
             $this->authorize('view', $recipe);
 
-            $request->request = $request->validate([
-                "comment" => ['required', 'string', 'max:500', 'min:1']
-            ], [
-                "comment.required" => "Comment is required!",
-            ]);
-            $recipe->comments()->create([
-                "comment" => $request->comment,
-                "user_id" => Auth::user()->id,
-            ]);
+
             session()->flash('alert', [
                 'title' => 'Success!',
                 'message' => 'Comment added successfully.',
