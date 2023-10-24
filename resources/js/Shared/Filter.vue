@@ -3,7 +3,8 @@
 
         <div class="form-group">
             <div class="btn-group">
-                <button style="font-size: 1.1rem" type="button" class="text-black  font-italic text-blue-accent-4 dropdown-toggle"
+                <button style="font-size: 1.1rem" type="button"
+                        class="text-black  font-italic text-blue-accent-4 dropdown-toggle"
                         aria-haspopup="true" data-bs-toggle="dropdown" aria-expanded="false">
                     <slot name="button_name"></slot>
                 </button>
@@ -31,14 +32,14 @@ export default {
 <style scoped>
 .filters {
     display: grid;
-    //padding: 1.5em 3em;
-    //height: 92px;
-    width: fit-content;
+//padding: 1.5em 3em; //height: 92px; width: fit-content;
 }
-button{
-    color:white;
+
+button {
+    color: white;
     font-weight: 500;
 }
+
 .dropdown-menu {
     overflow-y: auto;
     max-height: 400px;

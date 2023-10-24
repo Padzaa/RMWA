@@ -3,9 +3,16 @@
     <Head>
         <title>{{title}}</title>
     </Head>
-    <Filtering :recipes="recipes" :categories="categories" :ingredients="ingredients" :filters="filtersData" :collections="collections"></Filtering>
-    <GridNet :recipes="recipes.data" :auth="this.$attrs.auth"></GridNet>
-    <Paginator :recipes="recipes"></Paginator>
+    <Filtering :recipes="recipes"
+               :categories="categories"
+               :ingredients="ingredients"
+               :filters="filtersData"
+               :collections="collections"/>
+
+    <GridNet :recipes="recipes.data"
+             :auth="this.$attrs.auth"/>
+    
+    <Paginator :recipes="recipes"/>
 
 </template>
 
@@ -16,7 +23,7 @@ import {Inertia} from '@inertiajs/inertia'
 import GridNet from "../../Shared/GridNet.vue";
 import Paginator from "../../Shared/Paginator.vue";
 import Filtering from "../../Shared/Filtering.vue";
-import { usePage } from "@inertiajs/inertia-vue3";
+import {usePage} from "@inertiajs/inertia-vue3";
 
 export default {
     props: {

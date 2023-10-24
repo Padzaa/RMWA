@@ -90,14 +90,14 @@ export default {
                     icon: "mdi-bag-personal"
                 }
             ],
-            user:[
+            user: [
                 {
                     link: `/user/${this.$page.props.auth.user.id}/edit`,
                     title: "My profile",
                     icon: "mdi-account"
                 },
                 {
-                    link:"/follow",
+                    link: "/follow",
                     title: "Followers/Following",
                     icon: "mdi-account-multiple"
                 },
@@ -108,7 +108,7 @@ export default {
                 },
 
             ],
-            public:[
+            public: [
                 {
                     link: "/public",
                     title: "Public recipes",
@@ -131,13 +131,15 @@ export default {
 
 
 }
-h1{
-    font-family:Roboto, sans-serif;
+
+h1 {
+    font-family: Roboto, sans-serif;
     font-weight: 700;
     text-align: center;
     color: #4a4a4b;
     font-size: 2rem;
 }
+
 .link {
 
     font-style: italic;
@@ -158,7 +160,7 @@ h1{
 .recipes-actions,
 .collections-actions,
 .user-actions,
-.public-actions{
+.public-actions {
     display: grid;
     gap: 10px;
     grid-auto-rows: 75px;

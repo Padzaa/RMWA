@@ -2,15 +2,24 @@
 import Card from "./Card.vue";
 import {Inertia} from "@inertiajs/inertia";
 
-export default{
+export default {
     methods: {
-      submit() {
-        $('.modal').modal("hide");
+        /**
+         * Submits the form and hides the modal.
+         */
+        submit() {
+            $('.modal').modal("hide");
 
-      },
+        },
+        /**
+         * Converts the given recipe date to a normal date format.
+         *
+         * @param {string} recipeDate - The date of the recipe.
+         * @return {string} The date in the format 'YYYY-MM-DD'.
+         */
         normalDate(recipeDate) {
-          //Converts a date to a string with the format YYYY-MM-DD
-          const dateObject = new Date(recipeDate);
+
+            const dateObject = new Date(recipeDate);
             const year = dateObject.getFullYear();
             const month = dateObject.getMonth() + 1; // Month is zero-based
             const day = dateObject.getDate();
@@ -26,10 +35,10 @@ export default{
         },
         auth: Object
     },
-    components:{
+    components: {
         Card,
     },
-    created(){
+    created() {
         this.recipes.forEach(recipe => {
             recipe.dialog = false;
         })
@@ -41,17 +50,19 @@ export default{
 </script>
 
 <template>
-    <p v-if="recipes.length == 0 && this.$page.component !== 'Recipe/All'" class="records text-center">0 records found</p>
+    <p v-if="recipes.length == 0 && this.$page.component !== 'Recipe/All'" class="records text-center">0 records
+        found</p>
     <div class="grid-net">
 
         <Card v-for="(recipe,index) in recipes">
             <template v-slot:title1>
 
-                <h5><i>Rating: </i><b>{{ recipe.average_rating ? recipe.average_rating : 0 }}</b> </h5>based on {{recipe.review_count ? recipe.review_count : 0}} reviews
+                <h5><i>Rating: </i><b>{{ recipe.average_rating ? recipe.average_rating : 0 }}</b></h5>based on
+                {{ recipe.review_count ? recipe.review_count : 0 }} reviews
             </template>
 
             <template v-slot:title>
-                {{recipe.title}}
+                {{ recipe.title }}
             </template>
 
             <template v-slot:instructions>
@@ -60,14 +71,14 @@ export default{
             </template>
 
             <template v-slot:posted_at>
-                <span style="font-style: italic;">Posted at: {{normalDate(recipe.created_at)}}</span>
+                <span style="font-style: italic;">Posted at: {{ normalDate(recipe.created_at) }}</span>
             </template>
 
             <template v-slot:actions>
                 <v-card-actions class="actions">
                     <Link
-                          :href="'/recipe/' + recipe.id"
-                          method="GET">
+                        :href="'/recipe/' + recipe.id"
+                        method="GET">
                         <img src="../../../public/show.svg" alt="show">
                     </Link>
                     <Link v-if="auth ? auth.user.id == recipe.user_id : false"
@@ -76,28 +87,29 @@ export default{
                         <img src="../../../public/edit.svg" alt="edit">
                     </Link>
                     <button v-if="auth ? auth.user.id == recipe.user_id : false"
-                           @click="recipe.dialog = true;">
+                            @click="recipe.dialog = true;">
                         <img src="../../../public/delete.svg" alt="delete">
                     </button>
                     <v-dialog v-model="recipe.dialog" class="vd" style="display: grid">
                         <div class="bg-white dialog">
 
-                                <div class="dialog-header">
-                                    <h1 class="modal-title fs-4" >Confirm your deletion</h1>
-                                    <button type="button" class="btn-close"  @click="recipe.dialog = false"
-                                            aria-label="Close"></button>
+                            <div class="dialog-header">
+                                <h1 class="modal-title fs-4">Confirm your deletion</h1>
+                                <button type="button" class="btn-close" @click="recipe.dialog = false"
+                                        aria-label="Close"></button>
 
-                                </div>
-                                <div class="dialog-message">
-                                    Are you sure you want to delete recipe <b>"{{ recipe.title }}"</b> permanently?
-                                </div>
-                                <div class="dialog-actions">
-                                    <button type="button" class="btn btn-outline-secondary" @click="recipe.dialog = false">Cancel
-                                    </button>
-                                    <Link @click="submit" method="DELETE" :href="'/recipe/' + recipe.id"
-                                          class="btn btn-outline-danger" id="delete_recipe">Delete Recipe
-                                    </Link>
-                                </div>
+                            </div>
+                            <div class="dialog-message">
+                                Are you sure you want to delete recipe <b>"{{ recipe.title }}"</b> permanently?
+                            </div>
+                            <div class="dialog-actions">
+                                <button type="button" class="btn btn-outline-secondary" @click="recipe.dialog = false">
+                                    Cancel
+                                </button>
+                                <Link @click="submit" method="DELETE" :href="'/recipe/' + recipe.id"
+                                      class="btn btn-outline-danger" id="delete_recipe">Delete Recipe
+                                </Link>
+                            </div>
 
                         </div>
                     </v-dialog>
@@ -143,56 +155,65 @@ div.actions {
     align-items: center;
     display: grid;
     gap: 25px;
-    grid-template-columns: min-content min-content min-content 1fr ;
+    grid-template-columns: min-content min-content min-content 1fr;
     height: 65px;
 }
-div.actions>button, div.actions>a {
+
+div.actions > button, div.actions > a {
     font-size: 0.9rem;
-    color:black;
+    color: black;
 
 }
 
 
-h5{
-    text-align:center;
-    margin:0;
+h5 {
+    text-align: center;
+    margin: 0;
 }
+
 .records {
     grid-column: 2/3;
 
     font-size: 1.65rem;
 }
-.vd{
+
+.vd {
     display: grid;
     align-items: start;
     justify-content: center;
 }
-.vd > div{
-    align-items: center ;
+
+.vd > div {
+    align-items: center;
 }
-.dialog{
+
+.dialog {
     display: grid;
     padding: 1em;
     border-radius: 15px;
-    width:fit-content;
-    align-self:center;
+    width: fit-content;
+    align-self: center;
     gap: 1em;
 
 }
-.dialog-header{
+
+.dialog-header {
     display: grid;
     grid-template-columns: 5fr min-content;
 }
-.dialog-message{
+
+.dialog-message {
     font-size: 1.1rem;
 }
-.dialog-actions{
+
+.dialog-actions {
     display: grid;
     gap: 1em;
     grid-auto-flow: column;
 }
-.heart{
-    justify-self:end;
+
+.heart {
+    justify-self: end;
 }
 
 </style>

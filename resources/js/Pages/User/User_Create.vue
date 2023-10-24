@@ -132,6 +132,7 @@
 <script setup>
 import {reactive, ref} from 'vue';
 import {Inertia} from '@inertiajs/inertia';
+
 let visible = ref(false);
 let form = reactive({
     firstname: "",
@@ -141,6 +142,12 @@ let form = reactive({
     password_confirmation: "",
 
 });
+/**
+ * Submits the form data to the '/register' endpoint using an Inertia post request.
+ *
+ * @param {Object} form - The form data to be submitted.
+ * @return {Promise} A promise that resolves with the response from the server.
+ */
 let submit = () => {
     Inertia.post('/register', form);
 }
@@ -148,12 +155,13 @@ let submit = () => {
 </script>
 
 <style scoped>
-.container{
+.container {
     height: 100%;
-    padding:5em
+    padding: 5em;
 
 }
-button{
-    color:white;
+
+button {
+    color: white;
 }
 </style>

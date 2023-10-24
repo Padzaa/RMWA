@@ -1,13 +1,14 @@
 <script>
-    import Header from "../../Shared/Header.vue";
-    import GridNet from "../../Shared/GridNet.vue";
-    import Paginator from "../../Shared/Paginator.vue";
-    export default {
-        components: {Paginator, GridNet, Header},
-        props:{
-            recipes:Array
-        },
-    }
+import Header from "../../Shared/Header.vue";
+import GridNet from "../../Shared/GridNet.vue";
+import Paginator from "../../Shared/Paginator.vue";
+
+export default {
+    components: {Paginator, GridNet, Header},
+    props: {
+        recipes: Array
+    },
+}
 </script>
 
 <template>
@@ -15,11 +16,11 @@
     <Head>
         <title>Favorites</title>
     </Head>
-<div class="container">
-    <h1 class="text-center">Favorites</h1>
-    <GridNet :recipes="recipes.data" :auth="this.$attrs.auth"></GridNet>
-    <Paginator :recipes="recipes"></Paginator>
-</div>
+    <div class="container">
+        <h1 class="text-center">Favorites</h1>
+        <GridNet :recipes="recipes.data" :auth="this.$attrs.auth"></GridNet>
+        <Paginator :recipes="recipes"></Paginator>
+    </div>
 
 
 </template>
@@ -41,6 +42,7 @@ p {
     text-align: center;
     margin-bottom: 0;
 }
+
 div.actions {
     align-self: end;
     align-items: center;
@@ -48,11 +50,13 @@ div.actions {
     gap: 10px;
 
 }
-div.actions>a{
+
+div.actions > a {
     text-align: center;
-    height:fit-content;
+    height: fit-content;
 }
-.container{
+
+.container {
     padding: 2em 0;
 }
 </style>

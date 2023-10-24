@@ -1,8 +1,8 @@
 <script>
 export default {
-  props: {
-    recipes: Object,
-  }
+    props: {
+        recipes: Object,
+    }
 }
 </script>
 
@@ -37,6 +37,7 @@ export default {
     justify-content: center;
     padding: 1em 0;
 }
+
 p {
     font-style: italic;
 

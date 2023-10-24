@@ -19,6 +19,7 @@
                                 <div class="text-subtitle-1 text-medium-emphasis">Account</div>
 
                                 <v-text-field
+                                    name="email"
                                     density="compact"
                                     placeholder="Email address"
                                     prepend-inner-icon="mdi-email-outline"
@@ -46,8 +47,9 @@
                                     v-model="form.password"
                                     :error-messages="$attrs.errors.password"
                                 ></v-text-field>
-                                    <span class="text-danger text-center" style="display:block;" v-if="$attrs.errors.failedToLogin">
-                                        {{$attrs.errors.failedToLogin}}
+                                <span class="text-danger text-center" style="display:block;"
+                                      v-if="$attrs.errors.failedToLogin">
+                                        {{ $attrs.errors.failedToLogin }}
                                     </span>
                                 <v-card
                                     class="mb-12 mt-8"
@@ -104,6 +106,9 @@ let form = reactive({
     password: "",
 
 });
+/**
+ * Submits the form data to the '/login' endpoint using Inertia.
+ */
 let submit = () => {
     Inertia.post('/login', form);
 }

@@ -123,6 +123,12 @@ let form = reactive({
     favorite: recipe.is_favorite == 1 ?? 0,
     public: recipe.is_public == 1 ?? 0,
 });
+/**
+ * Submits the form data to update a recipe.
+ *
+ * @param {string} recipe.id - The ID of the recipe to be updated.
+ * @param {object} form - The data to be submitted.
+ */
 let submit = () => {
     Inertia.put('/recipe/' + recipe.id, form);
 }

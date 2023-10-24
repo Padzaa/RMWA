@@ -131,13 +131,11 @@ let form = reactive({
     favorite: false,
     public: false,
 });
+/**
+ * Submits the form data to the `/recipe` endpoint using an HTTP POST request.
+ */
 let submit = () => {
-    try {
-        Inertia.post('/recipe', form);
-    } catch (e) {
-        console.log(e);
-    }
-
+    Inertia.post('/recipe', form);
 }
 
 

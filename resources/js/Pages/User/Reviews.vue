@@ -14,8 +14,13 @@ export default {
         }
     },
     methods: {
+        /**
+         * Convert a given date to a normal date format.
+         *
+         * @param {string} recipeDate - The date to be converted.
+         * @return {string} The date in the format "DD-MM-YYYY".
+         */
         normalDate(recipeDate) {
-            //Converts a date to a string with the format YYYY-MM-DD
             const dateObject = new Date(recipeDate);
             const year = dateObject.getFullYear();
             const month = dateObject.getMonth() + 1; // Month is zero-based
@@ -35,34 +40,34 @@ export default {
     </Head>
 
     <div class="cont">
-    <h1>Reviews</h1>
-    <div class="reviews">
-        <template v-for="review in reviews.data">
-            <div class="review-card">
-                <div class="rating-hdr text-center">
-                    <v-rating
-                        class="ok"
-                        v-model="review.rating"
-                        bg-color="orange-lighten-1"
-                        color="green"
-                        disabled=""
-                    ></v-rating>
+        <h1>Reviews</h1>
+        <div class="reviews">
+            <template v-for="review in reviews.data">
+                <div class="review-card">
+                    <div class="rating-hdr text-center">
+                        <v-rating
+                            class="ok"
+                            v-model="review.rating"
+                            bg-color="orange-lighten-1"
+                            color="green"
+                            disabled=""
+                        ></v-rating>
+                    </div>
+                    <v-divider></v-divider>
+                    <h4>
+                        <Link class="recipe_name" :href="'/recipe/'+review.recipe.id">{{ review.recipe.title }}</Link>
+                    </h4>
+
+                    <div class="review-comment">
+                        <h5>Comment:</h5>
+                        <p class="comment"><cite><q>{{ review.message }}</q></cite></p>
+                    </div>
+
+                    <span class="posted-at">Rated: {{ normalDate(review.created_at) }}</span>
                 </div>
-                <v-divider></v-divider>
-                <h4>
-                    <Link class="recipe_name" :href="'/recipe/'+review.recipe.id">{{ review.recipe.title }}</Link>
-                </h4>
 
-                <div class="review-comment">
-                    <h5>Comment:</h5>
-                    <p class="comment"><cite><q>{{ review.message }}</q></cite></p>
-                </div>
-
-                <span class="posted-at">Rated: {{ normalDate(review.created_at) }}</span>
-            </div>
-
-        </template>
-    </div>
+            </template>
+        </div>
 
     </div>
     <div id="paginator">
@@ -89,13 +94,15 @@ export default {
 </template>
 
 <style scoped>
-.cont{
+.cont {
     display: grid;
     padding: 2em;
 }
-.cont > h1{
+
+.cont > h1 {
     text-align: center;
 }
+
 #paginator {
     display: flex;
     gap: 10px;
@@ -166,8 +173,9 @@ h4 {
 
     margin-right: 20px;
 }
+
 .v-rating >>> * {
-    cursor:unset;
+    cursor: unset;
 }
 
 
