@@ -69,7 +69,7 @@ class User extends Authenticatable
     /*
      Retrieve all recipes that are shared to a user
      */
-    public function sharedRecipes()
+    public function sharedWithMe()
     {
         return $this->belongsToMany(Recipe::class, 'shared_recipes', 'user_shared_to', 'recipe_id');
     }
@@ -89,6 +89,14 @@ class User extends Authenticatable
     public function comments()
     {
         return $this->hasMany(Comment::class);
+    }
+
+    /*
+    Retrieve every review that a certain user has written
+    */
+    public function reviews()
+    {
+        return $this->hasMany(Review::class);
     }
 
     /*

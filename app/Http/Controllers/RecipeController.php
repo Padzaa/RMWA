@@ -31,7 +31,6 @@ class RecipeController extends Controller
             ->Filter($request)
             ->paginate(10);
 
-
         return Inertia::render('Recipe/All', [
             "title" => "Recipes",
             'recipes' => $filteredRecipes,
@@ -379,9 +378,10 @@ class RecipeController extends Controller
      */
     public function favorites()
     {
-        $favorites = Auth::user()->favorites();
+        //Function favorites() that is called here accepts one argument $perPage which has a default value of 10
+        //$perPage is the number of recipes per page
         return Inertia::render('User/Favorites', [
-            "recipes" => $favorites,
+            "recipes" => Auth::user()->favorites(),
         ]);
     }
 

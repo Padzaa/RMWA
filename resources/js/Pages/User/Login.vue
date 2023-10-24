@@ -57,8 +57,8 @@
                                     variant="tonal"
                                 >
                                     <v-card-text class="text-medium-emphasis text-caption">
-                                        Warning: After 5 consecutive failed login attempts, you account will be
-                                        temporarily suspended for <b>30 seconds</b>.
+                                        Warning: After 6 consecutive failed login attempts, you account will be
+                                        temporarily suspended for <b>60 seconds</b>.
                                     </v-card-text>
                                 </v-card>
 

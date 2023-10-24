@@ -15,7 +15,7 @@ class ReviewController extends Controller
      */
     public function index()
     {
-        $reviews = Review::with("recipe")->where('user_id', Auth::user()->id)->paginate(10);
+        $reviews = Auth::user()->reviews()->with('recipe')->paginate(10);
         return Inertia::render('User/Reviews', [
             "reviews" => $reviews
         ]);

@@ -18,7 +18,7 @@ class CollectionController extends Controller
      */
     public function index()
     {
-        $collections = Collection::where("user_id", Auth::user()->id)->with('recipes')->get();
+        $collections = Auth::user()->collections()->with('recipes')->get();
 
         return Inertia::render('Collection/Collections', [
             "collections" => $collections
@@ -93,7 +93,7 @@ class CollectionController extends Controller
             $this->authorize('update', $collection);
 
             return Inertia::render('Collection/Collection_Edit', [
-                "recipes" => Recipe::where("user_id", Auth::user()->id)->get(),
+                "recipes" => Auth::user()->recipes()->get(),
                 "collection" => $collection,
                 "active" => $collection->load('recipes')->getRelation("recipes")->pluck("id"),
 
