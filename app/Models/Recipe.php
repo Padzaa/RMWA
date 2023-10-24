@@ -10,7 +10,7 @@ class Recipe extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['title', 'description', 'instructions', 'user_id', 'is_favorite'];
+    protected $fillable = ['title', 'description', 'instructions', 'user_id', 'is_favorite', 'is_public'];
 
     /*
      Retrieve every ingredient that is associated to certain recipe

@@ -244,7 +244,7 @@ header .logo {
     height: 100px;
     width: 100px;
     top: 0;
-    right: 50%;
+    right: calc(50% - 3em);
 
     position: absolute;
 }

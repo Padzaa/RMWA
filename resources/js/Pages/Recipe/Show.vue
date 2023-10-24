@@ -3,6 +3,7 @@
     <Head>
         <title>{{recipe.title}}</title>
     </Head>
+    <div style="display:grid; justify-content: center;">
     <div class="show-recipe">
         <div class="recipe">
             <div class="show-header">
@@ -178,37 +179,41 @@
 
         </div>
 
-        <div v-if="review" class="review alert alert-success" style="padding-top:0;">
+        <div class="reviews">
+            <div v-if="review" class="review alert alert-success" style="padding-top:0;">
 
-            <div style="width:fit-content;display:grid;grid-template-columns:1fr 3fr;">
-                <p style="height:fit-content;align-self:center;margin: 0;font-size:1.45rem">RATING:</p>
-                <v-rating style="justify-self: start;"
-                          v-model="review.rating"
-                          bg-color="orange-lighten-1"
-                          color="red"
-                          disabled="true"
-                ></v-rating>
-            </div>
-            <p>You rated this recipe with <b>{{ review.rating }}</b> stars</p>
-            <h6>COMMENT :</h6>
-            <p class="comment">``{{ review.message }}``</p>
-        </div>
+                <div style="display:grid;">
 
-        <template v-for="review in reviews">
-            <div class="review alert alert-danger">
-                <h6>RATING: {{ review.rating }}</h6>
-                <div class="text-center">
-                    <v-rating
-                        v-model="review.rating"
-                        bg-color="orange-lighten-1"
-                        color="blue"
+                    <v-rating style="justify-self: center;"
+                              v-model="review.rating"
+                              bg-color="orange-lighten-1"
+                              color="red"
+                              disabled="true"
                     ></v-rating>
                 </div>
+                <p style="font-size: 14px;text-align: center">You rated this recipe with <b>{{ review.rating }}</b> stars</p>
 
-                <h6>COMMENT :</h6>
-                <p class="comment">``{{ review.message }}``</p>
+                <p style="text-align: justify;" class="comment"><q>{{ review.message }}</q></p>
             </div>
-        </template>
+            <template v-for="review in reviews">
+                <div class="review alert alert-danger">
+                    <h6> {{ review.rating }}</h6>
+                    <div class="text-center">
+                        <v-rating
+                                v-model="review.rating"
+                                bg-color="orange-lighten-1"
+                                color="blue"
+                        ></v-rating>
+                    </div>
+
+                    <h6>COMMENT :</h6>
+                    <p class="comment"><q>{{ review.message }}</q></p>
+                </div>
+            </template>
+        </div>
+
+
+
         <div class="comments">
             <template v-for="comment in comments">
                 <div class="comment form-control">
@@ -227,7 +232,7 @@
             </template>
         </div>
     </div>
-
+    </div>
 
 </template>
 
@@ -380,8 +385,7 @@ div.picture {
 }
 
 .review {
-    min-width: 750px;
-    max-width: 750px;
+    width:100%;
     height: fit-content !important;
     border-radius: 12px;
     margin: 0;
@@ -391,7 +395,7 @@ div.picture {
     display: grid;
     padding: 3em 0;
     justify-items: center;
-
+    width:750px;
     gap: 2em;
     grid-auto-rows: min-content;
 }
@@ -493,5 +497,11 @@ h1 {
 
 .review .v-rating >>> * {
     cursor: unset;
+}
+.reviews{
+    display:grid;
+    width:100%;
+    gap: 2em;
+    grid-template-columns: repeat(2,1fr);
 }
 </style>

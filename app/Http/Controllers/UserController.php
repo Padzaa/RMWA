@@ -45,16 +45,26 @@ class UserController extends Controller
      */
     public function show(User $user)
     {
-        $this->authorize('view', $user);
-        if (Auth::user()->id === $user->id) {
-            return redirect()->route('user.edit', $user->id);
-        }
-        Auth::user()->follow()->where('followed_user_id', $user->id)->count() ? $is_following = true : $is_following = false;
+        try{
+            $this->authorize('view', $user);
+            if (Auth::user()->id === $user->id) {
+                return redirect()->route('user.edit', $user->id);
+            }
+            Auth::user()->follow()->where('followed_user_id', $user->id)->count() ? $is_following = true : $is_following = false;
 
-        return Inertia::render('User/User_Show', [
-            "user" => $user,
-            "is_following" => $is_following,
-        ]);
+            return Inertia::render('User/User_Show', [
+                "user" => $user,
+                "is_following" => $is_following,
+            ]);
+        }
+        catch (Exception $e) {
+            session()->flash("alert", [
+                "title" => "Error!",
+                "message" => $e->getMessage(),
+                "type" => "error"
+            ]);
+            return Inertia::location('/');
+        }
     }
 
     /**
@@ -64,10 +74,7 @@ class UserController extends Controller
     {
         try {
             $this->authorize('update', $user);
-            $recipes = $user->recipes()
-                ->orWhereHas('shared', function ($query) use ($user) {
-                    $query->where('shared_recipes.user_shared_to', $user->id);
-                })->paginate(10);
+            $recipes = $user->recipes()->paginate(10);
             return Inertia::render('User/User_Edit', [
                     "recipes" => $recipes,
                 ]

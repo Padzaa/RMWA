@@ -21,12 +21,16 @@ class UserPolicy
      */
     public function view(User $user, User $model): bool
     {
+        //IF USER 1 SHARED A RECIPE TO A USER 2 THEN USER 2 CAN VIEW THE USER'S 1 PROFILE
         $shared = $model->recipes()->whereHas('shared', function ($query) use ($user) {
             $query->where('user_shared_to', $user->id);
         })->get();
-        $exist = $user->follow()->where('followed_user_id', $model->id)->get();
+        //IF USER 1 FOLLOWS A USER 2 THEN USER 2 CAN VIEW THE USER'S 1 PROFILE
+        $follow = $user->follow()->where('followed_user_id', $model->id)->get();
+        //IF USER 1 HAS A PUBLIC RECIPE THEN USER 2 CAN VIEW THE USER'S 1 PROFILE
+        $has_public = $model->recipes()->where('is_public', 1)->get();
 
-        if ($exist->count() || $user->id === $model->id || $shared->count()) {
+        if ($follow->count() || $user->id === $model->id || $shared->count() || $has_public->count()) {
             return true;
         } else {
             return false;

@@ -79,7 +79,8 @@ tr {
 }
 
 .table {
-    border: 1px solid gray;
+    border: 1px solid grey;
+    height:fit-content;
 }
 
 caption {

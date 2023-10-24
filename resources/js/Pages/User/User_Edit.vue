@@ -62,9 +62,9 @@
                 </span>
                         </div>
                         <div class="mt-5 text-center">
-                            <button @click="submit" class="btn btn-primary profile-button text-white" name="submit"
+                            <v-btn @click="submit" class="profile-button text-black" name="submit"
                                     type="submit">Save Profile
-                            </button>
+                            </v-btn>
                         </div>
                     </div>
                 </div>

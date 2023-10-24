@@ -8,7 +8,7 @@
                         aria-haspopup="true" data-bs-toggle="dropdown" aria-expanded="false">
                     <slot name="button_name"></slot>
                 </button>
-                <div class="dropdown-menu">
+                <div class="dropdown-menu" >
                     <slot name="filter_slot"></slot>
 
 
@@ -42,7 +42,7 @@ button {
 
 .dropdown-menu {
     overflow-y: auto;
-    max-height: 400px;
+    max-height: 300px;
 }
 
 .dropdown-toggle {
