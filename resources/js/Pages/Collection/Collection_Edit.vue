@@ -61,7 +61,8 @@ export default {
                                 item-value="id"
                                 label="Select recipes"
                                 multiple
-
+                                chips="true"
+                                closable-chips="true"
                             ></v-select>
                         </v-col>
                     </v-row>

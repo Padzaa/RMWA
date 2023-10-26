@@ -60,8 +60,7 @@
                         </Link>
 
 
-                        <Link @click="opener = !opener" class="link" href="/recipe"
-                        >
+                        <Link @click="opener = !opener" class="link" href="/recipe">
                             <v-list-item value="2" prepend-icon="mdi-book-open-variant"
                                          :class="$props.pageUrl.includes('/recipe') && this.$page.component == 'Recipe/All' ? 'v-list-item--active' : ''">
                                 Recipes
@@ -69,8 +68,7 @@
                         </Link>
 
 
-                        <Link @click="opener = !opener" class="link" href="/collection"
-                        >
+                        <Link @click="opener = !opener" class="link" href="/collection">
                             <v-list-item value="3" prepend-icon="mdi-bag-personal"
                                          :class="$props.pageUrl.includes('/collection') ? 'v-list-item--active' : ''">
                                 Collections
@@ -78,8 +76,7 @@
                         </Link>
 
 
-                        <Link @click="opener = !opener" class="link" href="/favorites"
-                        >
+                        <Link @click="opener = !opener" class="link" href="/favorites">
                             <v-list-item value="4" prepend-icon="mdi-heart"
                                          :class="$props.pageUrl == '/favorites' ? 'v-list-item--active' : ''">
                                 Favorites
@@ -87,22 +84,33 @@
                         </Link>
 
 
-                        <Link @click="opener = !opener" class="link" href="/public"
-                        >
+                        <Link @click="opener = !opener" class="link" href="/public">
                             <v-list-item value="5" prepend-icon="mdi-earth"
                                          :class="$props.pageUrl.includes('/public') ? 'v-list-item--active' : ''">Public
                             </v-list-item>
                         </Link>
 
+                        <Link @click="opener = !opener" class="link" href="/review">
+                            <v-list-item value="6" prepend-icon="mdi-star"
+                                         :class="$props.pageUrl == '/review' ? 'v-list-item--active' : ''">
+                                Reviews
+                            </v-list-item>
+                        </Link>
 
-                        <Link @click="opener = !opener" class="link" href="/recipe/create"
+                        <Link @click="opener = !opener" class="link" href="/follow">
+                            <v-list-item value="6" prepend-icon="mdi-account-group"
+                                         :class="$props.pageUrl == '/follow' ? 'v-list-item--active' : ''">
+                                Follow
+                            </v-list-item>
+                        </Link>
 
-                        >
-                            <v-list-item value="6" prepend-icon="mdi-receipt-text-plus-outline"
+                        <Link @click="opener = !opener" class="link" href="/recipe/create">
+                            <v-list-item value="7" prepend-icon="mdi-receipt-text-plus-outline"
                                          :class="$props.pageUrl == '/recipe/create' ? 'v-list-item--active' : ''">
                                 Create Recipe
                             </v-list-item>
                         </Link>
+
 
                     </v-list>
                 </v-navigation-drawer>

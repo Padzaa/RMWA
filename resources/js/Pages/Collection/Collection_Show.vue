@@ -13,7 +13,7 @@ export default {
     </Head>
 
     <div class="collection-box">
-        <div class="collection form-control">
+        <div class="collection">
             <div class="header">
                 <h1>{{ collection.name }}</h1>
             </div>
@@ -54,10 +54,14 @@ export default {
 }
 
 .collection {
+    display:grid;
+    grid-template-rows: min-content auto min-content;
     width: 460px;
     border-radius: 25px;
     padding: 1em 1.5em;
+    min-height: 400px;
     height: fit-content;
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
 }
 
 .collection .header {

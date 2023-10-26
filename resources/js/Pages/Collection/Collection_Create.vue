@@ -58,6 +58,8 @@ export default {
                                 label="Select recipes"
                                 multiple="true"
                                 clearable="true"
+                                chips="true"
+                                closable-chips="true"
                             ></v-select>
                         </v-col>
                     </v-row>

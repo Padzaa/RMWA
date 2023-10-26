@@ -3,6 +3,15 @@ export default {
     props: {
         follows: Object,
         my_followers: Object
+    },
+    data() {
+        return {
+            tables: [this.follows, this.my_followers]
+        }
+    },
+    mounted() {
+        this.follows.caption = "Followings";
+        this.my_followers.caption = "My Followers";
     }
 }
 </script>
@@ -15,9 +24,8 @@ export default {
     <div class="cont">
         <h1>Follows</h1>
         <div class="tables">
-
-            <table class="table table-striped">
-                <caption>Followings</caption>
+            <table class="table table-striped" v-for="table in tables">
+                <caption>{{ table.caption }}</caption>
                 <thead>
 
                 <tr>
@@ -25,41 +33,23 @@ export default {
                     <th>Firstname</th>
                     <th>Lastname</th>
                     <th>Email</th>
+                    <th>Followed by</th>
+                    <th>Follows</th>
                 </tr>
-
                 </thead>
                 <tbody>
-                <tr v-for="follow in follows">
-                    <td>{{ follows.indexOf(follow) + 1 }}</td>
+                <tr v-for="follow in table">
+                    <td>{{ table.indexOf(follow) + 1 }}</td>
                     <td>
                         <Link :href="'/user/' + follow.id">{{ follow.firstname }}</Link>
                     </td>
                     <td>{{ follow.lastname }}</td>
                     <td>{{ follow.email }}</td>
+                    <td>{{ follow.followed_count }}</td>
+                    <td>{{ follow.follow_count }}</td>
                 </tr>
                 </tbody>
-            </table>
-            <table class="table table-striped">
-                <caption>My Followers</caption>
-                <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Firstname</th>
-                    <th>Lastname</th>
-                    <th>Email</th>
-                </tr>
 
-                </thead>
-                <tbody>
-                <tr v-for="follow in my_followers">
-                    <td>{{ my_followers.indexOf(follow) + 1 }}</td>
-                    <td>
-                        <Link :href="'/user/' + follow.id">{{ follow.firstname }}</Link>
-                    </td>
-                    <td>{{ follow.lastname }}</td>
-                    <td>{{ follow.email }}</td>
-                </tr>
-                </tbody>
             </table>
         </div>
     </div>
@@ -80,7 +70,7 @@ tr {
 
 .table {
     border: 1px solid grey;
-    height:fit-content;
+    height: fit-content;
 }
 
 caption {

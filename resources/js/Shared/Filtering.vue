@@ -36,141 +36,211 @@ export default {
                 collections: [],
             };
             this.submit();
+        },
+        /**
+         * Checks if the search field is empty and submits the form if it is.
+         */
+        ifSearchEmpty() {
+            if (this.form.search === "") {
+                this.submit();
+            }
         }
     },
     data() {
         return {
             form: {
-                categories: this.filters.categories ? this.filters.categories : [],
-                ingredients: this.filters.ingredients ? this.filters.ingredients : [],
+                categories: [],
+                ingredients: [],
                 favorites: this.filters.favorites ? JSON.parse(this.filters.favorites) : null,
                 ratings: this.filters.ratings ? this.filters.ratings : [],
                 order: this.filters.order ? this.filters.order : 'desc',
                 search: this.filters.search ? this.filters.search : '',
-                collections: this.filters.collections ? this.filters.collections : [],
+                collections: [],
             },
             dialog: false,
 
         }
     },
+    mounted() {
+        if (this.filters.categories) {
+            this.filters.categories.forEach((el) => {
+                el = parseInt(el);
+                this.form.categories.push(el);
+            });
+
+        }
+        if (this.filters.ingredients) {
+            this.filters.ingredients.forEach((el) => {
+                el = parseInt(el);
+                this.form.ingredients.push(el);
+            });
+
+        }
+        if (this.filters.collections) {
+            this.filters.collections.forEach((el) => {
+                el = parseInt(el);
+                this.form.collections.push(el);
+            });
+
+        }
+
+    }
 }
 </script>
 
 <template>
-    <div style="padding: 2em 4em;display:grid; justify-content: center">
-    <v-btn style="width:fit-content;font-size:1.25rem;" @click="dialog = !dialog" color="black" append-icon="mdi-filter">Filter</v-btn>
-    <v-row justify="center">
-        <v-dialog
-            v-model="dialog"
-            width="fit-content"
-        >
+    <div style="padding: 2em 4em 1em 4em;display:grid;grid-auto-flow:column;grid-template-columns: 1fr 2fr;">
+        <div class="search" style="display: grid;grid-auto-flow:column;gap:5px;">
+            <input placeholder="Search recipes" @keyup="ifSearchEmpty" v-model="form.search" type="search" name="search"
+                   id="search"
+                   class="form-input form-control">
 
-            <v-card style="border-radius:15px;min-height:350px;">
-                <form @submit.prevent="submit" class="filter-form">
-                    <div class="pickers" :style="!$page.props.auth ? 'grid-template-columns:repeat(2, 1fr);' : ''">
-                        <Filter>
-                            <template v-slot:button_name>Select Categories</template>
-                            <template v-slot:filter_slot>
-                                <template v-for="category in categories">
-                                    <div class="dropdown-item" onclick="event.stopPropagation()">
-                                        <input class="input-cat" v-model="form.categories" type="checkbox" :value="category.id"
-                                               :id="category.name"> <label class="dr-lb" :for="category.name">{{
-                                            category.name
-                                        }}</label>
-                                    </div>
-                                </template>
-
-                            </template>
-                        </Filter>
-
-                        <Filter v-if="$page.props.auth">
-                            <template v-slot:button_name>Select Collections</template>
-                            <template v-slot:filter_slot>
-                                <template v-for="collection in collections">
-                                    <div class="dropdown-item" onclick="event.stopPropagation()">
-                                        <input class="input-cat" v-model="form.collections" type="checkbox" :value="collection.id"
-                                               :id="collection.name"> <label class="dr-lb" :for="collection.name">{{
-                                            collection.name
-                                        }}</label>
-                                    </div>
-                                </template>
-
-                            </template>
-                        </Filter>
+            <v-btn @click="submit" style="width:10px;height: 100%;">
+                <v-icon style="font-size: 2em">mdi-magnify</v-icon>
+            </v-btn>
 
 
-                        <Filter :style="!$page.props.auth ? 'grid-column: 2 / 3':''">
-                            <template v-slot:button_name>Select Ingredients</template>
-                            <template v-slot:filter_slot>
-                                <template v-for="ingredient in ingredients">
-                                    <div class="dropdown-item" onclick="event.stopPropagation()">
-                                        <input class="input-cat" v-model="form.ingredients" type="checkbox" :value="ingredient.id"
-                                               :id="ingredient.name"> <label class="dr-lb" :for="ingredient.name">{{
-                                            ingredient.name
-                                        }}</label>
-                                    </div>
-                                </template>
-                            </template>
-                        </Filter>
+        </div>
+        <div style="justify-self: end;display:grid;grid-auto-flow:column;gap:10px;">
+            <v-btn style="width:fit-content;font-size:1.25rem;justify-self:end;" @click="dialog = !dialog" color="black"
+                   append-icon="mdi-filter">Filter
+            </v-btn>
+            <v-btn @click="reset">
+                <v-icon style="font-size: 2em">mdi-refresh</v-icon>
+            </v-btn>
+        </div>
 
-                        <div class="for-fav" v-if="$page.props.auth">
+        <v-row justify="center">
+            <v-dialog
+                v-model="dialog"
+                width="fit-content"
+            >
 
-                            <v-checkbox-btn v-model="form.favorites" label="Favorite"></v-checkbox-btn>
-                        </div>
-                        <div class="rating" :style="!$page.props.auth ? 'grid-column: 1 / -1;grid-row:3;':''">
-                            Rating:
-                            <v-checkbox v-model="form.ratings" label="1-2" value="1"></v-checkbox>
-                            <v-checkbox v-model="form.ratings" label="2-3" value="2"></v-checkbox>
-                            <v-checkbox v-model="form.ratings" label="3-4" value="3"></v-checkbox>
-                            <v-checkbox v-model="form.ratings" label="4-5" value="4"></v-checkbox>
-                            <v-checkbox v-model="form.ratings" label="5" value="5"></v-checkbox>
-                        </div>
-                        <div class="order" :style="!$page.props.auth ? 'grid-column: 1 / -1;grid-row:2;':''">
-                            Rating Order:
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="order" id="asc" value="asc" v-model="form.order">
-                                <label class="form-check-label" for="asc"> <!--Rating-->
-                                    <v-icon>mdi-sort-ascending</v-icon>
-                                </label>
+                <v-card style="border-radius:15px;min-height:400px;">
+                    <form @submit.prevent="submit" class="filter-form">
+                        <div class="pickers">
+                            <v-container fluid style="padding:0 !important;">
+                                <v-row>
+                                    <v-col cols="12" style="padding:15px 12px 0 12px !important;">
+                                        <v-select
+                                            id="ingredients"
+                                            v-model="form.categories"
+                                            :items="categories"
+                                            item-title="name"
+                                            item-value="id"
+                                            label="Select categories"
+                                            multiple=true
+                                            chips=true
+                                            closable-chips
+                                            clearable=true
+
+                                        >
+
+                                        </v-select>
+                                    </v-col>
+                                </v-row>
+                            </v-container>
+
+                            <v-container fluid style="padding:0 !important;">
+                                <v-row>
+                                    <v-col cols="12" style="padding:15px 12px 0 12px !important;">
+                                        <v-select
+                                            id="ingredients"
+                                            v-model="form.collections"
+                                            :items="collections"
+                                            item-title="name"
+                                            item-value="id"
+                                            label="Select collections"
+                                            multiple=true
+                                            chips=true
+                                            closable-chips
+                                            clearable=true
+
+                                        >
+
+                                        </v-select>
+                                    </v-col>
+                                </v-row>
+                            </v-container>
+
+
+                            <v-container fluid style="padding:0 !important;">
+                                <v-row>
+                                    <v-col cols="12" style="padding:15px 12px 0 12px !important;">
+                                        <v-select
+                                            id="ingredients"
+                                            v-model="form.ingredients"
+                                            :items="ingredients"
+                                            item-title="name"
+                                            item-value="id"
+                                            label="Select ingredients"
+                                            multiple=true
+                                            chips=true
+                                            closable-chips
+                                            clearable=true
+
+                                        >
+
+                                        </v-select>
+                                    </v-col>
+                                </v-row>
+                            </v-container>
+
+                            <div class="for-fav" v-if="$page.props.auth">
+                                <v-checkbox-btn v-model="form.favorites" label="Favorite"></v-checkbox-btn>
                             </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="order" id="desc" value="desc"
-                                       v-model="form.order">
-                                <label class="form-check-label" for="desc">
-
-<!--                                    Rating-->
-                                    <v-icon>mdi-sort-descending</v-icon>
-                                </label>
+                            <div class="rating">
+                                Rating:
+                                <v-checkbox v-model="form.ratings" label="1+" value="1"></v-checkbox>
+                                <v-checkbox v-model="form.ratings" label="2+" value="2"></v-checkbox>
+                                <v-checkbox v-model="form.ratings" label="3+" value="3"></v-checkbox>
+                                <v-checkbox v-model="form.ratings" label="4+" value="4"></v-checkbox>
+                                <v-checkbox v-model="form.ratings" label="5" value="5"></v-checkbox>
                             </div>
+                            <div class="order">
+                                Rating Order:
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="order" id="asc" value="asc"
+                                           v-model="form.order">
+                                    <label class="form-check-label" for="asc"> <!--Rating-->
+                                        <v-icon>mdi-sort-ascending</v-icon>
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="order" id="desc" value="desc"
+                                           v-model="form.order">
+                                    <label class="form-check-label" for="desc">
+
+                                        <!--                                    Rating-->
+                                        <v-icon>mdi-sort-descending</v-icon>
+                                    </label>
+                                </div>
+                            </div>
+
                         </div>
-                        <div class="search" :style="!$page.props.auth ? 'grid-column: 1 / -1;':''">
-
-                            <input placeholder="Search recipes" v-model="form.search" type="search" name="search" id="search"
-                                   class="form-input form-control">
-
-
+                        <div class="filter-buttons">
+                            <v-btn type="submit" name="submit" class="fr" color="blue" append-icon="mdi-filter">Filter
+                            </v-btn>
                         </div>
-                    </div>
-                    <div class="filter-buttons">
-                        <v-btn type="submit" name="submit" class="fr" color="blue" append-icon="mdi-filter">Filter Recipes </v-btn>
-                        <v-btn @click="reset" name="reset" class="fr" color="red" append-icon="mdi-refresh">Reset Filters</v-btn>
-                    </div>
 
 
-                </form>
-            </v-card>
-        </v-dialog>
-    </v-row>
+                    </form>
+                </v-card>
+            </v-dialog>
+        </v-row>
     </div>
 </template>
 
 <style scoped>
-.v-dialog >>> .v-card{
-    display:grid !important;
+
+.v-dialog >>> .v-card {
+    display: grid !important;
 }
-.v-dialog >>> .v-card__underlay{
-    display:none;
+
+.v-dialog >>> .v-card__underlay {
+    display: none;
 }
+
 .filter-form {
     display: grid;
     padding: 2em 2em;
@@ -180,13 +250,12 @@ export default {
 
 .pickers {
     display: grid;
-    grid-template-columns: repeat(3,1fr);
-
     justify-self: center;
     place-items: center;
-    padding: 0 2em 1.5em 2em;
+    padding: 0 0 1.5em 0;
+    grid-auto-rows: min-content;
+    gap: 2em;
 
-    row-gap: 3em;
 }
 
 
@@ -195,11 +264,10 @@ export default {
     display: grid;
     grid-auto-flow: column;
     gap: 1em;
-    align-self:end;
+    align-self: end;
 }
 
 .for-fav {
-
     display: grid;
     place-items: center;
 }
@@ -211,7 +279,7 @@ export default {
 }
 
 .rating {
-    grid-column: 2/-1;
+
     display: flex;
     gap: 5px;
     align-items: center;
@@ -223,11 +291,7 @@ export default {
     background-color: var(--bs-btn-active-bg);
     border-color: var(--bs-btn-active-border-color);
 }
-.search{
-    grid-column: 1/-1;
-    width: 100%;
-    justify-self: end;
-}
+
 input#search {
     font-size: 1.2em;
 }
@@ -245,11 +309,17 @@ button.fr {
     display: flex;
     gap: 25px;
     font-size: 20px;
-    grid-column: 1/-1;
+
 }
 
 .v-checkbox >>> .v-input__details {
     display: none !important;
+}
+
+.v-container >>> .v-field__input {
+    max-width: 400px;
+
+
 }
 
 </style>

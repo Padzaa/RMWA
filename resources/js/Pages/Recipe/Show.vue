@@ -81,6 +81,8 @@
                                                         multiple="true"
                                                         clearable="true"
                                                         required
+                                                        chips="true"
+                                                        closable-chips="true"
                                                     ></v-select>
                                                 </v-col>
                                             </v-row>

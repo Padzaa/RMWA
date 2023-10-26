@@ -43,6 +43,8 @@
                                     item-value="id"
                                     label="Select ingredients"
                                     multiple="true"
+                                    chips="true"
+                                    closable-chips="true"
                                     clearable="true"
 
                                 ></v-select>
@@ -68,6 +70,8 @@
                                     item-value="id"
                                     label="Select categories"
                                     multiple="true"
+                                    chips="true"
+                                    closable-chips="true"
                                     clearable="true"
                                 ></v-select>
                             </v-col>
