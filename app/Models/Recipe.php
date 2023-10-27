@@ -100,26 +100,29 @@ class Recipe extends Model
     public function scopeFilter($query, $request)
     {
         $filters = $request->query();
-
+        $order = $request->order !== null ? explode('-',$request->order) : ['created_at', 'desc'];
+        $orderColumn = $order[0];
+        $orderDirection = $order[1];
         $query->when($request->search, function ($query, $search) {
             $query->where(function ($query) use ($search) {
                 $query->orWhere('description', 'like', '%' . $search . '%')
                     ->orWhere('title', 'like', '%' . $search . '%')
                     ->orWhere('instructions', 'like', '%' . $search . '%');
             });
-        })->when($request->ratings, function ($query, $ratings) use ($request) {
-
+        })->when($request->ratings, function ($query, $ratings) use ($orderColumn, $orderDirection) {
             $query->select('recipes.*', \DB::raw('ROUND(AVG(reviews.rating),2) as average_rating'), \DB::raw('COUNT(reviews.id) as review_count'))
                 ->leftJoin('reviews', 'reviews.recipe_id', '=', 'recipes.id')
                 ->groupBy('recipes.id')
                 ->havingRaw('FLOOR(AVG(reviews.rating)) IN (' . implode(',', $ratings) . ')')
-                ->orderBy('average_rating', $request->order ? $request->order : 'desc');
+                ->orderBy($orderColumn, $orderDirection);
 
-        })->when($request->ratings == null, function ($query) use ($request) {
+        })->when($request->ratings == null, function ($query) use ($orderColumn, $orderDirection) {
+
+
             $query->select('recipes.*', \DB::raw('ROUND(AVG(reviews.rating),2) as average_rating'), \DB::raw('COUNT(reviews.id) as review_count'))
                 ->leftJoin('reviews', 'reviews.recipe_id', '=', 'recipes.id')
                 ->groupBy('recipes.id')
-                ->orderBy('average_rating', $request->order ? $request->order : 'desc');
+                ->orderBy($orderColumn, $orderDirection);
 
         })->when($request->ingredients, function ($query, $ingredients) {
             $query->whereHas('ingredients', function ($query) use ($ingredients) {

@@ -53,11 +53,29 @@ export default {
                 ingredients: [],
                 favorites: this.filters.favorites ? JSON.parse(this.filters.favorites) : null,
                 ratings: this.filters.ratings ? this.filters.ratings : [],
-                order: this.filters.order ? this.filters.order : 'desc',
+                order: this.filters.order ? this.filters.order : null,
                 search: this.filters.search ? this.filters.search : '',
                 collections: [],
             },
             dialog: false,
+            order:[
+                {
+                    name: "Created At Desc",
+                    value: "created_at-desc"
+                },
+                 {
+                    name: "Created At Asc",
+                    value: "created_at-asc"
+                },
+                {
+                    name: "Rating Desc",
+                    value: "average_rating-desc"
+                },
+                {
+                    name: "Rating Asc",
+                    value: "average_rating-asc"
+                },
+            ]
 
         }
     },
@@ -186,6 +204,20 @@ export default {
                                 </v-row>
                             </v-container>
 
+                            <v-container fluid style="padding:0 !important;">
+                                <v-row>
+                                    <v-col cols="12" style="padding:15px 12px 0 12px !important;">
+                                        <v-select
+                                            id="order"
+                                            v-model="form.order"
+                                            :items="order"
+                                            item-title="name"
+                                            item-value="value"
+                                            label="Order by">
+                                        </v-select>
+                                    </v-col>
+                                </v-row>
+                            </v-container>
                             <div class="for-fav" v-if="$page.props.auth">
                                 <v-checkbox-btn v-model="form.favorites" label="Favorite"></v-checkbox-btn>
                             </div>
@@ -197,25 +229,9 @@ export default {
                                 <v-checkbox v-model="form.ratings" label="4+" value="4"></v-checkbox>
                                 <v-checkbox v-model="form.ratings" label="5" value="5"></v-checkbox>
                             </div>
-                            <div class="order">
-                                Rating Order:
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="order" id="asc" value="asc"
-                                           v-model="form.order">
-                                    <label class="form-check-label" for="asc"> <!--Rating-->
-                                        <v-icon>mdi-sort-ascending</v-icon>
-                                    </label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="order" id="desc" value="desc"
-                                           v-model="form.order">
-                                    <label class="form-check-label" for="desc">
 
-                                        <!--                                    Rating-->
-                                        <v-icon>mdi-sort-descending</v-icon>
-                                    </label>
-                                </div>
-                            </div>
+
+
 
                         </div>
                         <div class="filter-buttons">
@@ -305,12 +321,7 @@ button.fr {
     font-size: 1.1em;
 }
 
-.order {
-    display: flex;
-    gap: 25px;
-    font-size: 20px;
 
-}
 
 .v-checkbox >>> .v-input__details {
     display: none !important;

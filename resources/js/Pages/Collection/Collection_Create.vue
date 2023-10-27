@@ -56,10 +56,10 @@ export default {
                                 item-title="title"
                                 item-value="id"
                                 label="Select recipes"
-                                multiple="true"
-                                clearable="true"
-                                chips="true"
-                                closable-chips="true"
+                                multiple
+                                chips
+                                closable-chips
+                                clearable
                             ></v-select>
                         </v-col>
                     </v-row>

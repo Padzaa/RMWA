@@ -1,33 +1,33 @@
 <script>
+import {Inertia} from "@inertiajs/inertia";
+
 export default {
     props: {
         recipes: Object,
+    },
+    data() {
+        return {
+            page: parseInt(new URLSearchParams(this.$page.url).get('page')) || 1
+        }
+    },
+    methods: {
+        changePage() {
+            Inertia.get('/recipe?page=' + this.page);
+        }
+    },
+    mounted() {
+        console.log(this.page);
     }
 }
 </script>
 
 <template>
-    <div id="paginator">
-        <p>Recipes from {{ recipes.from ? recipes.from : 0 }} to {{ recipes.to ? recipes.to : 0 }} of total {{
-                recipes.total
-            }}</p>
-        Page:
-        <template v-for="(link,index) in recipes.links">
-
-            <Link v-if="index !== 0 && index !== (recipes.links.length - 1)"
-                  :style="{
-                      'font-weight' : link.active ? 'bold' : 400,
-                      'color' : link.active ? 'red' : 'inherit'
-                      }"
-                  :href="link.url"
-
-            >
-
-                {{ link.label }}
-            </Link>
-
-        </template>
-    </div>
+    <v-pagination
+        v-model="page"
+        :length="recipes.links.length - 2"
+        :total-visible="5"
+        @click="changePage"
+    ></v-pagination>
 </template>
 
 <style scoped>
@@ -41,7 +41,7 @@ export default {
 p {
     font-style: italic;
 
-    color: gray;
+    color: grey;
     text-align: center;
     margin-bottom: 0;
 }

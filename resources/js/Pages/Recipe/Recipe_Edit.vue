@@ -42,10 +42,10 @@
                                     item-title="name"
                                     item-value="id"
                                     label="Select ingredients"
-                                    multiple="true"
-                                    chips="true"
-                                    closable-chips="true"
-                                    clearable="true"
+                                    multiple
+                                    chips
+                                    closable-chips
+                                    clearable
 
                                 ></v-select>
                             </v-col>
@@ -69,10 +69,10 @@
                                     item-title="name"
                                     item-value="id"
                                     label="Select categories"
-                                    multiple="true"
-                                    chips="true"
-                                    closable-chips="true"
-                                    clearable="true"
+                                    multiple
+                                    chips
+                                    closable-chips
+                                    clearable
                                 ></v-select>
                             </v-col>
                         </v-row>

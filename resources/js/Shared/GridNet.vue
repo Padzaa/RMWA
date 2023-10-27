@@ -79,7 +79,7 @@ export default {
                     <Link
                         :href="'/recipe/' + recipe.id"
                         method="GET">
-                        <img src="../../../public/show.svg" alt="show">
+                        <img src="../../../public/show.svg" alt="edit">
                     </Link>
                     <Link v-if="auth ? auth.user.id == recipe.user_id : false"
                           :href="'/recipe/' + recipe.id + '/edit'"

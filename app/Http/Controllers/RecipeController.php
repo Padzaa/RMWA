@@ -27,6 +27,7 @@ class RecipeController extends Controller
     {
 
 
+
         $filteredRecipes = Recipe::forUser()
             ->Filter($request)
             ->paginate(10);

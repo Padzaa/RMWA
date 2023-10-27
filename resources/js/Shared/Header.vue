@@ -26,7 +26,6 @@
                         <Link @click="opener = !opener" style="display:grid;"
                               :href="'/user/'+ this.$page.props.auth.user.id +'/edit'">
                             <v-list-item value="user" class="side-user"
-                                         :class="$props.pageUrl == '/user/'+ this.$page.props.auth.user.id +'/edit' ? 'v-list-item--active' : ''"
                                          style="padding: 15px 0 15px 1em;"
                                          :prepend-avatar="pic"
 
@@ -49,70 +48,30 @@
 
 
                     <v-divider style="color:white;;margin: 0;"></v-divider>
+                    <v-expansion-panels style="border-radius: 0" variant="accordion" v-model="active">
+                        <v-expansion-panel style="background-color: #494949;border-radius:0;"
+                                           v-for="panel in panels"
+                                           :title="panel.section"
+                        >
 
-                    <v-list class="side-list" density="compact" nav>
+                            <v-expansion-panel-text v-for="item in panel.items"
+                            >
+                                <v-btn style="background-color: #838383;font-size:1rem;border-radius: 0;"
+                                       @click="opener = !opener"
+                                       :class=
+                                           "[
+                                           (item.link.includes('/create') || item.link.includes('/edit')) && this.$page.url.includes(item.link) ? 'active' :  '' ,
+                                           this.$page.url.includes(item.link) && !(this.$page.url.includes('/create') || this.$page.url.includes('/edit')) ? 'active' : '' ,
+                                            ]"
+                                       class="text-white"
+                                       :prepend-icon="item.icon" :href="item.link">{{ item.title }}
+                                </v-btn>
+                            </v-expansion-panel-text>
 
+                        </v-expansion-panel>
 
-                        <Link @click="opener = !opener" class="link" href="/">
-                            <v-list-item value="1" prepend-icon="mdi-home"
-                                         :class="$props.pageUrl== '/' ? 'v-list-item--active' : ''">Home
-                            </v-list-item>
-                        </Link>
+                    </v-expansion-panels>
 
-
-                        <Link @click="opener = !opener" class="link" href="/recipe">
-                            <v-list-item value="2" prepend-icon="mdi-book-open-variant"
-                                         :class="$props.pageUrl.includes('/recipe') && this.$page.component == 'Recipe/All' ? 'v-list-item--active' : ''">
-                                Recipes
-                            </v-list-item>
-                        </Link>
-
-
-                        <Link @click="opener = !opener" class="link" href="/collection">
-                            <v-list-item value="3" prepend-icon="mdi-bag-personal"
-                                         :class="$props.pageUrl.includes('/collection') ? 'v-list-item--active' : ''">
-                                Collections
-                            </v-list-item>
-                        </Link>
-
-
-                        <Link @click="opener = !opener" class="link" href="/favorites">
-                            <v-list-item value="4" prepend-icon="mdi-heart"
-                                         :class="$props.pageUrl == '/favorites' ? 'v-list-item--active' : ''">
-                                Favorites
-                            </v-list-item>
-                        </Link>
-
-
-                        <Link @click="opener = !opener" class="link" href="/public">
-                            <v-list-item value="5" prepend-icon="mdi-earth"
-                                         :class="$props.pageUrl.includes('/public') ? 'v-list-item--active' : ''">Public
-                            </v-list-item>
-                        </Link>
-
-                        <Link @click="opener = !opener" class="link" href="/review">
-                            <v-list-item value="6" prepend-icon="mdi-star"
-                                         :class="$props.pageUrl == '/review' ? 'v-list-item--active' : ''">
-                                Reviews
-                            </v-list-item>
-                        </Link>
-
-                        <Link @click="opener = !opener" class="link" href="/follow">
-                            <v-list-item value="6" prepend-icon="mdi-account-group"
-                                         :class="$props.pageUrl == '/follow' ? 'v-list-item--active' : ''">
-                                Follow
-                            </v-list-item>
-                        </Link>
-
-                        <Link @click="opener = !opener" class="link" href="/recipe/create">
-                            <v-list-item value="7" prepend-icon="mdi-receipt-text-plus-outline"
-                                         :class="$props.pageUrl == '/recipe/create' ? 'v-list-item--active' : ''">
-                                Create Recipe
-                            </v-list-item>
-                        </Link>
-
-
-                    </v-list>
                 </v-navigation-drawer>
             </v-app>
 
@@ -144,12 +103,130 @@ export default {
         return {
             pic: this.$page.props.auth && this.$page.props.auth.user.picture ? this.$page.props.auth.user.picture : "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_640.png",
             opener: false,
+            panels: [
+                {
+                    section: "Recipes",
+                    items: [
+                        {
+                            link: "/recipe/create",
+                            title: "Create new recipe",
+                            icon: "mdi-plus-box"
+                        },
+                        {
+                            link: "/recipe",
+                            title: "List of all recipes",
+                            icon: "mdi-book-open-variant"
+                        },
+                        {
+                            link: "/favorites",
+                            title: "My favorites",
+                            icon: "mdi-heart"
+                        },
+                        {
+                            link: "/like",
+                            title: "Liked Recipes",
+                            icon: "mdi-thumb-up"
+                        },
+                        {
+                            link: "/shared",
+                            title: "Shared recipes",
+                            icon: "mdi-share"
+                        },
+                        {
+                            link: "/sharedwithme",
+                            title: "Recipes shared with me",
+                            icon: "mdi-reply"
+                        }
+                    ],
+                    value:0,
+
+                },
+                {
+                    section: "Collections",
+                    items: [
+                        {
+                            link: "/collection/create",
+                            title: "Create new collection",
+                            icon: "mdi-plus-box"
+                        },
+                        {
+                            link: "/collection",
+                            title: "My collections",
+                            icon: "mdi-bag-personal"
+                        }
+                    ],
+                    value:1,
+
+                },
+                {
+                    section: "User",
+                    items: [
+                        {
+                            link: `/user/${this.$page.props.auth?.user.id}/edit`,
+                            title: "My profile",
+                            icon: "mdi-account"
+                        },
+                        {
+                            link: "/follow",
+                            title: "Followers/Following",
+                            icon: "mdi-account-multiple"
+                        },
+                        {
+                            link: "/review",
+                            title: "My reviews",
+                            icon: "mdi-star"
+                        },
+
+                    ],
+                    value:2,
+                },
+                {
+                    section: "Public",
+                    items: [
+                        {
+                            link: "/public",
+                            title: "Public recipes",
+                            icon: "mdi-earth"
+                        }
+                    ],
+                    value:3,
+                }
+            ],
+            active: 5,
+
         }
     }, watch: {
         "$page.url": function () {
             this.opener = false;
+            this.active = this.setItemAndPanelActive();
         }
     },
+    mounted() {
+        this.active = this.setItemAndPanelActive();
+    },
+
+    methods: {
+        /**
+         * Loop through panels and panel items to check if any item is a link to the current page and makes it active,
+         * so the panel will be expanded when menu is opened
+         */
+        setItemAndPanelActive() {
+            let url = this.$page.url;
+            let value;
+            this.panels.forEach(function (panel,i){
+
+                panel.items.forEach(function (item){
+                  if ((item.link.includes('/create') || item.link.includes('/edit')) && url.includes(item.link)){
+                      value = i;
+                  }
+                  if(url.includes(item.link) && !(url.includes('/create') || url.includes('/edit'))){
+                      value = i;
+                  }
+                })
+            });
+            return value;
+        }
+    }
 
 
 }
@@ -292,6 +369,7 @@ h2 {
 .active {
     font-weight: bold;
     color: #03d1f5 !important;
+    background-color: #4f4949 !important;
 
 }
 
@@ -333,4 +411,28 @@ h2 {
 .v-list-item >>> .v-list-item__spacer {
     width: 10px !important;
 }
+
+.v-expansion-panel >>> .v-expansion-panel-text__wrapper {
+    padding: 0;
+    width: 100%;
+    height: fit-content;
+
+}
+
+.v-expansion-panel >>> .v-btn {
+    width: 100%;
+    height: 60px;
+}
+
+.v-expansion-panel >>> .v-expansion-panel-title {
+    font-size: 1.25rem;
+    height: 70px;
+    color: white;
+    font-weight: 550;
+}
+
+.v-expansion-panel >>> .v-btn:hover {
+    background-color: rgba(12, 48, 58, 0.2) !important;
+}
+
 </style>
