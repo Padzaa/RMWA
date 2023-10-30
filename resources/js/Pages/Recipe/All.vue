@@ -3,16 +3,17 @@
     <Head>
         <title>{{title}}</title>
     </Head>
-    <Filtering :recipes="recipes"
-               :categories="categories"
-               :ingredients="ingredients"
-               :filters="filtersData"
-               :collections="collections"/>
 
-    <GridNet :recipes="recipes.data"
-             :auth="this.$attrs.auth"/>
-    
-    <Paginator :recipes="recipes"/>
+        <Filtering :recipes="recipes"
+                   :categories="categories"
+                   :ingredients="ingredients"
+                   :filters="filtersData"
+                   :collections="collections"/>
+
+        <GridNet :recipes="recipes.data"
+                 :auth="this.$attrs.auth"/>
+
+        <Paginator :recipes="recipes"/>
 
 </template>
 
@@ -46,4 +47,5 @@ export default {
 }
 </script>
 <style scoped>
+
 </style>

@@ -15,13 +15,15 @@ export default {
          * Change the page of the recipe pagination.
          */
         changePage() {
-            Inertia.get(this.recipes.path+'?page=' + this.page);
+            Inertia.get(this.recipes.path + '?page=' + this.page);
         }
     },
 }
 </script>
 
 <template>
+
+    <p v-if="recipes.data.length == 0" class="text-center">0 records found</p>
     <!-- :length = "recipes.links.length - 2" (-2 is because the length of the links also contains links for previous and next page) -->
     <v-pagination
         v-model="page"
@@ -29,6 +31,8 @@ export default {
         :total-visible="5"
         @click="changePage"
     ></v-pagination>
+
+
 </template>
 
 <style scoped>
@@ -45,5 +49,9 @@ p {
     color: grey;
     text-align: center;
     margin-bottom: 0;
+}
+
+.v-pagination >>> .v-pagination__list {
+    padding-left: 0;
 }
 </style>

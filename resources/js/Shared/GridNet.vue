@@ -50,9 +50,8 @@ export default {
 </script>
 
 <template>
-    <p v-if="recipes.length == 0 && this.$page.component !== 'Recipe/All'" class="records text-center">0 records
-        found</p>
-    <div class="grid-net">
+
+    <div class="grid-net" v-if="recipes.length > 0">
 
         <Card v-for="(recipe,index) in recipes">
             <template v-slot:title1>

@@ -38,10 +38,10 @@ export default {
             this.submit();
         },
         /**
-         * Checks if the search field is empty and submits the form if it is.
+         * Checks if the search field is empty or if Enter is pressed and submits the form if it is.
          */
-        ifSearchEmpty() {
-            if (this.form.search === "") {
+        ifSearchEmpty(e) {
+            if (this.form.search === "" || e.key === "Enter") {
                 this.submit();
             }
         }
@@ -113,7 +113,7 @@ export default {
                    id="search"
                    class="form-input form-control">
 
-            <v-btn @click="submit" style="width:10px;height: 100%;">
+            <v-btn @click="submit" style="width:10px;height: 100%;" type="submit">
                 <v-icon style="font-size: 2em">mdi-magnify</v-icon>
             </v-btn>
 

@@ -20,6 +20,7 @@ export default {
                 <img src="../../../../public/plus.svg" alt="">
             </Link>
         </div>
+        <p class="records text-center" v-if="collections.length === 0">No collections found.</p>
         <template v-for="collection in collections">
             <div class="single-collection">
                 <div class="info">
@@ -124,5 +125,11 @@ h2 {
     overflow: hidden;
     text-overflow: ellipsis !important;
     white-space: nowrap;
+}
+.records{
+    font-size: 1.65rem;
+    color: grey;
+    font-style: italic;
+    grid-column: 1/-1;
 }
 </style>
