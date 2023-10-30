@@ -68,7 +68,7 @@ export default {
                     icon: "mdi-thumb-up"
                 },
                 {
-                    link: "/shared",
+                    link: "/myshared",
                     title: "Shared recipes",
                     icon: "mdi-share"
                 },

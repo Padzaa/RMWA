@@ -7,21 +7,22 @@ export default {
     },
     data() {
         return {
-            page: parseInt(new URLSearchParams(this.$page.url).get('page')) || 1
+            page: this.recipes.current_page
         }
     },
     methods: {
+        /**
+         * Change the page of the recipe pagination.
+         */
         changePage() {
-            Inertia.get('/recipe?page=' + this.page);
+            Inertia.get(this.recipes.path+'?page=' + this.page);
         }
     },
-    mounted() {
-        console.log(this.page);
-    }
 }
 </script>
 
 <template>
+    <!-- :length = "recipes.links.length - 2" (-2 is because the length of the links also contains links for previous and next page) -->
     <v-pagination
         v-model="page"
         :length="recipes.links.length - 2"

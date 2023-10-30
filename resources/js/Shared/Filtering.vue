@@ -31,7 +31,7 @@ export default {
                 ingredients: [],
                 favorites: null,
                 ratings: [],
-                order: 'desc',
+                order: '',
                 search: '',
                 collections: [],
             };

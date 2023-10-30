@@ -30,39 +30,39 @@ use App\Http\Controllers\CollectionController;
 /*--------------------------ONLY ACCESSABLE WHEN USER LOGGED IN--------------------------*/
 /*---------------------------------------------------------------------------------------*/
 Route::middleware(['auth'])->group(function () {
-//Home page
+    //Home page
     Route::get('/', function () {
         return Inertia::render('Welcome');
     })->name('welcome');
-//Resource routes
+    //Resource routes
     Route::resource('/recipe', RecipeController::class);
-
     Route::resource('/user', UserController::class);
     Route::resource('/review', ReviewController::class);
     Route::resource('/collection', CollectionController::class);
     Route::resource('/follow', FollowController::class);
     Route::resource('/like', LikeController::class);
     Route::resource('/shared', SharedRecipeController::class);
-//Rate routes
+    //Routes for rating the recipe
     Route::put('/recipe/{recipe}/rate', [RecipeController::class, 'rate'])->name('rate');
     Route::put('/recipe/{recipe}/rate', [RecipeController::class, 'rate'])->name('rate');
     Route::get('/recipe/{recipe}/rate', function () {
         return Inertia::location("/recipe/");
     });
-//Share routes
+    //Routes for sharing the recipe
     Route::put('/recipe/{recipe}/share', [RecipeController::class, 'share'])->name('share');
     Route::get('/sharedwithme', [SharedRecipeController::class, 'sharedWithMe'])->name('sharedwithme');
-//Favorites routes
+    Route::get('/myshared', [SharedRecipeController::class, 'myShared'])->name('myshared');
+    //Routes for placing the recipe in favorites
     Route::get('/favorites', [RecipeController::class, 'favorites'])->name('favorites');
     Route::put('/recipe/{recipe}/favorite', [RecipeController::class, 'favorite'])->name('favorite');
     Route::get('/recipe/{recipe}/favorite', function () {
         return Inertia::location("/recipe/");
     });
-    //Comment route
+    //Route for commenting on a recipe
     Route::put('/recipe/{recipe}/comment', [RecipeController::class, 'comment'])->name('comment');
-    //Follow route
+    //Route for following a user
     Route::put('/user/{user}/follow', [UserController::class, 'follow'])->name('follow');
-    //Like route
+    //Route for liking a recipe
     Route::put('/recipe/{recipe}/like', [RecipeController::class, 'like'])->name('like');
 
 });
@@ -74,5 +74,5 @@ Auth::routes();
 //Guest can access show route of this resource
 Route::resource('/recipe', RecipeController::class)->only("show");
 //Public page of the site, so mainly guest can access
-Route::get("/public", [RecipeController::class,"public"])->name("public");
+Route::get("/public", [RecipeController::class, "public"])->name("public");
 

@@ -26,8 +26,6 @@ class RecipeController extends Controller
     public function index(Request $request)
     {
 
-
-
         $filteredRecipes = Recipe::forUser()
             ->Filter($request)
             ->paginate(10);
@@ -201,9 +199,14 @@ class RecipeController extends Controller
 
         try {
             $this->authorize('delete', $recipe);
-            $recipe->ingredients()->detach();
-            $recipe->categories()->detach();
+            $collections = $recipe->collections()->withCount("recipes")->get();
+            foreach ($collections as $collection) {
+                if($collection->recipes_count == 1){
+                    $collection->delete();
+                }
+            }
             $recipe->delete();
+
             return redirect()->back();
         } catch (Exception $e) {
             session()->flash('alert', [
@@ -358,6 +361,7 @@ class RecipeController extends Controller
     {
         try {
             $this->authorize('view', $recipe);
+
             $recipe->likes()->where('user_id', Auth::user()->id)->count() ?
                 $recipe->likes()->detach(Auth::user()->id)
                 :
@@ -391,7 +395,7 @@ class RecipeController extends Controller
      */
     public function public(Request $request)
     {
-        $filteredRecipes = Recipe::query()->Public()->Filter($request)->paginate(10);
+        $filteredRecipes = Recipe::query()->Public()->Filter($request)->paginate(1);
 
         return Inertia::render('Recipe/All', [
             "title" => "Public Recipes",

@@ -48,7 +48,18 @@
 
 
                     <v-divider style="color:white;;margin: 0;"></v-divider>
+
                     <v-expansion-panels style="border-radius: 0" variant="accordion" v-model="active">
+
+                                <Link as="button" href="/"
+                                      style="background-color: #494949;font-size:1.25rem;border-radius: 0;height: 70px;width:100%;font-weight: 550;text-align: start;padding: 16px 24px;"
+                                      @click="opener = !opener"
+                                      :class="this.$page.url == '/' ? 'active' : ''"
+                                      class="text-white home-btn"
+                                     >Home
+                                </Link>
+
+
                         <v-expansion-panel style="background-color: #494949;border-radius:0;"
                                            v-for="panel in panels"
                                            :title="panel.section"
@@ -128,7 +139,7 @@ export default {
                             icon: "mdi-thumb-up"
                         },
                         {
-                            link: "/shared",
+                            link: "/myshared",
                             title: "Shared recipes",
                             icon: "mdi-share"
                         },
@@ -138,7 +149,7 @@ export default {
                             icon: "mdi-reply"
                         }
                     ],
-                    value:0,
+                    value: 0,
 
                 },
                 {
@@ -155,7 +166,7 @@ export default {
                             icon: "mdi-bag-personal"
                         }
                     ],
-                    value:1,
+                    value: 1,
 
                 },
                 {
@@ -178,7 +189,7 @@ export default {
                         },
 
                     ],
-                    value:2,
+                    value: 2,
                 },
                 {
                     section: "Public",
@@ -189,10 +200,10 @@ export default {
                             icon: "mdi-earth"
                         }
                     ],
-                    value:3,
+                    value: 3,
                 }
             ],
-            active: 5,
+            active: null,
 
         }
     }, watch: {
@@ -213,15 +224,15 @@ export default {
         setItemAndPanelActive() {
             let url = this.$page.url;
             let value;
-            this.panels.forEach(function (panel,i){
+            this.panels.forEach(function (panel, i) {
 
-                panel.items.forEach(function (item){
-                  if ((item.link.includes('/create') || item.link.includes('/edit')) && url.includes(item.link)){
-                      value = i;
-                  }
-                  if(url.includes(item.link) && !(url.includes('/create') || url.includes('/edit'))){
-                      value = i;
-                  }
+                panel.items.forEach(function (item) {
+                    if ((item.link.includes('/create') || item.link.includes('/edit')) && url.includes(item.link)) {
+                        value = i;
+                    }
+                    if (url.includes(item.link) && !(url.includes('/create') || url.includes('/edit'))) {
+                        value = i;
+                    }
                 })
             });
             return value;
@@ -369,7 +380,7 @@ h2 {
 .active {
     font-weight: bold;
     color: #03d1f5 !important;
-    background-color: #4f4949 !important;
+    background-color: rgba(42, 42, 42, 0.78) !important;
 
 }
 
@@ -430,8 +441,10 @@ h2 {
     color: white;
     font-weight: 550;
 }
-
-.v-expansion-panel >>> .v-btn:hover {
+.home-btn:hover{
+    background-color: rgba(249, 251, 252, 0.2) !important;
+}
+.v-expansion-panel >>> .v-btn:hover{
     background-color: rgba(12, 48, 58, 0.2) !important;
 }
 

@@ -100,7 +100,8 @@ class Recipe extends Model
     public function scopeFilter($query, $request)
     {
         $filters = $request->query();
-        $order = $request->order !== null ? explode('-',$request->order) : ['created_at', 'desc'];
+        $order = $request->order !== null ? explode('-',$request->order) : ['created_at','desc'];
+
         $orderColumn = $order[0];
         $orderDirection = $order[1];
         $query->when($request->search, function ($query, $search) {

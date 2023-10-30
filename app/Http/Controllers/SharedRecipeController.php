@@ -17,7 +17,26 @@ class SharedRecipeController extends Controller
      */
     public function index()
     {
+        //
+    }
 
+    /**
+     * Retrieve the recipes shared with the authenticated user.
+     */
+    public function sharedWithMe()
+    {
+        $recipes = Auth::user()->sharedWithMe()->paginate(10);
+        return Inertia::render('User/Shared_Recipes', [
+            'recipes' => $recipes,
+            'title' => "Recipes shared with me"
+        ]);
+    }
+
+    /**
+     * Retrieves the recipes belonging to the authenticated user that he shared.
+     */
+    public function myShared()
+    {
         $recipes = Recipe::where('user_id', Auth::user()->id)->whereExists(function ($query) {
             $query->select(DB::raw(1))
                 ->from('shared_recipes')
@@ -27,15 +46,6 @@ class SharedRecipeController extends Controller
         return Inertia::render('User/Shared_Recipes', [
             'recipes' => $recipes,
             'title' => "My Shared Recipes"
-        ]);
-    }
-
-    public function sharedWithMe()
-    {
-        $recipes = Auth::user()->sharedWithMe()->paginate(10);
-        return Inertia::render('User/Shared_Recipes', [
-            'recipes' => $recipes,
-            'title' => "Recipes shared with me"
         ]);
     }
 

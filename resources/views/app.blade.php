@@ -16,6 +16,9 @@
     @vite("resources/js/app.js")
 {{--    @vite("resources/css/global.css")--}}
     <style>
+        *{
+            font-family: Roboto, sans-serif !important;
+        }
         body{
             min-height: 100vh;
 
