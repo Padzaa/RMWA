@@ -16,7 +16,7 @@ class LikeController extends Controller
     public function index()
     {
         return Inertia::render('User/Likes', [
-            'likes' => Auth::user()->likes()->get(),
+            'likes' => Auth::user()->likes()->paginate(10),
         ]);
     }
 

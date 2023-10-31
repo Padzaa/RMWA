@@ -91,8 +91,8 @@
         <div class="menu">
             <Link v-if="this.$page.props.auth" as="button" @click="notificationOpener = !notificationOpener"
                   class="notification">
-                <v-icon v-if="notifications.length === 0" style="color:#bebebe;">mdi-message</v-icon>
-                <v-icon v-else="notifications.length > 0" style="color:white;">mdi-message-alert</v-icon>
+                <v-icon v-if="notifications.length === 0" style="color:#bebebe;">mdi-bell-outline</v-icon>
+                <v-icon v-else="notifications.length > 0" style="color:white;">mdi-bell-ring</v-icon>
             </Link>
             <v-app v-if="this.$page.props.auth" style="position:absolute;">
                 <!-- check to see if there is a better way to watch for notification :key-->
@@ -110,43 +110,69 @@
 
                     <div class="notifications">
                         <div style="display:grid;place-items: center"
-                        :style="notifications.length > 0 ? 'grid-template-columns: 4fr 1fr;' : 'grid-template-columns:1fr'">
+                        :style="notifications_length > 0 ? 'grid-template-columns: 4fr 1fr;' : 'grid-template-columns:1fr'">
                             <h3 class="text-white text-center m-3 fw-bold">Notifications
                             </h3>
                             <v-btn
-                                @click="markAsRead" v-if="notifications.length > 0" variant="flat" icon="mdi-delete"></v-btn>
+                                @click="markAsRead" v-if="notifications_length > 0" variant="flat" icon="mdi-delete"></v-btn>
                         </div>
                         <v-divider style="color:white;margin: 0;"></v-divider>
                         <div v-for="notification in notifications" class="notification-card">
-                            <p style="margin: 0;" v-if="notification.user_shared_to">
+
+                            <p class="notification-text" v-if="notification.type == 'Creation'">
                                 <b>
-                                    <Link class="text-white font-italic" :href="'/user/' + notification.recipe.user.id">
+                                    <Link class="text-white font-italic" :href="'/user/' + notification.user.id">
                                         {{
-                                            notification.recipe.user.firstname + " " + notification.recipe.user.lastname
+                                            notification.user.firstname + " " + notification.user.lastname
                                         }}
                                     </Link>
                                 </b>
-                                shared the recipe <b>
-                                <Link class="text-white font-italic" :href="'/recipe/'+notification.id">
-                                    {{ notification.title }}
-                                </Link>
-                            </b> with you.
-                            </p>
-                            <p style="margin: 0;" v-if="!notification.user_shared_to">
-                                <b>
-                                    <Link class="text-white font-italic" :href="'/user/'+notification.user_id">
-                                        {{ notification.user.firstname + " " + notification.user.lastname }}
-                                    </Link>
-                                </b>
-                                created a new recipe named <b>
+                                created a new public recipe <b>
                                 <Link class="text-white font-italic" :href="'/recipe/'+notification.id">
                                     {{ notification.title }}
                                 </Link>
                             </b>.
                             </p>
-
+                            <p class="notification-text" v-if="notification.type == 'Follow'">
+                                <b>
+                                    <Link class="text-white font-italic" :href="'/user/' + notification.id">
+                                        {{
+                                            notification.firstname + " " + notification.lastname
+                                        }}
+                                    </Link>
+                            </b> followed you.
+                            </p>
+                            <p class="notification-text" v-if="notification.type == 'Shared'">
+                                <b>
+                                    <Link class="text-white font-italic" :href="'/user/'+notification.recipe.user_id">
+                                        {{ notification.recipe.user.firstname + " " + notification.recipe.user.lastname }}
+                                    </Link>
+                                </b>
+                                shared a recipe <b>
+                                <Link class="text-white font-italic" :href="'/recipe/'+notification.id">
+                                    {{ notification.title }}
+                                </Link>
+                            </b> with you.
+                            </p>
+                            <p class="notification-text" v-if="notification.type == 'Like'">
+                                <b>
+                                    <Link class="text-white font-italic" :href="'/user/' + notification.user_id">
+                                        {{
+                                            notification.firstname + " " + notification.lastname
+                                        }}
+                                    </Link>
+                            </b> liked your recipe
+                                <b>
+                                    <Link class="text-white font-italic" :href="'/recipe/' + notification.recipe_id">
+                                        {{
+                                            notification.title
+                                        }}
+                                    </Link>
+                                </b>.
+                            </p>
 
                         </div>
+
                     </div>
 
                 </v-navigation-drawer>
@@ -184,6 +210,7 @@ export default {
             opener: false,
             notificationOpener: false,
             notifications: this.$page.props.notifications,
+            notifications_length : 0,
             panels: [
                 {
                     section: "Recipes",
@@ -286,6 +313,7 @@ export default {
     },
     mounted() {
         this.active = this.setItemAndPanelActive();
+        this.notifications_length = Object.keys(this.notifications).length;
     },
 
     methods: {
@@ -326,10 +354,12 @@ export default {
 <style scoped>
 .notification-card {
     background-color: #727272;
-
+    border-bottom:1px solid white;
     padding: 1em;
 }
-
+.notification-text {
+    margin: 0;
+}
 .opener {
     width: fit-content;
 

@@ -1,12 +1,14 @@
 <script>
 
 import GridNet from "../../Shared/GridNet.vue";
+import Paginator from "../../Shared/Paginator.vue";
 
 export default {
     props: {
         likes: Object
     },
     components: {
+        Paginator,
         GridNet,
     }
 }
@@ -19,7 +21,8 @@ export default {
     </Head>
     <div class="container">
         <h1 class="text-center">Liked recipes</h1>
-        <GridNet :recipes="likes" :auth="this.$attrs.auth"></GridNet>
+        <GridNet :recipes="likes.data" :auth="this.$attrs.auth"></GridNet>
+        <Paginator :recipes="likes"/>
     </div>
 
 

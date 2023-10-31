@@ -49,7 +49,7 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
     public function penultimateLogin(){
-        return $this->logins()->orderBy('created_at')->take(2)->first()->toSql();
+        return collect($this->logins()->orderBy('created_at',"desc")->limit(2)->get())->last()->updated_at;
     }
     /**
      * Retrieves the last login record for the user.
@@ -89,7 +89,7 @@ class User extends Authenticatable
      */
     public function sharedWithMe()
     {
-        return $this->belongsToMany(Recipe::class, 'shared_recipes', 'user_shared_to', 'recipe_id');
+        return $this->belongsToMany(Recipe::class, 'shared_recipes', 'user_shared_to', 'recipe_id')->withTimestamps();
     }
 
     /*
@@ -122,7 +122,7 @@ class User extends Authenticatable
      */
     public function follow()
     {
-        return $this->belongsToMany(User::class, 'follows', 'user_id', 'followed_user_id');
+        return $this->belongsToMany(User::class, 'follows', 'user_id', 'followed_user_id')->withTimestamps();
     }
 
     /*
@@ -130,7 +130,7 @@ class User extends Authenticatable
      */
     public function followed()
     {
-        return $this->belongsToMany(User::class, 'follows', 'followed_user_id', 'user_id');
+        return $this->belongsToMany(User::class, 'follows', 'followed_user_id', 'user_id')->withTimestamps();
     }
 
     /*
@@ -138,7 +138,7 @@ class User extends Authenticatable
      */
     public function likes()
     {
-        return $this->belongsToMany(Recipe::class, 'likes', 'user_id', 'recipe_id');
+        return $this->belongsToMany(Recipe::class, 'likes', 'user_id', 'recipe_id')->withTimestamps();
     }
 
 

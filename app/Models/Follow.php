@@ -8,4 +8,12 @@ use Illuminate\Database\Eloquent\Model;
 class Follow extends Model
 {
     use HasFactory;
+
+    public function user(){
+        return $this->belongsTo(User::class,'user_id');
+    }
+
+    public function followed(){
+        return $this->belongsTo(User::class,'followed_id');
+    }
 }

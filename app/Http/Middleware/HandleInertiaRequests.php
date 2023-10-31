@@ -3,6 +3,8 @@
 namespace App\Http\Middleware;
 
 use App\Models\Category;
+use App\Models\Follow;
+use App\Models\Like;
 use App\Models\Recipe;
 use App\Models\SharedRecipe;
 use Carbon\Carbon;
@@ -42,13 +44,30 @@ class HandleInertiaRequests extends Middleware
     public function share(Request $request): array
     {
         if(Auth::user()){
-            $penultimateLogin = collect(Auth::user()->logins()->orderBy('created_at',"desc")->limit(2)->get())->last()->updated_at;
+            $penultimateLogin = Auth::user()->penultimateLogin();
             $lastLogin= $penultimateLogin->format('Y-m-d H:i:s');
-
             $recipes = Recipe::where('created_at', ">=", $lastLogin)->where('is_public', true)->with("user")->get();
             $sharedRecipes = SharedRecipe::where('created_at', ">=", $lastLogin)->where('user_shared_to', Auth::user()->id)->with("recipe", "recipe.user")->get();
-            $notifications = collect($recipes->merge($sharedRecipes))->sortByDesc('created_at');
+            $newFollowers = Auth::user()->followed()->where('follows.created_at', ">=", $lastLogin)->get();
+            $likes = Like::join("recipes", "likes.recipe_id", "=", "recipes.id")
+                ->where('recipes.user_id',Auth::user()->id)
+                ->where("likes.created_at", ">=", $lastLogin)
+                ->select("recipes.title","recipes.id","recipes.user_id","likes.*","users.*")
+                ->join("users", "likes.user_id", "=", "users.id")->get();
 
+            foreach ($recipes as $recipe) {
+                $recipe->type = "Creation";
+            }
+            foreach ($sharedRecipes as $sharedRecipe) {
+                $sharedRecipe->type = "Shared";
+            }
+            foreach ($newFollowers as $newFollower) {
+                $newFollower->type = "Follow";
+            }
+            foreach ($likes as $like) {
+                $like->type = "Like";
+            }
+            $notifications = collect($recipes->merge($sharedRecipes)->merge($newFollowers)->merge($likes))->sortByDesc('created_at');
         }
 
 
