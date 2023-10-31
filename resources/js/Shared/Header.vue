@@ -51,13 +51,13 @@
 
                     <v-expansion-panels style="border-radius: 0" variant="accordion" v-model="active">
 
-                                <Link as="button" href="/"
-                                      style="background-color: #494949;font-size:1.25rem;border-radius: 0;height: 70px;width:100%;font-weight: 550;text-align: start;padding: 16px 24px;"
-                                      @click="opener = !opener"
-                                      :class="this.$page.url == '/' ? 'active' : ''"
-                                      class="text-white home-btn"
-                                     >Home
-                                </Link>
+                        <Link as="button" href="/"
+                              style="background-color: #494949;font-size:1.25rem;border-radius: 0;height: 70px;width:100%;font-weight: 550;text-align: start;padding: 16px 24px;"
+                              @click="opener = !opener"
+                              :class="this.$page.url == '/' ? 'active' : ''"
+                              class="text-white home-btn"
+                        >Home
+                        </Link>
 
 
                         <v-expansion-panel style="background-color: #494949;border-radius:0;"
@@ -88,6 +88,70 @@
 
 
         </div>
+        <div class="menu">
+            <Link v-if="this.$page.props.auth" as="button" @click="notificationOpener = !notificationOpener"
+                  class="notification">
+                <v-icon v-if="notifications.length === 0" style="color:#bebebe;">mdi-message</v-icon>
+                <v-icon v-else="notifications.length > 0" style="color:white;">mdi-message-alert</v-icon>
+            </Link>
+            <v-app v-if="this.$page.props.auth" style="position:absolute;">
+                <!-- check to see if there is a better way to watch for notification :key-->
+                <v-navigation-drawer :key="$props.pageUrl"
+                                     v-model="notificationOpener"
+                                     temporary=""
+                                     location="right"
+                                     style="top:0;width:320px;background-color: rgb(43,43,43);border: none;">
+                    <div class="space-notification">
+                        <Link as="button" @click="notificationOpener = !notificationOpener" class="opener">
+                            <img src="../../../public/close.svg" alt="menu">
+                        </Link>
+                    </div>
+                    <v-divider style="color:white;margin: 0;"></v-divider>
+
+                    <div class="notifications">
+                        <div style="display:grid;place-items: center"
+                        :style="notifications.length > 0 ? 'grid-template-columns: 4fr 1fr;' : 'grid-template-columns:1fr'">
+                            <h3 class="text-white text-center m-3 fw-bold">Notifications
+                            </h3>
+                            <v-btn
+                                @click="markAsRead" v-if="notifications.length > 0" variant="flat" icon="mdi-delete"></v-btn>
+                        </div>
+                        <v-divider style="color:white;margin: 0;"></v-divider>
+                        <div v-for="notification in notifications" class="notification-card">
+                            <p style="margin: 0;" v-if="notification.user_shared_to">
+                                <b>
+                                    <Link class="text-white font-italic" :href="'/user/' + notification.recipe.user.id">
+                                        {{
+                                            notification.recipe.user.firstname + " " + notification.recipe.user.lastname
+                                        }}
+                                    </Link>
+                                </b>
+                                shared the recipe <b>
+                                <Link class="text-white font-italic" :href="'/recipe/'+notification.id">
+                                    {{ notification.title }}
+                                </Link>
+                            </b> with you.
+                            </p>
+                            <p style="margin: 0;" v-if="!notification.user_shared_to">
+                                <b>
+                                    <Link class="text-white font-italic" :href="'/user/'+notification.user_id">
+                                        {{ notification.user.firstname + " " + notification.user.lastname }}
+                                    </Link>
+                                </b>
+                                created a new recipe named <b>
+                                <Link class="text-white font-italic" :href="'/recipe/'+notification.id">
+                                    {{ notification.title }}
+                                </Link>
+                            </b>.
+                            </p>
+
+
+                        </div>
+                    </div>
+
+                </v-navigation-drawer>
+            </v-app>
+        </div>
 
 
         <div v-if="!$page.props.auth" class="profile-section">
@@ -103,17 +167,23 @@
 <script>
 
 
+import {Inertia} from "@inertiajs/inertia";
+
 export default {
     name: "Header.vue",
     components: {},
     props: {
         title: String,
-        pageUrl: String
+        pageUrl: String,
+
+
     },
     data() {
         return {
             pic: this.$page.props.auth && this.$page.props.auth.user.picture ? this.$page.props.auth.user.picture : "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_640.png",
             opener: false,
+            notificationOpener: false,
+            notifications: this.$page.props.notifications,
             panels: [
                 {
                     section: "Recipes",
@@ -206,9 +276,11 @@ export default {
             active: null,
 
         }
-    }, watch: {
+    },
+    watch: {
         "$page.url": function () {
             this.opener = false;
+            this.notificationOpener = false;
             this.active = this.setItemAndPanelActive();
         }
     },
@@ -236,6 +308,14 @@ export default {
                 })
             });
             return value;
+        },
+        /**
+         * Marks the notifications as read.
+         *
+         * @return {void}
+         */
+        markAsRead() {
+            Inertia.put('/notifications');
         }
     }
 
@@ -244,9 +324,34 @@ export default {
 </script>
 
 <style scoped>
+.notification-card {
+    background-color: #727272;
+
+    padding: 1em;
+}
+
 .opener {
     width: fit-content;
 
+}
+
+.space-notification {
+    padding-right: 27.5px;
+    padding-left: 0;
+    height: 100px;
+    display: grid;
+    align-items: center;
+    justify-items: end;
+}
+
+.notification {
+    width: fit-content;
+    position: absolute;
+    right: 27.5px;
+}
+
+.notification >>> .v-icon {
+    font-size: 45px;
 }
 
 .space {
@@ -441,10 +546,12 @@ h2 {
     color: white;
     font-weight: 550;
 }
-.home-btn:hover{
+
+.home-btn:hover {
     background-color: rgba(249, 251, 252, 0.2) !important;
 }
-.v-expansion-panel >>> .v-btn:hover{
+
+.v-expansion-panel >>> .v-btn:hover {
     background-color: rgba(12, 48, 58, 0.2) !important;
 }
 

@@ -3,6 +3,10 @@
 namespace App\Http\Middleware;
 
 use App\Models\Category;
+use App\Models\Recipe;
+use App\Models\SharedRecipe;
+use Carbon\Carbon;
+use DateTime;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 use Illuminate\Support\Facades\Auth;
@@ -37,6 +41,17 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
+        if(Auth::user()){
+            $penultimateLogin = collect(Auth::user()->logins()->orderBy('created_at',"desc")->limit(2)->get())->last()->updated_at;
+            $lastLogin= $penultimateLogin->format('Y-m-d H:i:s');
+
+            $recipes = Recipe::where('created_at', ">=", $lastLogin)->where('is_public', true)->with("user")->get();
+            $sharedRecipes = SharedRecipe::where('created_at', ">=", $lastLogin)->where('user_shared_to', Auth::user()->id)->with("recipe", "recipe.user")->get();
+            $notifications = collect($recipes->merge($sharedRecipes))->sortByDesc('created_at');
+
+        }
+
+
 
         return array_merge(parent::share($request), [
 
@@ -52,7 +67,9 @@ class HandleInertiaRequests extends Middleware
 
             ] : null,
 
-            'alertFlash' => $request->session()->get('alert')
+            'alertFlash' => $request->session()->get('alert'),
+
+            'notifications' => $notifications ?? null,
         ]);
     }
 }

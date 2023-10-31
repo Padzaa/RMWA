@@ -64,7 +64,8 @@ Route::middleware(['auth'])->group(function () {
     Route::put('/user/{user}/follow', [UserController::class, 'follow'])->name('follow');
     //Route for liking a recipe
     Route::put('/recipe/{recipe}/like', [RecipeController::class, 'like'])->name('like');
-
+    //Mark every notification as read
+    Route::put('/notifications', [RecipeController::class, 'notifications'])->name('notifications');
 });
 /*---------------------------------------------------------------------------------------*/
 /*------------END OF (ONLY ACCESSABLE WHEN USER LOGGED IN) ROUTES------------------------*/

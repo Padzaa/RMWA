@@ -11,4 +11,13 @@ class SharedRecipe extends Model
 
     protected $fillable = ['user_who_shared', 'user_shared_to'];
 
+    /**
+     * Retrieves the related Recipe model for this instance.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo The relationship instance.
+     */
+    public function recipe()
+    {
+        return $this->belongsTo(Recipe::class);
+    }
 }

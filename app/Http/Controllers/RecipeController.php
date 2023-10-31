@@ -9,9 +9,12 @@ use App\Models\Ingredient;
 use App\Models\Recipe;
 use App\Models\Review;
 use App\Models\User;
+use App\Models\UserLogin;
+use Carbon\Carbon;
 use Dflydev\DotAccessData\Data;
 use Exception;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Validator;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
@@ -297,14 +300,10 @@ class RecipeController extends Controller
 
         try {
             $this->authorize('update', $recipe);
-            $request->request = $request->validate([
-                "users" => ['required', 'min:1'],
-            ], [
-                "users.required" => "Users are required!"]);
             $recipe->shared()->sync($request->users);
             session()->flash('alert', [
                 'title' => 'Success!',
-                'message' => 'Recipe shared successfully.',
+                'message' => 'Recipe shared list adjusted successfully.',
                 'type' => 'success'
             ]);
             return Inertia::location('/recipe/' . $recipe->id);
@@ -395,7 +394,7 @@ class RecipeController extends Controller
      */
     public function public(Request $request)
     {
-        $filteredRecipes = Recipe::query()->Public()->Filter($request)->paginate(1);
+        $filteredRecipes = Recipe::query()->Public()->Filter($request)->paginate(10);
 
         return Inertia::render('Recipe/All', [
             "title" => "Public Recipes",
@@ -408,4 +407,11 @@ class RecipeController extends Controller
         ]);
     }
 
+    public function notifications(){
+        $last = Auth::user()->logins()->orderBy('created_at',"desc")->limit(2)->get()->last();
+        $last = UserLogin::find($last->id);
+        $last->updated_at = Carbon::now();
+        $last->save();
+        return Inertia::location(URL::previous());
+    }
 }

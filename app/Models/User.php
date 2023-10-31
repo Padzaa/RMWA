@@ -48,7 +48,25 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
-
+    public function penultimateLogin(){
+        return $this->logins()->orderBy('created_at')->take(2)->first()->toSql();
+    }
+    /**
+     * Retrieves the last login record for the user.
+     *
+     * @return Login|null The last login record or null if no login records exist.
+     */
+    public function lastLogin(){
+        return $this->logins()->latest()->first();
+    }
+    /**
+     * Retrieves the logins associated with this user.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function logins(){
+        return $this->hasMany(UserLogin::class);
+    }
     /*
      Retrieve all recipes that a user owns
      */

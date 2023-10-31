@@ -7,17 +7,20 @@ export default {
     },
     data() {
         return {
-            page: this.recipes.current_page
+            page: new URLSearchParams(this.$page.url).get('page') || 1
         }
     },
     methods: {
         /**
          * Change the page of the recipe pagination.
          */
-        changePage() {
+        changePage(){
+            if (this.page > this.recipes.last_page) {
+                this.page = this.recipes.last_page
+            }
             Inertia.get(this.recipes.path + '?page=' + this.page);
         }
-    },
+    }
 }
 </script>
 

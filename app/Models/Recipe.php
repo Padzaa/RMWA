@@ -49,7 +49,7 @@ class Recipe extends Model
      */
     public function shared()
     {
-        return $this->belongsToMany(User::class, "shared_recipes", 'recipe_id', 'user_shared_to');
+        return $this->belongsToMany(User::class, "shared_recipes", 'recipe_id', 'user_shared_to')->withTimestamps();
     }
 
     /*
@@ -104,6 +104,7 @@ class Recipe extends Model
 
         $orderColumn = $order[0];
         $orderDirection = $order[1];
+
         $query->when($request->search, function ($query, $search) {
             $query->where(function ($query) use ($search) {
                 $query->orWhere('description', 'like', '%' . $search . '%')
