@@ -48,6 +48,11 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+    /**
+     * Retrieves the timestamp of the penultimate login for the user.
+     *
+     * @return string The timestamp of the penultimate login.
+     */
     public function penultimateLogin(){
         return collect($this->logins()->orderBy('created_at',"desc")->limit(2)->get())->last()->updated_at;
     }

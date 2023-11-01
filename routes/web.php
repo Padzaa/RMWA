@@ -45,9 +45,6 @@ Route::middleware(['auth'])->group(function () {
     //Routes for rating the recipe
     Route::put('/recipe/{recipe}/rate', [RecipeController::class, 'rate'])->name('rate');
     Route::put('/recipe/{recipe}/rate', [RecipeController::class, 'rate'])->name('rate');
-    Route::get('/recipe/{recipe}/rate', function () {
-        return Inertia::location("/recipe/");
-    });
     //Routes for sharing the recipe
     Route::put('/recipe/{recipe}/share', [RecipeController::class, 'share'])->name('share');
     Route::get('/sharedwithme', [SharedRecipeController::class, 'sharedWithMe'])->name('sharedwithme');
@@ -55,9 +52,6 @@ Route::middleware(['auth'])->group(function () {
     //Routes for placing the recipe in favorites
     Route::get('/favorites', [RecipeController::class, 'favorites'])->name('favorites');
     Route::put('/recipe/{recipe}/favorite', [RecipeController::class, 'favorite'])->name('favorite');
-    Route::get('/recipe/{recipe}/favorite', function () {
-        return Inertia::location("/recipe/");
-    });
     //Route for commenting on a recipe
     Route::put('/recipe/{recipe}/comment', [RecipeController::class, 'comment'])->name('comment');
     //Route for following a user
@@ -66,6 +60,7 @@ Route::middleware(['auth'])->group(function () {
     Route::put('/recipe/{recipe}/like', [RecipeController::class, 'like'])->name('like');
     //Mark every notification as read
     Route::put('/notifications', [RecipeController::class, 'notifications'])->name('notifications');
+    Route::get('/api/getnotifications', [RecipeController::class, 'getnotifications'])->name('getnotifications');
 });
 /*---------------------------------------------------------------------------------------*/
 /*------------END OF (ONLY ACCESSABLE WHEN USER LOGGED IN) ROUTES------------------------*/

@@ -95,7 +95,7 @@
                 <v-icon v-else="notifications.length > 0" style="color:white;">mdi-bell-ring</v-icon>
             </Link>
             <v-app v-if="this.$page.props.auth" style="position:absolute;">
-                <!-- check to see if there is a better way to watch for notification :key-->
+
                 <v-navigation-drawer :key="$props.pageUrl"
                                      v-model="notificationOpener"
                                      temporary=""
@@ -110,11 +110,11 @@
 
                     <div class="notifications">
                         <div style="display:grid;place-items: center"
-                        :style="notifications_length > 0 ? 'grid-template-columns: 4fr 1fr;' : 'grid-template-columns:1fr'">
+                        :style="notifications.length > 0 ? 'grid-template-columns: 4fr 1fr;' : 'grid-template-columns:1fr'">
                             <h3 class="text-white text-center m-3 fw-bold">Notifications
                             </h3>
                             <v-btn
-                                @click="markAsRead" v-if="notifications_length > 0" variant="flat" icon="mdi-delete"></v-btn>
+                                @click="markAsRead" v-if="notifications.length > 0" variant="flat" icon="mdi-delete"></v-btn>
                         </div>
                         <v-divider style="color:white;margin: 0;"></v-divider>
                         <div v-for="notification in notifications" class="notification-card">
@@ -194,7 +194,6 @@
 
 
 import {Inertia} from "@inertiajs/inertia";
-
 export default {
     name: "Header.vue",
     components: {},
@@ -209,8 +208,7 @@ export default {
             pic: this.$page.props.auth && this.$page.props.auth.user.picture ? this.$page.props.auth.user.picture : "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_640.png",
             opener: false,
             notificationOpener: false,
-            notifications: this.$page.props.notifications,
-            notifications_length : 0,
+            notifications: [],
             panels: [
                 {
                     section: "Recipes",
@@ -313,7 +311,6 @@ export default {
     },
     mounted() {
         this.active = this.setItemAndPanelActive();
-        this.notifications_length = Object.keys(this.notifications).length;
     },
 
     methods: {
@@ -337,6 +334,7 @@ export default {
             });
             return value;
         },
+
         /**
          * Marks the notifications as read.
          *
