@@ -78,10 +78,10 @@
                                                             item-title="firstname"
                                                             item-value="id"
                                                             label="Select users"
-                                                            multiple="true"
-                                                            clearable="true"
-                                                            chips="true"
-                                                            closable-chips="true"
+                                                            multiple
+                                                            clearable
+                                                            chips
+                                                            closable-chips
                                                         ></v-select>
                                                     </v-col>
                                                 </v-row>
@@ -189,7 +189,7 @@
                                   v-model="review.rating"
                                   bg-color="orange-lighten-1"
                                   color="red"
-                                  disabled="true"
+                                  disabled
                         ></v-rating>
                     </div>
                     <p style="font-size: 14px;text-align: center">You rated this recipe with <b>{{ review.rating }}</b>

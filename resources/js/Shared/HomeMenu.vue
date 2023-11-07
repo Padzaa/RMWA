@@ -35,6 +35,8 @@
             </div>
         </div>
 
+<!--        <Link href="/sendmail" method="POST">SEND MAIL</Link>-->
+
 
     </div>
 </template>

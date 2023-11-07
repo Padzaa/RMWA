@@ -10,7 +10,6 @@ import {Inertia} from "@inertiajs/inertia";
 import Filter from "./Shared/Filter.vue";
 import Filtering from "./Shared/Filtering.vue";
 import Alert from "./Shared/Alert.vue";
-
 const vuetify = createVuetify({
     components,
     directives,
@@ -19,6 +18,7 @@ const vuetify = createVuetify({
         iconFont:'mdi'
     }
 });
+
 
 
 createInertiaApp({
@@ -37,9 +37,6 @@ createInertiaApp({
                 Inertia.get('/');
             }
         }
-
-
-
     },
     setup({el, App, props, plugin}) {
         createApp({render: () => h(App, props)})

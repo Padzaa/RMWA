@@ -2,16 +2,22 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\MyNotifications;
+use App\Events\MyRecipeLiked;
 use App\Http\Requests\StoreRecipeRequest;
 use App\Http\Requests\UpdateRecipeRequest;
 use App\Models\Collection;
 use App\Models\Ingredient;
 use App\Models\Like;
+use App\Models\Notification;
 use App\Models\Recipe;
 use App\Models\Review;
 use App\Models\SharedRecipe;
 use App\Models\User;
 use App\Models\UserLogin;
+use App\Notifications\PublicRecipeCreated;
+use App\Notifications\RecipeLiked;
+use App\Notifications\RecipeShared;
 use Carbon\Carbon;
 use Dflydev\DotAccessData\Data;
 use Exception;
@@ -22,6 +28,7 @@ use Inertia\Inertia;
 use Illuminate\Http\Request;
 use App\Models\Category;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Notification as NotificationF;
 
 class RecipeController extends Controller
 {
@@ -30,7 +37,6 @@ class RecipeController extends Controller
      */
     public function index(Request $request)
     {
-
         $filteredRecipes = Recipe::forUser()
             ->Filter($request)
             ->paginate(10);
@@ -74,12 +80,16 @@ class RecipeController extends Controller
             ]);
             $recipe->ingredients()->attach($request->ingredients);
             $recipe->categories()->attach($request->categories);
-
+            if ($recipe->is_public) {
+                NotificationF::send(User::all(), new PublicRecipeCreated($recipe->title, Auth::user()));
+            }
             session()->flash('alert', [
                 'title' => 'Success!',
                 'message' => 'Recipe created successfully.',
                 'type' => 'success'
             ]);
+
+
             return redirect()->route('recipe.index');
 
         } catch (Exception $e) {
@@ -182,6 +192,7 @@ class RecipeController extends Controller
                 'message' => 'Recipe updated successfully.',
                 'type' => 'success'
             ]);
+
             return redirect()->route('recipe.show', $recipe);
 
         } catch (Exception $e) {
@@ -206,7 +217,7 @@ class RecipeController extends Controller
             $this->authorize('delete', $recipe);
             $collections = $recipe->collections()->withCount("recipes")->get();
             foreach ($collections as $collection) {
-                if($collection->recipes_count == 1){
+                if ($collection->recipes_count == 1) {
                     $collection->delete();
                 }
             }
@@ -303,11 +314,13 @@ class RecipeController extends Controller
         try {
             $this->authorize('update', $recipe);
             $recipe->shared()->sync($request->users);
+            $users_shared_to = User::whereIn("id", $request->users)->get();
             session()->flash('alert', [
                 'title' => 'Success!',
                 'message' => 'Recipe shared list adjusted successfully.',
                 'type' => 'success'
             ]);
+            NotificationF::send($users_shared_to, new RecipeShared(Auth::user(), $recipe->title));
             return Inertia::location('/recipe/' . $recipe->id);
         } catch (Exception $e) {
             session()->flash('alert', [
@@ -360,13 +373,18 @@ class RecipeController extends Controller
     */
     public function like(Recipe $recipe)
     {
+
+
         try {
             $this->authorize('view', $recipe);
 
-            $recipe->likes()->where('user_id', Auth::user()->id)->count() ?
-                $recipe->likes()->detach(Auth::user()->id)
-                :
+            if ($recipe->likes()->where('user_id', Auth::user()->id)->count()) {
+                $recipe->likes()->detach(Auth::user()->id);
+            } else {
+                NotificationF::send(User::find($recipe->user_id), new RecipeLiked(Auth::user(), $recipe->title));
                 $recipe->likes()->attach(Auth::user()->id);
+            }
+
             return redirect()->back();
         } catch (Exception $e) {
             session()->flash('alert', [
@@ -409,45 +427,13 @@ class RecipeController extends Controller
         ]);
     }
 
-    public function notifications(){
-        $last = Auth::user()->logins()->orderBy('created_at',"desc")->limit(2)->get()->last();
-        $last = UserLogin::find($last->id);
-        $last->updated_at = Carbon::now();
-        $last->save();
+    /**
+     * Updates the read_at field of the notifications for the authenticated user.
+     */
+    public function notifications()
+    {
+        Notification::where('notifiable_id', Auth::user()->id)->where('read_at', null)->update(['read_at' => now()]);
         return Inertia::location(URL::previous());
     }
 
-//    public function getnotifications(){
-//        if(Auth::user()){
-//            $lastLogin = Auth::user()->penultimateLogin()->format('Y-m-d H:i:s') ?? Carbon::now()->format('Y-m-d H:i:s');
-//
-//            $recipes = Recipe::where('created_at', ">=", $lastLogin)->where('is_public', true)->with("user")->get();
-//
-//            $sharedRecipes = SharedRecipe::where('created_at', ">=", $lastLogin)->where('user_shared_to', Auth::user()->id)->with("recipe", "recipe.user")->get();
-//
-//            $newFollowers = Auth::user()->followed()->where('follows.created_at', ">=", $lastLogin)->get();
-//
-//            $likes = Like::join("recipes", "likes.recipe_id", "=", "recipes.id")
-//                ->where('recipes.user_id',Auth::user()->id)
-//                ->where("likes.created_at", ">=", $lastLogin)
-//                ->select("recipes.title","recipes.id","recipes.user_id","likes.*","users.*")
-//                ->join("users", "likes.user_id", "=", "users.id")
-//                ->get();
-//
-//            foreach ($recipes as $recipe) {
-//                $recipe->type = "Creation";
-//            }
-//            foreach ($sharedRecipes as $sharedRecipe) {
-//                $sharedRecipe->type = "Shared";
-//            }
-//            foreach ($newFollowers as $newFollower) {
-//                $newFollower->type = "Follow";
-//            }
-//            foreach ($likes as $like) {
-//                $like->type = "Like";
-//            }
-//            $notifications = collect($recipes->merge($sharedRecipes)->merge($newFollowers)->merge($likes))->sortByDesc('created_at');
-//            return response()->json($notifications);
-//        }
-//    }
 }

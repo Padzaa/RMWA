@@ -2,6 +2,7 @@
 
 namespace App\Listeners;
 
+use App\Events\MyNotifications;
 use App\Models\UserLogin;
 use Illuminate\Auth\Events\Login;
 use Illuminate\Contracts\Queue\ShouldQueue;

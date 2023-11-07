@@ -4,15 +4,20 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
+use App\Jobs\SendSMS;
+use App\Mail\TestingMail;
 use App\Models\Recipe;
 use App\Models\User;
+use App\Services\TwilioService;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
+use function Illuminate\Events\queueable;
 
 class UserController extends Controller
 {
@@ -45,7 +50,7 @@ class UserController extends Controller
      */
     public function show(User $user)
     {
-        try{
+        try {
             $this->authorize('view', $user);
             if (Auth::user()->id === $user->id) {
                 return redirect()->route('user.edit', $user->id);
@@ -56,8 +61,7 @@ class UserController extends Controller
                 "user" => $user,
                 "is_following" => $is_following,
             ]);
-        }
-        catch (Exception $e) {
+        } catch (Exception $e) {
             session()->flash("alert", [
                 "title" => "Error!",
                 "message" => $e->getMessage(),
@@ -146,4 +150,28 @@ class UserController extends Controller
 
         return redirect()->back();
     }
+
+//    public function sendMail()
+//    {
+//        Mail::to(env('MAIL_TO'))->queue(new TestingMail("email", "Ovo je text"));
+//        return redirect()->back();
+//    }
+//
+//    public function sms()
+//    {
+//        $sms = new TwilioService();
+//
+//        return Inertia::render('User/SMS', [
+//
+//        ]);
+//    }
+//
+//    public function sendSMS(Request $request)
+//    {
+//
+//        SendSMS::dispatch($request->number, $request->message);
+//
+//        return Inertia::location("/sms");
+//
+//    }
 }

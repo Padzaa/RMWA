@@ -91,8 +91,8 @@
         <div class="menu">
             <Link v-if="this.$page.props.auth" as="button" @click="notificationOpener = !notificationOpener"
                   class="notification">
-                <v-icon v-if="notifications.length === 0" style="color:#bebebe;">mdi-bell-outline</v-icon>
-                <v-icon v-else="notifications.length > 0" style="color:white;">mdi-bell-ring</v-icon>
+                <v-icon v-if="notifications.length == 0" style="color:#bebebe;">mdi-bell-outline</v-icon>
+                <v-icon v-else style="color:white;">mdi-bell-ring</v-icon>
             </Link>
             <v-app v-if="this.$page.props.auth" style="position:absolute;">
 
@@ -117,62 +117,16 @@
                                 @click="markAsRead" v-if="notifications.length > 0" variant="flat" icon="mdi-delete"></v-btn>
                         </div>
                         <v-divider style="color:white;margin: 0;"></v-divider>
-                        <div v-for="notification in notifications" class="notification-card">
+                        <template v-for="notificationsType in notifications">
 
-                            <p class="notification-text" v-if="notification.type == 'Creation'">
-                                <b>
-                                    <Link class="text-white font-italic" :href="'/user/' + notification.user.id">
-                                        {{
-                                            notification.user.firstname + " " + notification.user.lastname
-                                        }}
-                                    </Link>
-                                </b>
-                                created a new public recipe <b>
-                                <Link class="text-white font-italic" :href="'/recipe/'+notification.id">
-                                    {{ notification.title }}
-                                </Link>
-                            </b>.
+                        <div v-if="notificationsType != null" v-for="notification in notificationsType" class="notification-card">
+                            <p class="notification-text">
+                                {{ JSON.parse(notification.data).message }}
                             </p>
-                            <p class="notification-text" v-if="notification.type == 'Follow'">
-                                <b>
-                                    <Link class="text-white font-italic" :href="'/user/' + notification.id">
-                                        {{
-                                            notification.firstname + " " + notification.lastname
-                                        }}
-                                    </Link>
-                            </b> followed you.
-                            </p>
-                            <p class="notification-text" v-if="notification.type == 'Shared'">
-                                <b>
-                                    <Link class="text-white font-italic" :href="'/user/'+notification.recipe.user_id">
-                                        {{ notification.recipe.user.firstname + " " + notification.recipe.user.lastname }}
-                                    </Link>
-                                </b>
-                                shared a recipe <b>
-                                <Link class="text-white font-italic" :href="'/recipe/'+notification.id">
-                                    {{ notification.title }}
-                                </Link>
-                            </b> with you.
-                            </p>
-                            <p class="notification-text" v-if="notification.type == 'Like'">
-                                <b>
-                                    <Link class="text-white font-italic" :href="'/user/' + notification.user_id">
-                                        {{
-                                            notification.firstname + " " + notification.lastname
-                                        }}
-                                    </Link>
-                            </b> liked your recipe
-                                <b>
-                                    <Link class="text-white font-italic" :href="'/recipe/' + notification.recipe_id">
-                                        {{
-                                            notification.title
-                                        }}
-                                    </Link>
-                                </b>.
-                            </p>
+
 
                         </div>
-
+                        </template>
                     </div>
 
                 </v-navigation-drawer>
@@ -191,8 +145,7 @@
 </template>
 
 <script>
-
-
+import Pusher from "pusher-js";
 import {Inertia} from "@inertiajs/inertia";
 export default {
     name: "Header.vue",
@@ -200,7 +153,7 @@ export default {
     props: {
         title: String,
         pageUrl: String,
-
+        notifications: Array,
 
     },
     data() {
@@ -208,7 +161,6 @@ export default {
             pic: this.$page.props.auth && this.$page.props.auth.user.picture ? this.$page.props.auth.user.picture : "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_640.png",
             opener: false,
             notificationOpener: false,
-            notifications: [],
             panels: [
                 {
                     section: "Recipes",
@@ -307,11 +259,13 @@ export default {
             this.opener = false;
             this.notificationOpener = false;
             this.active = this.setItemAndPanelActive();
-        }
+        },
+
     },
     mounted() {
         this.active = this.setItemAndPanelActive();
     },
+
 
     methods: {
         /**
@@ -341,8 +295,11 @@ export default {
          * @return {void}
          */
         markAsRead() {
+            localStorage.removeItem('recipeShared');
+            localStorage.removeItem('publicRecipeCreated');
+            localStorage.removeItem('recipeLiked');
             Inertia.put('/notifications');
-        }
+        },
     }
 
 

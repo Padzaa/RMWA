@@ -60,7 +60,12 @@ Route::middleware(['auth'])->group(function () {
     Route::put('/recipe/{recipe}/like', [RecipeController::class, 'like'])->name('like');
     //Mark every notification as read
     Route::put('/notifications', [RecipeController::class, 'notifications'])->name('notifications');
-    Route::get('/api/getnotifications', [RecipeController::class, 'getnotifications'])->name('getnotifications');
+//    //Send email
+//    Route::post('/sendmail', [UserController::class, 'sendMail'])->name('sendmail');
+//    //Send sms
+//    Route::post('/sendsms', [UserController::class, 'sendSMS'])->name('sendsms');
+//    //SMS page
+//    Route::get('/sms', [UserController::class, 'sms'])->name('sms');
 });
 /*---------------------------------------------------------------------------------------*/
 /*------------END OF (ONLY ACCESSABLE WHEN USER LOGGED IN) ROUTES------------------------*/
