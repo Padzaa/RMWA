@@ -81,7 +81,7 @@ class RecipeController extends Controller
             $recipe->ingredients()->attach($request->ingredients);
             $recipe->categories()->attach($request->categories);
             if ($recipe->is_public) {
-                NotificationF::send(User::all(), new PublicRecipeCreated($recipe->title, Auth::user()));
+                NotificationF::send(User::all()->except(Auth::user()->id), new PublicRecipeCreated($recipe->title, Auth::user()));
             }
             session()->flash('alert', [
                 'title' => 'Success!',
@@ -186,6 +186,9 @@ class RecipeController extends Controller
             $recipe->ingredients()->sync($request->ingredients);
             $recipe->categories()->sync($request->categories);
             $recipe->save();
+            if ($recipe->is_public) {
+                NotificationF::send(User::all()->except(Auth::user()->id), new PublicRecipeCreated($recipe->title, Auth::user()));
+            }
 
             session()->flash('alert', [
                 'title' => 'Success!',

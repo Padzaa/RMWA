@@ -8,11 +8,13 @@ use App\Jobs\SendSMS;
 use App\Mail\TestingMail;
 use App\Models\Recipe;
 use App\Models\User;
+use App\Notifications\UserFollowed;
 use App\Services\TwilioService;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
@@ -143,11 +145,12 @@ class UserController extends Controller
 //Follow/Unfollow a certain user
     public function follow(Request $request, User $user)
     {
-        Auth::user()->follow()->where('followed_user_id', $user->id)->count() ?
-            Auth::user()->follow()->detach($user->id)
-            :
+        if(Auth::user()->follow()->where('followed_user_id', $user->id)->count()){
+            Auth::user()->follow()->detach($user->id);
+        }else{
             Auth::user()->follow()->attach($user->id);
-
+            Notification::send(User::find($user->id), new UserFollowed(Auth::user()));
+        }
         return redirect()->back();
     }
 

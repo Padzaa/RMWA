@@ -24,7 +24,7 @@ class RecipeShared extends Notification implements ShouldQueue
     {
         $this->user = $user;
         $this->recipe = $recipe;
-        $this->message = "Recipe {$recipe} shared by {$user->firstname} {$user->lastname}";
+        $this->message = "Recipe \"{$recipe}\" shared by {$user->firstname} {$user->lastname}";
     }
 
     /**
@@ -69,6 +69,6 @@ class RecipeShared extends Notification implements ShouldQueue
 
     public function toArray(): array
     {
-        return ['recipeShared' => \App\Models\Notification::where('notifiable_id', $this->notifiable)->where('type', 'App\Notifications\RecipeShared')->where('read_at', null)->get()->toArray()];
+        return ['recipeShared' => \App\Models\Notification::where('notifiable_id', $this->notifiable)->where('type', 'App\Notifications\RecipeShared')->where('read_at', null)->latest()->first()->toArray()];
     }
 }

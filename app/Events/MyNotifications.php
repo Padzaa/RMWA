@@ -21,19 +21,20 @@ class MyNotifications implements ShouldBroadcast
     /**
      * Create a new event instance.
      */
-    public function __construct()
+    public $user;
+    public function __construct($user)
     {
-
+        $this->user = $user;
+        $this->data = ['notificationsOnLogin' => Notification::where('notifiable_id',$user)->where('read_at',null)->get()];
     }
 
     /**
      * Get the channels the event should broadcast on.
      *
-     * @return array<int, \Illuminate\Broadcasting\Channel>
      */
     public function broadcastOn(): PrivateChannel
     {
-//        return new PrivateChannel('notifications.'.Auth::user()->id);
+        return new PrivateChannel('notifications.'.$this->user);
     }
 
     public function broadcastAs(): string

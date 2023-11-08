@@ -8,23 +8,21 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class RecipeLiked extends Notification implements ShouldQueue
+class UserFollowed extends Notification implements ShouldQueue
 {
     use Queueable;
 
     public $user;
     public $message;
-    public $recipe;
     public $notifiable;
 
     /**
      * Create a new notification instance.
      */
-    public function __construct($user, $recipe)
+    public function __construct($user)
     {
         $this->user = $user;
-        $this->recipe = $recipe;
-        $this->message = "Recipe \"{$recipe}\" liked by {$user->firstname} {$user->lastname}";
+        $this->message = "User {$user->firstname} {$user->lastname} is now following you.";
     }
 
     /**
@@ -69,6 +67,6 @@ class RecipeLiked extends Notification implements ShouldQueue
 
     public function toArray(): array
     {
-        return ['recipeLiked' => \App\Models\Notification::where('notifiable_id', $this->notifiable)->where('type', 'App\Notifications\RecipeLiked')->where('read_at', null)->latest()->first()->toArray()];
+        return ['userFollowed' => \App\Models\Notification::where('notifiable_id', $this->notifiable)->where('type', 'App\Notifications\UserFollowed')->where('read_at', null)->latest()->first()->toArray()];
     }
 }

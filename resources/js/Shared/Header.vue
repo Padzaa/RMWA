@@ -117,16 +117,16 @@
                                 @click="markAsRead" v-if="notifications.length > 0" variant="flat" icon="mdi-delete"></v-btn>
                         </div>
                         <v-divider style="color:white;margin: 0;"></v-divider>
-                        <template v-for="notificationsType in notifications">
 
-                        <div v-if="notificationsType != null" v-for="notification in notificationsType" class="notification-card">
+
+                        <div v-for="notification in notifications" class="notification-card">
                             <p class="notification-text">
                                 {{ JSON.parse(notification.data).message }}
                             </p>
 
 
                         </div>
-                        </template>
+
                     </div>
 
                 </v-navigation-drawer>
@@ -295,9 +295,8 @@ export default {
          * @return {void}
          */
         markAsRead() {
-            localStorage.removeItem('recipeShared');
-            localStorage.removeItem('publicRecipeCreated');
-            localStorage.removeItem('recipeLiked');
+            localStorage.removeItem('notifications');
+
             Inertia.put('/notifications');
         },
     }

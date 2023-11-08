@@ -26,7 +26,7 @@ class PublicRecipeCreated extends Notification implements ShouldQueue
     {
         $this->name = $name;
         $this->user = $user;
-        $this->message = "Recipe {$name} has been created by {$user->firstname} {$user->lastname}";
+        $this->message = "Recipe \"{$name}\" has been created by {$user->firstname} {$user->lastname}";
 
     }
 
@@ -80,6 +80,6 @@ class PublicRecipeCreated extends Notification implements ShouldQueue
      * @return array The resulting array.
      */
     public function toArray(): array{
-        return ['publicRecipeCreated' =>\App\Models\Notification::where('notifiable_id',$this->notifiable)->where('type','App\Notifications\PublicRecipeCreated')->where('read_at',null)->get()->toArray()];
+        return ['publicRecipeCreated' =>\App\Models\Notification::where('notifiable_id',$this->notifiable)->where('type','App\Notifications\PublicRecipeCreated')->where('read_at',null)->latest()->first()->toArray()];
     }
 }
