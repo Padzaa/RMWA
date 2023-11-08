@@ -16,7 +16,9 @@ use App\Models\SharedRecipe;
 use App\Models\User;
 use App\Models\UserLogin;
 use App\Notifications\PublicRecipeCreated;
+use App\Notifications\RecipeCommented;
 use App\Notifications\RecipeLiked;
+use App\Notifications\RecipeRated;
 use App\Notifications\RecipeShared;
 use Carbon\Carbon;
 use Dflydev\DotAccessData\Data;
@@ -263,7 +265,6 @@ class RecipeController extends Controller
        */
     public function rate(Recipe $recipe, Request $request)
     {
-
         try {
             $this->authorize('view', $recipe);
 
@@ -283,19 +284,21 @@ class RecipeController extends Controller
                 $rating->save();
             }
             if ($rating === null) {
-                Review::create([
+                $rating = Review::create([
                     "rating" => $request->rating,
                     "message" => $request->msg,
                     "user_id" => Auth::user()->id,
                     "recipe_id" => $recipe->id
                 ]);
             }
+            NotificationF::send(User::find($recipe->user_id), new RecipeRated($recipe->title,$rating->rating,Auth::user()));
             session()->flash('alert', [
                 'title' => 'Success!',
                 'message' => 'Review added successfully.',
                 'type' => 'success'
             ]);
-            return Inertia::location('/recipe/' . $recipe->id);
+
+            return redirect()->back();
         } catch (Exception $e) {
             session()->flash('alert', [
                 'title' => 'Error!',
@@ -360,6 +363,7 @@ class RecipeController extends Controller
                 'message' => 'Comment added successfully.',
                 'type' => 'success'
             ]);
+            NotificationF::send(User::find($recipe->user_id), new RecipeCommented($recipe->title, Auth::user()));
             return Inertia::location('/recipe/' . $recipe->id);
         } catch (Exception $e) {
             session()->flash('alert', [

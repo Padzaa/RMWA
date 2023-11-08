@@ -30,8 +30,6 @@ class SendSMS implements ShouldQueue
      */
     public function handle(): void
     {
-        $sms = new TwilioService();
-
-        $sms->sendSMS($this->number,$this->message);
+        $ok = "SMS sent to " . $this->number . " with message " . $this->message;
     }
 }

@@ -24,8 +24,8 @@ export default {
          * Retrieves the notifications from local storage and sort them by date.
          */
         getNotifications() {
-            if(localStorage.getItem('notifications')){
-                let notifications = JSON.parse(localStorage.getItem('notifications'));
+            if(sessionStorage.getItem('notifications')){
+                let notifications = JSON.parse(sessionStorage.getItem('notifications'));
                 return notifications.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
             }else{
                 return [];
@@ -48,25 +48,34 @@ export default {
         });
 
         window.Echo.private('notifications.' + this.$page.props.auth.user.id).listen('.my-notifications', (data) => {
+            console.log(data);
             if(data.data?.notificationsOnLogin){
-                localStorage.setItem('notifications', JSON.stringify(data.data.notificationsOnLogin));
+                sessionStorage.setItem('notifications', JSON.stringify(data.data.notificationsOnLogin));
                 this.notifications = this.getNotifications();
+            }
+            if(data.recipeCommented) {
+                this.notifications.push(data.recipeCommented);
+                sessionStorage.setItem('notifications', JSON.stringify(this.notifications));
+            }
+            if(data.recipeRated) {
+                this.notifications.push(data.recipeRated);
+                sessionStorage.setItem('notifications', JSON.stringify(this.notifications));
             }
             if(data.userFollowed) {
                 this.notifications.push(data.userFollowed);
-                localStorage.setItem('notifications', JSON.stringify(this.notifications));
+                sessionStorage.setItem('notifications', JSON.stringify(this.notifications));
             }
             if(data.recipeShared) {
                 this.notifications.push(data.recipeShared);
-                localStorage.setItem('notifications', JSON.stringify(this.notifications));
+                sessionStorage.setItem('notifications', JSON.stringify(this.notifications));
             }
             if(data.publicRecipeCreated){
                 this.notifications.push(data.publicRecipeCreated);
-                localStorage.setItem('notifications', JSON.stringify(this.notifications));
+                sessionStorage.setItem('notifications', JSON.stringify(this.notifications));
             }
             if(data.recipeLiked){
                 this.notifications.push(data.recipeLiked);
-                localStorage.setItem('notifications', JSON.stringify(this.notifications));
+                sessionStorage.setItem('notifications', JSON.stringify(this.notifications));
             }
             this.notifications = this.getNotifications();
         });

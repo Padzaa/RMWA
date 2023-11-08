@@ -295,7 +295,7 @@ export default {
          * @return {void}
          */
         markAsRead() {
-            localStorage.removeItem('notifications');
+            sessionStorage.removeItem('notifications');
 
             Inertia.put('/notifications');
         },
@@ -307,7 +307,7 @@ export default {
 
 <style scoped>
 .notification-card {
-    background-color: #727272;
+    background-color: #bdbdbd;
     border-bottom:1px solid white;
     padding: 1em;
 }

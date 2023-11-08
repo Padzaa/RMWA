@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Controller;
 use App\Http\Controllers\FollowController;
 use App\Http\Controllers\LikeController;
 use App\Http\Controllers\RecipeController;
@@ -31,9 +32,7 @@ use App\Http\Controllers\CollectionController;
 /*---------------------------------------------------------------------------------------*/
 Route::middleware(['auth'])->group(function () {
     //Home page
-    Route::get('/', function () {
-        return Inertia::render('Welcome');
-    })->name('welcome');
+    Route::get('/', [Controller::class, 'welcome'])->name('welcome');
     //Resource routes
     Route::resource('/recipe', RecipeController::class);
     Route::resource('/user', UserController::class);
@@ -70,7 +69,6 @@ Route::middleware(['auth'])->group(function () {
 /*---------------------------------------------------------------------------------------*/
 /*------------END OF (ONLY ACCESSABLE WHEN USER LOGGED IN) ROUTES------------------------*/
 /*---------------------------------------------------------------------------------------*/
-
 Auth::routes();
 //Guest can access show route of this resource
 Route::resource('/recipe', RecipeController::class)->only("show");
