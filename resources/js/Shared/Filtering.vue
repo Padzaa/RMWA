@@ -17,7 +17,7 @@ export default {
          * @return {void}
          */
         submit() {
-            let url = this.$page.url.includes('/recipe') ? '/recipe' : '/public';
+            let url = this.$page.url.includes('/recipe') ? '/recipe' : '/guest/public';
             Inertia.get(url, this.form);
         },
         /**
@@ -147,10 +147,10 @@ export default {
                                             item-title="name"
                                             item-value="id"
                                             label="Select categories"
-                                            multiple=true
-                                            chips=true
+                                            multiple
+                                            chips
                                             closable-chips
-                                            clearable=true
+                                            clearable
 
                                         >
 
@@ -169,10 +169,10 @@ export default {
                                             item-title="name"
                                             item-value="id"
                                             label="Select collections"
-                                            multiple=true
-                                            chips=true
+                                            multiple
+                                            chips
                                             closable-chips
-                                            clearable=true
+                                            clearable
 
                                         >
 
@@ -192,10 +192,10 @@ export default {
                                             item-title="name"
                                             item-value="id"
                                             label="Select ingredients"
-                                            multiple=true
-                                            chips=true
+                                            multiple
+                                            chips
                                             closable-chips
-                                            clearable=true
+                                            clearable
 
                                         >
 

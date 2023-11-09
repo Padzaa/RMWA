@@ -406,23 +406,7 @@ class RecipeController extends Controller
         ]);
     }
 
-    /*
-     Public page of the site, so mainly guest can access
-     */
-    public function public(Request $request)
-    {
-        $filteredRecipes = Recipe::query()->Public()->Filter($request)->paginate(10);
 
-        return Inertia::render('Recipe/All', [
-            "title" => "Public Recipes",
-            "recipes" => $filteredRecipes,
-            'categories' => Category::all(),
-            'ingredients' => Ingredient::orderBy('name')->get(),
-            'filtersData' => $request->query->all(),
-            'collections' => Auth::user() ? Auth::user()->collections()->orderBy('name')->get() : null
-
-        ]);
-    }
 
     /**
      * Updates the read_at field of the notifications for the authenticated user.
