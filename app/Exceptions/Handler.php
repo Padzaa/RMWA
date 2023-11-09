@@ -4,7 +4,7 @@ namespace App\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Throwable;
-
+use Inertia\Inertia;
 class Handler extends ExceptionHandler
 {
     /**
@@ -26,5 +26,14 @@ class Handler extends ExceptionHandler
         $this->reportable(function (Throwable $e) {
             //
         });
+
+    }
+    public function render($request, Throwable $e)
+    {
+        if ($this->isHttpException($e) && $e->getStatusCode() == 404) {
+            return redirect()->route('welcome');
+        }
+
+        return parent::render($request, $e);
     }
 }

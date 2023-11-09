@@ -1,0 +1,443 @@
+/*  ------------------------------------------  */
+div.form{
+    padding: 2em;
+
+}
+form>button{
+    color:white;
+}
+/*  ------------------------------------------  */
+.collection-box{
+    display:grid;
+    height: 100%;
+    justify-content: center;
+    padding:3em;
+}
+.collection{
+    width:460px;
+    border-radius: 25px;
+    padding: 1em 1.5em;
+    height: fit-content;
+}
+.collection .header{
+    font-style: italic;
+
+}
+.h5-class{
+    margin: 1em 0;
+}
+ul p>a{
+    font-size: 18px;
+}
+
+/*  ------------------------------------------  */
+
+.collections{
+    padding: 2em;
+    display:grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap:1.5em
+}
+.single-collection {
+    font-family: "Roboto", sans-serif;
+    font-weight: 550;
+    border:1px solid black;
+    min-height: fit-content;
+    padding: 1em;
+    max-height: 600px;
+    border-radius:15px;
+}
+
+.collections-actions{
+    grid-column: 1/-1;
+}
+.info{
+    height: 100%;
+    display:grid;
+}
+/* -------------------------------------  */
+
+#paginator p {
+    font-style: italic;
+
+    color: gray;
+    text-align: center;
+    margin-bottom: 0;
+}
+
+#paginator {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    padding: 1em 0;
+}
+
+#paginator a {
+    font-size: 1.1rem;
+    width: fit-content;
+}
+
+
+.filter-form {
+    display: grid;
+
+}
+
+.pickers {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 85%;
+    justify-self: center;
+    place-items: center;
+    padding: 1.5em 2em;
+    column-gap: 4em;
+    row-gap: 2em;
+}
+
+.search {
+    width: 100%;
+}
+
+button[name="submit"] {
+    width: 85%;
+    justify-self: center;
+}
+
+.for-fav {
+    display: grid;
+    place-items: center;
+}
+
+.for-fav > label,
+.rating > label {
+    padding: 0.5em 1.6em;
+
+}
+
+.rating {
+    display: flex;
+    gap: 5px;
+    font-size: 20px;
+}
+
+.btn-check:checked + .btn, .btn.active, .btn.show, .btn:first-child:active, :not(.btn-check) + .btn:active {
+    color: var(--bs-btn-active-color);
+    background-color: var(--bs-btn-active-bg);
+    border-color: var(--bs-btn-active-border-color);
+}
+
+input#search {
+    font-size: 1.2em;
+}
+
+.dr-lb {
+    width: calc(100% - 1px);
+}
+/* ---------------------------------------  */
+form{
+    display: grid;
+    gap: 1em;
+}
+textarea#description{
+    min-height:150px;
+    max-height:150px;
+}
+textarea#instructions{
+    min-height:150px;
+    max-height:500px;
+}
+/* ---------------------------------------  */
+
+
+.owner{
+    font-size:18px;
+    font-style: italic;
+}
+.leave-comment{
+    width:750px;
+    display:grid;
+
+}
+div.comments{
+    display:grid;
+    gap:10px
+}
+div.comment{
+    width:750px;
+    display:grid;
+    grid-template-columns: 1fr 9fr;
+
+    padding:0 !important;
+
+    border-radius:20px;
+}
+.body>h6{
+    font-style: italic;
+}
+.body>p{
+    font-size: 14px;
+    color:gray;
+    font-style: italic;
+}
+div.body{
+    border-left: 1px solid lightgray;
+    padding:1em;
+}
+div.picture{
+    padding:1em;
+}
+.picture img{
+    height:75px;
+    width: 75px;
+    border-radius: 50%;
+    object-fit:cover;
+}
+.leave-comment>textarea{
+    max-height: 150px;
+    font-size:14px;
+}
+.review{
+    min-width: 750px;
+    max-width: 750px;
+    height:fit-content !important;
+    border-radius: 12px;
+    margin: 0;
+}
+.show-recipe {
+    display: grid;
+    padding: 3em 0;
+    justify-items: center;
+
+    gap: 2em;
+    grid-auto-rows: min-content;
+}
+
+.recipe {
+    min-width: 750px;
+    max-width: 750px;
+    border: 1px solid gray;
+    border-radius: 25px;
+    padding: 1.3em 2em;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+
+}
+
+.description {
+    font-style: italic;
+    text-transform: capitalize;
+    font-size: 1.2rem;
+    color: gray;
+}
+
+h1 {
+    text-transform: capitalize;
+}
+
+.instructions {
+    font-size: 1.1rem;
+    text-transform: capitalize;
+    height: 100%;
+}
+
+.heart {
+    position: absolute;
+    top: 1.3em;
+    right: 2em;
+}
+.rate-me{
+    align-self:end;
+    display:grid;
+    grid-template-columns: 6fr 1fr;
+    width: 100%;
+}
+.rate-me h4 {
+    height: fit-content;
+    align-self:center;
+    margin:0;
+    justify-self: start;
+}
+.modals{
+    display: flex;
+    gap:10px;
+    justify-content:end;
+}
+/* ---------------------------------------- */
+
+div.card {
+    min-width: 330px;
+    max-height: 450px;
+    min-height: 450px;
+}
+
+.card-header{
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    text-align: center;
+}
+.card-title{
+    overflow: hidden;
+    text-overflow: ellipsis !important;
+    white-space: nowrap;
+    font-size:1.3rem;
+
+}
+.card-text {
+    width: 100%;
+
+    overflow-y: auto;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 5;
+    display: -webkit-box;
+
+
+}
+
+.card-body {
+    display: grid;
+    height: 100%;
+    padding-bottom:10px;
+    grid-template-rows: min-content auto min-content;
+}
+/* --------------------------------------  */
+.filters {
+    display: grid;
+//padding: 1.5em 3em;
+//height: 92px;
+    width: fit-content;
+}
+button{
+    color:white;
+    font-weight: 500;
+}
+.dropdown-menu {
+    overflow-y: auto;
+    max-height: 400px;
+}
+
+.dropdown-toggle {
+    padding: 0.5em 1.6em;
+}
+/* --------------------------------------  */
+.grid-net {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
+    padding: 1em 2em;
+    gap: 1em;
+    grid-auto-rows: auto;
+    justify-items: center;
+}
+
+p {
+    font-style: italic;
+
+    color: gray;
+    text-align: center;
+    margin-bottom: 0;
+}
+
+div.actions {
+    align-self: end;
+    align-items: center;
+    display: flex;
+    gap: 10px;
+
+}
+
+div.actions > a {
+    text-align: center;
+    height: fit-content;
+}
+h5{
+    text-align:center;
+    margin:0;
+}
+.records{
+    grid-column: 2/3;
+
+    font-size: 1.65rem;
+}
+/* --------------------------------------  */
+
+header {
+
+    display: grid;
+    height: 100px;
+    align-items: center;
+
+    justify-content: space-between;
+    grid-auto-flow: column;
+    padding: 0 2em;
+    background: rgb(232,106,3);
+    background: linear-gradient(174deg, rgba(232,106,3,1) 0%, rgba(255,248,0,1) 100%);
+    border-bottom: 2px solid black;
+}
+
+h2 {
+    font-family: roboto, sans-serif;
+    margin: 0;
+    font-style: italic;
+}
+
+.links {
+    font-size: 1.15rem;
+    display: flex;
+    gap: 10px;
+}
+.profile-pic,.profile-section>a[href="/logout"]{
+    width:60px;
+    height:60px;
+    border-radius:50%;
+}
+.profile-pic{
+    object-fit: cover;
+}
+.profile-section{
+    display:grid;
+    gap:10px;
+    grid-auto-flow: column;
+
+}
+.profile-section>button{
+    height:fit-content;
+    align-self:center;
+}
+.active{
+    font-weight: bold;
+
+}
+.links a{
+    font-size:1.25rem;
+}
+/* --------------------------------------  */
+#recipes_menu {
+
+    padding: 2em;
+    display:grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5em;
+    height: fit-content;
+    justify-items:center;
+
+}
+
+h2 {
+    text-align: center;
+
+}
+
+img {
+
+    height: 100%;
+    width: 100%;
+}
+
+div.card {
+    height: 100%;
+    padding:1em 1.5em;
+    width:300px
+
+}
