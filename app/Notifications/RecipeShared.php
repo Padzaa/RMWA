@@ -13,18 +13,18 @@ class RecipeShared extends Notification implements ShouldQueue
     use Queueable;
 
     public $user;
-    public $message;
-    public $recipe;
+    public string $message;
+    public string $recipeTitle;
     public $notifiable;
 
     /**
      * Create a new notification instance.
      */
-    public function __construct($user, $recipe)
+    public function __construct($user, $recipeTitle)
     {
         $this->user = $user;
-        $this->recipe = $recipe;
-        $this->message = "Recipe \"{$recipe}\" shared by {$user->firstname} {$user->lastname}";
+        $this->recipeTitle = $recipeTitle;
+        $this->message = "Recipe \"{$this->recipeTitle}\" shared by {$user->firstname} {$user->lastname}";
     }
 
     /**
@@ -37,17 +37,24 @@ class RecipeShared extends Notification implements ShouldQueue
         $this->notifiable = $notifiable->id;
         return ['database', 'broadcast'];
     }
-
-    public function broadcastOn(): PrivateChannel
+    /**
+     * Returns the channel names the event should broadcast on.
+     *
+     * @return PrivateChannel
+     */
+    public function broadcastOn()
     {
-        return new PrivateChannel('notifications.' . $this->notifiable);
+        return new PrivateChannel('notifications.'.$this->notifiable);
     }
-
-    public function broadcastAs(): string
+    /**
+     * Retrieves the name of the event that should be broadcasted.
+     *
+     * @return string The name of the event.
+     */
+    public function broadcastAs()
     {
         return 'my-notifications';
     }
-
     /**
      * Get the mail representation of the notification.
      */

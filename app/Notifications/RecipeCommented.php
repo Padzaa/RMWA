@@ -11,20 +11,20 @@ use Illuminate\Notifications\Notification;
 class RecipeCommented extends Notification implements ShouldQueue
 {
     use Queueable;
-    public $message;
-    public $recipe;
+    public string $message;
+    public string $recipeTitle;
     public $user;
     public $notifiable;
 
     /**
      * Create a new notification instance.
      */
-    public function __construct ($recipe,$user)
+    public function __construct ($recipeTitle,$user)
 {
     $this->user = $user;
 
-    $this->recipe = $recipe;
-    $this->message = "User \"{$this->user->firstname} {$this->user->lastname}\" commented on recipe \"{$this->recipe}\".";
+    $this->recipeTitle = $recipeTitle;
+    $this->message = "User \"{$this->user->firstname} {$this->user->lastname}\" commented on recipe \"{$this->recipeTitle}\".";
 }
 
     /**
@@ -38,16 +38,24 @@ class RecipeCommented extends Notification implements ShouldQueue
     return ['database', 'broadcast'];
 }
 
-    public function broadcastOn(): PrivateChannel
-{
-    return new PrivateChannel('notifications.' . $this->notifiable);
-}
-
-    public function broadcastAs(): string
-{
-    return 'my-notifications';
-}
-
+    /**
+     * Returns the channel names the event should broadcast on.
+     *
+     * @return PrivateChannel
+     */
+    public function broadcastOn()
+    {
+        return new PrivateChannel('notifications.'.$this->notifiable);
+    }
+    /**
+     * Retrieves the name of the event that should be broadcasted.
+     *
+     * @return string The name of the event.
+     */
+    public function broadcastAs()
+    {
+        return 'my-notifications';
+    }
     /**
      * Get the mail representation of the notification.
      */

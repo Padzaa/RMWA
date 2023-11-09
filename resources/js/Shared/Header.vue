@@ -261,6 +261,8 @@ export default {
             this.active = this.setItemAndPanelActive();
         },
 
+
+
     },
     mounted() {
         this.active = this.setItemAndPanelActive();

@@ -15,18 +15,18 @@ class PublicRecipeCreated extends Notification implements ShouldQueue
 {
     use Queueable;
 
-    public $name;
+    public string $recipeTitle;
     public $user;
-    public $message;
+    public string $message;
     public $notifiable;
     /**
      * Create a new notification instance.
      */
-    public function __construct($name,$user)
+    public function __construct($recipeTitle,$user)
     {
-        $this->name = $name;
+        $this->recipeTitle = $recipeTitle;
         $this->user = $user;
-        $this->message = "Recipe \"{$name}\" has been created by {$user->firstname} {$user->lastname}";
+        $this->message = "Recipe \"{$this->recipeTitle}\" has been created by {$user->firstname} {$user->lastname}";
 
     }
 
@@ -41,11 +41,20 @@ class PublicRecipeCreated extends Notification implements ShouldQueue
 
         return ['database', 'broadcast'];
     }
-
+    /**
+     * Returns the channel names the event should broadcast on.
+     *
+     * @return PrivateChannel
+     */
     public function broadcastOn()
     {
         return new PrivateChannel('notifications.'.$this->notifiable);
     }
+    /**
+     * Retrieves the name of the event that should be broadcasted.
+     *
+     * @return string The name of the event.
+     */
     public function broadcastAs()
     {
         return 'my-notifications';

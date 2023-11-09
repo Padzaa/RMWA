@@ -1,35 +1,25 @@
 <?php
 
 namespace App\Http\Controllers;
-
-use App\Events\MyNotifications;
 use App\Events\MyRecipeLiked;
 use App\Http\Requests\StoreRecipeRequest;
 use App\Http\Requests\UpdateRecipeRequest;
-use App\Models\Collection;
 use App\Models\Ingredient;
-use App\Models\Like;
 use App\Models\Notification;
 use App\Models\Recipe;
 use App\Models\Review;
-use App\Models\SharedRecipe;
 use App\Models\User;
-use App\Models\UserLogin;
 use App\Notifications\PublicRecipeCreated;
 use App\Notifications\RecipeCommented;
 use App\Notifications\RecipeLiked;
 use App\Notifications\RecipeRated;
 use App\Notifications\RecipeShared;
-use Carbon\Carbon;
-use Dflydev\DotAccessData\Data;
 use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\URL;
-use Illuminate\Support\Facades\Validator;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
 use App\Models\Category;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Notification as NotificationF;
 
 class RecipeController extends Controller
@@ -82,7 +72,7 @@ class RecipeController extends Controller
             ]);
             $recipe->ingredients()->attach($request->ingredients);
             $recipe->categories()->attach($request->categories);
-            if ($recipe->is_public) {
+            if ($recipe->is_public){
                 NotificationF::send(User::all()->except(Auth::user()->id), new PublicRecipeCreated($recipe->title, Auth::user()));
             }
             session()->flash('alert', [
@@ -129,13 +119,13 @@ class RecipeController extends Controller
                 [
                     "recipe" => $recipe,
                     "ingredients" => $recipe->ingredients,
-                    "review" => $review ? $review : null,
-                    "average" => $average ? $average : "No Rating Yet",
-                    "reviews" => $reviews ? $reviews : [],
-                    "users" => $users ? $users : User::all(),
-                    "shared_to" => $shared_to ? $shared_to : null,
+                    "review" => $review ?? null,
+                    "average" => $average!=0 ? $average : "No Rating Yet",
+                    "reviews" => $reviews ?? [],
+                    "users" => $users ?? User::all(),
+                    "shared_to" => $shared_to ?? null,
                     "comments" => $recipe->comments()->with('user')->orderBy('created_at', 'desc')->get(),
-                    "is_liked" => $is_liked ? $is_liked : false,
+                    "is_liked" => $is_liked ?? false,
                 ]);
         } catch (Exception $e) {
             session()->flash('alert', [

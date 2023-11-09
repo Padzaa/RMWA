@@ -12,6 +12,9 @@ class UserLogin extends Model
     protected $fillable = [
         'user_id'
     ];
+    /**
+     * Retrieve the associated user.
+     */
     public function user(){
         return $this->belongsTo(User::class);
     }

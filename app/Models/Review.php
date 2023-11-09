@@ -14,7 +14,6 @@ class Review extends Model
     /*
      Retrieve a recipe that is associated to certain review
      */
-
     public function recipe()
     {
         return $this->belongsTo(Recipe::class);

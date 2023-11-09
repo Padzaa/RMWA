@@ -154,27 +154,4 @@ class UserController extends Controller
         return redirect()->back();
     }
 
-//    public function sendMail()
-//    {
-//        Mail::to(env('MAIL_TO'))->queue(new TestingMail("email", "Ovo je text"));
-//        return redirect()->back();
-//    }
-//
-//    public function sms()
-//    {
-//        $sms = new TwilioService();
-//
-//        return Inertia::render('User/SMS', [
-//
-//        ]);
-//    }
-//
-//    public function sendSMS(Request $request)
-//    {
-//
-//        SendSMS::dispatch($request->number, $request->message);
-//
-//        return Inertia::location("/sms");
-//
-//    }
 }

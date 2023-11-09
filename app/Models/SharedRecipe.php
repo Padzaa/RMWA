@@ -9,12 +9,10 @@ class SharedRecipe extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['user_who_shared', 'user_shared_to'];
+    protected $fillable = ['recipe_id', 'user_shared_to'];
 
     /**
      * Retrieves the related Recipe model for this instance.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo The relationship instance.
      */
     public function recipe()
     {

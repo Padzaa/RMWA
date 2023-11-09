@@ -13,10 +13,4 @@ class Notification extends Model
 {
     use HasFactory;
     protected $table = 'notifications';
-
-    /**
-     * Create a notification in the database and retrieve all notifications.
-     */
-
-
 }

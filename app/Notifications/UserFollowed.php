@@ -13,7 +13,7 @@ class UserFollowed extends Notification implements ShouldQueue
     use Queueable;
 
     public $user;
-    public $message;
+    public string $message;
     public $notifiable;
 
     /**
@@ -35,17 +35,24 @@ class UserFollowed extends Notification implements ShouldQueue
         $this->notifiable = $notifiable->id;
         return ['database', 'broadcast'];
     }
-
-    public function broadcastOn(): PrivateChannel
+    /**
+     * Returns the channel names the event should broadcast on.
+     *
+     * @return PrivateChannel
+     */
+    public function broadcastOn()
     {
-        return new PrivateChannel('notifications.' . $this->notifiable);
+        return new PrivateChannel('notifications.'.$this->notifiable);
     }
-
-    public function broadcastAs(): string
+    /**
+     * Retrieves the name of the event that should be broadcasted.
+     *
+     * @return string The name of the event.
+     */
+    public function broadcastAs()
     {
         return 'my-notifications';
     }
-
     /**
      * Get the mail representation of the notification.
      */
