@@ -8,6 +8,7 @@ use App\Http\Controllers\RecipeController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\SharedRecipeController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\WelcomeController;
 use App\Models\Category;
 use App\Models\Ingredient;
 use App\Models\Recipe;
@@ -33,7 +34,7 @@ use App\Http\Controllers\CollectionController;
 /*---------------------------------------------------------------------------------------*/
 Route::middleware(['auth'])->group(function () {
     //Home page
-    Route::get('/', [Controller::class, 'welcome'])->name('welcome');
+    Route::get('/', [WelcomeController::class, 'welcome'])->name('welcome');
     //Resource routes
     Route::resource('/recipe', RecipeController::class);
     Route::resource('/user', UserController::class);

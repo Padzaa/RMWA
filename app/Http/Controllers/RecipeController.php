@@ -29,9 +29,11 @@ class RecipeController extends Controller
      */
     public function index(Request $request)
     {
+
         $filteredRecipes = Recipe::forUser()
             ->Filter($request)
-            ->paginate(10);
+            ->Favorites($request)
+            ->paginate(1);
 
         return Inertia::render('Recipe/All', [
             "title" => "Recipes",
