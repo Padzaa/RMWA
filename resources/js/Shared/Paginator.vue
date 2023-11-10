@@ -7,7 +7,7 @@ export default {
     },
     data() {
         return {
-            page: new URLSearchParams(this.$page.url).get('page') || 1
+            page: this.recipes.current_page > this.recipes.last_page ? this.changePage() : this.recipes.current_page,
         }
     },
     methods: {
@@ -15,10 +15,7 @@ export default {
          * Change the page of the recipe pagination.
          */
         changePage(){
-            if (this.page > this.recipes.last_page) {
-                this.page = this.recipes.last_page
-            }
-            Inertia.get(this.recipes.path + '?page=' + this.page);
+            Inertia.get(this.$page.url, {page: this.page});
         }
     }
 }

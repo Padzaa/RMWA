@@ -17,7 +17,7 @@ export default {
          * @return {void}
          */
         submit() {
-            let url = this.$page.url.includes('/recipe') ? '/recipe' : '/public';
+            let url = this.$page.url.includes('/recipe') ? '/recipe' : '/guest/public';
             Inertia.get(url, this.form);
         },
         /**
