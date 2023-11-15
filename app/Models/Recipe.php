@@ -111,7 +111,6 @@ class Recipe extends Model
             ->FilterCategories($request)
             ->byRating($request)
             ->Favorites($request);
-
     }
 
     /*
@@ -181,7 +180,7 @@ class Recipe extends Model
 
     /*
      * Check if a recipe is public
-     * */
+     */
     public function scopePublic($query)
     {
         return $query->where("is_public", 1);

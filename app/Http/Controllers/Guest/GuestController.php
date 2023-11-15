@@ -34,11 +34,7 @@ class GuestController extends Controller
                     "comments" => $recipe->comments()->with('user')->orderBy('created_at', 'desc')->get(),
                 ]);
         } catch (Exception $e) {
-            session()->flash('alert', [
-                'title' => 'Recipe Error',
-                'message' => $e->getMessage(),
-                'type' => 'error'
-            ]);
+            $this->flashErrorMessage($e->getMessage());
             return redirect()->route('recipe.index');
         }
     }

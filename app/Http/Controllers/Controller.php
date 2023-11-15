@@ -39,10 +39,37 @@ class Controller extends BasController
         return $query->paginate($per_page);
     }
 
+    /**
+     * Order and paginate the query result.
+     */
     protected function OrderAndPaginate($query, $request)
     {
         $query = $this->orderBy($query, $request);
         return $this->paginate($query, $request);
+    }
+
+    /*
+     * Sending a success message to user interface
+     */
+    protected function flashSuccessMessage($message): void
+    {
+        session()->flash('alert', [
+            'title' => 'Success!',
+            'message' => $message,
+            'type' => 'success'
+        ]);
+    }
+
+    /*
+     * Sending an error message to user interface
+     */
+    protected function flashErrorMessage($message): void
+    {
+        session()->flash('alert', [
+            'title' => 'Error!',
+            'message' => $message,
+            'type' => 'error'
+        ]);
     }
 
 }

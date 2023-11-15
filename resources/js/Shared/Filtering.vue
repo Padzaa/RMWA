@@ -54,7 +54,7 @@ export default {
             }
         },
         /**
-         * Adjusting values for ratings filters
+         * Adjusting values for filters
          */
         adjustValues() {
 
@@ -66,28 +66,31 @@ export default {
             }
             let ratings_to = [1, 2, 3, 4, 5];
             let ratings_from = [1, 2, 3, 4, 5];
+            //Filtering the ratings when fromNUMBER or toNUMBER are selected
             if (from != null) {
                 ratings_to = ratings_to.filter(number => number > from);
             }
             if (to != null) {
                 ratings_from = ratings_from.filter(number => number < to);
             }
-            this.form.r_to = to;
-            this.form.r_from = from;
-            this.ratings_to = ratings_to;
-            this.ratings_from = ratings_from;
+            //Adjusting values for form
+            this.form.r_to = to;//Rating to-value
+            this.form.r_from = from;//Rating from-value
+            this.ratings_to = ratings_to;//Array of ratings to
+            this.ratings_from = ratings_from;//Array of ratings from
+
         }
     },
     data() {
         return {
             form: {
-                categories: [],
-                ingredients: [],
+                categories: this.filters.categories ? this.filters.categories.map(category => parseInt(category)) : [],
+                ingredients: this.filters.ingredients ? this.filters.ingredients.map(ingredient => parseInt(ingredient)) : [],
                 favorites: this.filters.favorites ? JSON.parse(this.filters.favorites) : null,
                 ratings: this.filters.ratings ? this.filters.ratings : [],
-                order: this.filters.order ? this.filters.order : null,
+                order: null,
                 search: this.filters.search ? this.filters.search : '',
-                collections: [],
+                collections: this.filters.collections ? this.filters.collections.map(collection => parseInt(collection)) : [],
                 r_from: this.filters.r_from ?? null,
                 r_to: this.filters.r_to ?? null,
             },
@@ -121,29 +124,8 @@ export default {
         }
     },
     mounted() {
-        if (this.filters.categories) {
-            this.filters.categories.forEach((el) => {
-                el = parseInt(el);
-                this.form.categories.push(el);
-            });
-
-        }
-        if (this.filters.ingredients) {
-            this.filters.ingredients.forEach((el) => {
-                el = parseInt(el);
-                this.form.ingredients.push(el);
-            });
-
-        }
-        if (this.filters.collections) {
-            this.filters.collections.forEach((el) => {
-                el = parseInt(el);
-                this.form.collections.push(el);
-            });
-
-        }
         this.adjustValues();
-
+        this.form.order = this.filters.order ?? this.order[0].value //Setting form order;
     }
 }
 </script>

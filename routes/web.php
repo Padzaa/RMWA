@@ -65,7 +65,7 @@ Route::middleware(['auth'])->group(function () {
 /*------------------END OF (ONLY ACCESSABLE WHEN USER LOGGED IN) ROUTES------------------*/
 /*---------------------------------------------------------------------------------------*/
 
-Auth::routes();
+Auth::routes([]);
 Route::prefix('guest')->group(function () {
     Route::get('/recipe/{recipe}', [GuestController::class, 'show'])->name('guest-recipe-show');
         //Public page of the site, so mainly guest can access

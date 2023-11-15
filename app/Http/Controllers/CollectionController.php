@@ -46,18 +46,10 @@ class CollectionController extends Controller
                 'user_id' => Auth::user()->id
             ]);
             $collection->recipes()->sync($request->recipes);
-            session()->flash('alert', [
-                'title' => 'Collection Created',
-                'message' => 'Collection created successfully',
-                'type' => 'success'
-            ]);
+            $this->flashSuccessMessage('Collection created successfully');
             return redirect()->route('collection.index');
         } catch (Exception $e) {
-            session()->flash('alert', [
-                'title' => 'Collection Error',
-                'message' => $e->getMessage(),
-                'type' => 'error'
-            ]);
+            $this->flashErrorMessage($e->getMessage());
             return redirect()->route('collection.index');
         }
 
@@ -74,11 +66,7 @@ class CollectionController extends Controller
                 "collection" => $collection->load('recipes')
             ]);
         } catch (Exception $e) {
-            session()->flash('alert', [
-                'title' => 'Collection Error',
-                'message' => $e->getMessage(),
-                'type' => 'error'
-            ]);
+            $this->flashErrorMessage($e->getMessage());
             return redirect()->route('collection.index');
         }
 
@@ -99,11 +87,7 @@ class CollectionController extends Controller
 
             ]);
         } catch (Exception $e) {
-            session()->flash('alert', [
-                'title' => 'Collection Error',
-                'message' => $e->getMessage(),
-                'type' => 'error'
-            ]);
+            $this->flashErrorMessage($e->getMessage());
             return redirect()->route('collection.index');
         }
 
@@ -120,18 +104,10 @@ class CollectionController extends Controller
                 'name' => $request->name,
             ]);
             $collection->recipes()->sync($request->recipes);
-            session()->flash('alert', [
-                'title' => 'Collection Updated',
-                'message' => 'Collection updated successfully',
-                'type' => 'success'
-            ]);
+            $this->flashSuccessMessage('Collection updated successfully');
             return redirect()->route('collection.index');
         } catch (Exception $e) {
-            session()->flash('alert', [
-                'title' => 'Collection Error',
-                'message' => $e->getMessage(),
-                'type' => 'error'
-            ]);
+            $this->flashErrorMessage($e->getMessage());
             return redirect()->route('collection.index');
         }
 
@@ -149,11 +125,7 @@ class CollectionController extends Controller
             $collection->delete();
             return redirect()->route('collection.index');
         } catch (Exception $e) {
-            session()->flash('alert', [
-                'title' => 'Collection Error',
-                'message' => $e->getMessage(),
-                'type' => 'error'
-            ]);
+            $this->flashErrorMessage($e->getMessage());
             return redirect()->route('collection.index');
 
         }

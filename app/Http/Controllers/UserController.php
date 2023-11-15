@@ -64,11 +64,7 @@ class UserController extends Controller
                 "is_following" => $is_following,
             ]);
         } catch (Exception $e) {
-            session()->flash("alert", [
-                "title" => "Error!",
-                "message" => $e->getMessage(),
-                "type" => "error"
-            ]);
+            $this->flashErrorMessage($e->getMessage());
             return Inertia::location('/');
         }
     }
@@ -87,11 +83,7 @@ class UserController extends Controller
                 ]
             );
         } catch (Exception $e) {
-            session()->flash("alert", [
-                "title" => "Error!",
-                "message" => $e->getMessage(),
-                "type" => "error"
-            ]);
+            $this->flashErrorMessage($e->getMessage());
             return Inertia::location('/');
         }
 
@@ -117,18 +109,10 @@ class UserController extends Controller
             $user->lastname = $request->lastname;
             $user->email = $request->email;
             $user->save();
-            session()->flash("alert", [
-                "title" => "Success!",
-                "message" => "Your profile has been updated!",
-                "type" => "success"
-            ]);
+            $this->flashSuccessMessage('User updated successfully.');
             return Inertia::location('/');
         } catch (Exception $e) {
-            session()->flash("alert", [
-                "title" => "Error!",
-                "message" => $e->getMessage(),
-                "type" => "error"
-            ]);
+            $this->flashErrorMessage($e->getMessage());
             return Inertia::location('/');
         }
 

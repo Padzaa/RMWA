@@ -59,10 +59,9 @@ class User extends Authenticatable
     /*
      Retrieve recipes that are favorite to a user/paginating them
      */
-    public function favorites($per_page = 10)
+    public function favorites()
     {
-
-        return Recipe::where('is_favorite', true)->where('user_id', Auth::user()->id)->paginate($per_page);
+        return Recipe::where('is_favorite', true)->where('user_id', Auth::user()->id);
     }
 
     /*
