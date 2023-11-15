@@ -33,7 +33,7 @@ class GuestController extends Controller
                     "users" => $users ?? User::all(),
                     "comments" => $recipe->comments()->with('user')->orderBy('created_at', 'desc')->get(),
                 ]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->flashErrorMessage($e->getMessage());
             return redirect()->route('recipe.index');
         }

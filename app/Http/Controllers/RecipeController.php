@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Events\MyRecipeLiked;
 use App\Http\Requests\StoreRecipeRequest;
 use App\Http\Requests\UpdateRecipeRequest;
 use App\Models\Ingredient;
@@ -201,8 +200,8 @@ class RecipeController extends Controller
 
     }
 
-    /*
-    Makes a recipe favorite to a user
+    /**
+    *Makes a recipe favorite to a user
    */
     public function favorite(Recipe $recipe, Request $request)
     {
@@ -217,7 +216,7 @@ class RecipeController extends Controller
         }
     }
 
-    /*
+    /**
         Creates a review(rate the recipe)
        */
     public function rate(Recipe $recipe, Request $request)
@@ -260,7 +259,7 @@ class RecipeController extends Controller
 
     }
 
-    /*
+    /**
        Share a recipe with other users
      */
     public function share(Recipe $recipe, Request $request)
@@ -280,7 +279,7 @@ class RecipeController extends Controller
 
     }
 
-    /*
+    /**
      Adds a comment for the recipe
     */
     public function comment(Recipe $recipe, Request $request)
@@ -307,12 +306,11 @@ class RecipeController extends Controller
         }
     }
 
-    /*
+    /**
      Likes the recipe for a user
     */
     public function like(Recipe $recipe)
     {
-
 
         try {
             $this->authorize('view', $recipe);
@@ -332,7 +330,7 @@ class RecipeController extends Controller
 
     }
 
-    /*
+    /**
      Goes to favorites page
      */
     public function favorites(Request $request)

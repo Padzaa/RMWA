@@ -52,7 +52,6 @@ class CollectionController extends Controller
             $this->flashErrorMessage($e->getMessage());
             return redirect()->route('collection.index');
         }
-
     }
 
     /**
@@ -69,7 +68,6 @@ class CollectionController extends Controller
             $this->flashErrorMessage($e->getMessage());
             return redirect()->route('collection.index');
         }
-
     }
 
     /**
@@ -110,8 +108,6 @@ class CollectionController extends Controller
             $this->flashErrorMessage($e->getMessage());
             return redirect()->route('collection.index');
         }
-
-
     }
 
     /**
@@ -119,7 +115,6 @@ class CollectionController extends Controller
      */
     public function destroy(Collection $collection)
     {
-
         try {
             $this->authorize('delete', $collection);
             $collection->delete();

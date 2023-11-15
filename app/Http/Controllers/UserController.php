@@ -4,22 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
-use App\Jobs\SendSMS;
-use App\Mail\TestingMail;
-use App\Models\Recipe;
 use App\Models\User;
 use App\Notifications\UserFollowed;
-use App\Services\TwilioService;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\Rule;
 use Inertia\Inertia;
-use function Illuminate\Events\queueable;
+
 
 class UserController extends Controller
 {
@@ -129,7 +122,7 @@ class UserController extends Controller
     /**
      *Follows/Unfollows a user
      */
-    public function follow(Request $request, User $user)
+    public function follow(User $user)
     {
         if(Auth::user()->followedByMe()->where('followed_user_id', $user->id)->count()){
             Auth::user()->followedByMe()->detach($user->id);
