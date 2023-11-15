@@ -59,9 +59,9 @@ class User extends Authenticatable
     /*
      Retrieve recipes that are favorite to a user/paginating them
      */
-
     public function favorites($per_page = 10)
     {
+
         return Recipe::where('is_favorite', true)->where('user_id', Auth::user()->id)->paginate($per_page);
     }
 
@@ -94,10 +94,14 @@ class User extends Authenticatable
     {
         return $this->hasMany(Review::class);
     }
+
+    public function followsUser($user){
+        return $this->followedByMe()->where('followed_user_id', $user->id);
+    }
     /*
      Retrieve every user that a certain user follows
      */
-    public function follow()
+    public function followedByMe()
     {
         return $this->belongsToMany(User::class, 'follows', 'user_id', 'followed_user_id')->withTimestamps();
     }
@@ -105,7 +109,7 @@ class User extends Authenticatable
     /*
      Retrieve every user that follows a certain user
      */
-    public function followed()
+    public function myFollowers()
     {
         return $this->belongsToMany(User::class, 'follows', 'followed_user_id', 'user_id')->withTimestamps();
     }

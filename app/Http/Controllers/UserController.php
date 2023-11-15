@@ -57,7 +57,7 @@ class UserController extends Controller
             if (Auth::user()->id === $user->id) {
                 return redirect()->route('user.edit', $user->id);
             }
-            Auth::user()->follow()->where('followed_user_id', $user->id)->count() ? $is_following = true : $is_following = false;
+            Auth::user()->followsUser($user)->count() ? $is_following = true : $is_following = false;
 
             return Inertia::render('User/User_Show', [
                 "user" => $user,
@@ -76,11 +76,12 @@ class UserController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(User $user)
+    public function edit(User $user, Request $request)
     {
         try {
             $this->authorize('update', $user);
-            $recipes = $user->recipes()->paginate(10);
+            $recipes = $user->recipes();
+            $recipes = $this->OrderAndPaginate($recipes, $request);
             return Inertia::render('User/User_Edit', [
                     "recipes" => $recipes,
                 ]
@@ -109,10 +110,9 @@ class UserController extends Controller
                 }
                 $uploadedFile = $request->file('file');
                 $filename = time() . '_' . $uploadedFile->getClientOriginalName();
-                $path = $uploadedFile->storeAs('public', $filename);
+                $uploadedFile->storeAs('public', $filename);
                 $user->picture = "/storage/" . $filename;
             }
-
             $user->firstname = $request->firstname;
             $user->lastname = $request->lastname;
             $user->email = $request->email;
@@ -142,13 +142,15 @@ class UserController extends Controller
         //
     }
 
-//Follow/Unfollow a certain user
+    /**
+     *Follows/Unfollows a user
+     */
     public function follow(Request $request, User $user)
     {
-        if(Auth::user()->follow()->where('followed_user_id', $user->id)->count()){
-            Auth::user()->follow()->detach($user->id);
+        if(Auth::user()->followedByMe()->where('followed_user_id', $user->id)->count()){
+            Auth::user()->followedByMe()->detach($user->id);
         }else{
-            Auth::user()->follow()->attach($user->id);
+            Auth::user()->followedByMe()->attach($user->id);
             Notification::send(User::find($user->id), new UserFollowed(Auth::user()));
         }
         return redirect()->back();

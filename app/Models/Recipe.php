@@ -44,6 +44,14 @@ class Recipe extends Model
         return $this->hasMany(Review::class);
     }
 
+    /**
+     * Retrieves the user's review for a given recipe.
+     */
+    public function reviewForRecipeByUser($user)
+    {
+        return $this->reviews()->where('user_id', $user->id)->with('user')->first();
+    }
+
     /*
      Retrieve every record where a certain recipe appears to be shared
      */
@@ -88,57 +96,87 @@ class Recipe extends Model
             })->orWhereHas('shared', function ($query) use ($user) {
                 $query->where('user_shared_to', $user->id);
             });
-        } else {
-            return $query;
         }
+    }
+
+    /*
+     * Filtering through recipes
+     */
+    public function scopeFilterRecipes($query, $request)
+    {
+        $query
+            ->Search($request)
+            ->FilterIngredients($request)
+            ->FilterCollections($request)
+            ->FilterCategories($request)
+            ->byRating($request)
+            ->Favorites($request);
 
     }
 
     /*
-        Filtering through recipes
-         */
-    public function scopeFilter($query, $request)
+     * Filter recipes by search
+     */
+    public function scopeSearch($query, $request)
     {
-//        $filters = $request->query();
-//        $order = $request->order !== null ? explode('-', $request->order) : ['created_at', 'desc'];
-//
-//        $orderColumn = $order[0];
-//        $orderDirection = $order[1];
-        /*when($request->ratings, function ($query, $ratings) use ($orderColumn, $orderDirection) {
-                    $query->select('recipes.*', \DB::raw('ROUND(AVG(reviews.rating),2) as average_rating'), \DB::raw('COUNT(reviews.id) as review_count'))
-                        ->leftJoin('reviews', 'reviews.recipe_id', '=', 'recipes.id')
-                        ->groupBy('recipes.id')
-                        ->havingRaw('FLOOR(AVG(reviews.rating)) IN (' . implode(',', $ratings) . ')')
-                        ->orderBy($orderColumn, $orderDirection);
-
-                })->when($request->ratings == null, function ($query) use ($orderColumn, $orderDirection) {
-                    $query->select('recipes.*', \DB::raw('ROUND(AVG(reviews.rating),2) as average_rating'), \DB::raw('COUNT(reviews.id) as review_count'))
-                        ->leftJoin('reviews', 'reviews.recipe_id', '=', 'recipes.id')
-                        ->groupBy('recipes.id')
-                        ->orderBy($orderColumn, $orderDirection);
-
-                })->*/
         $query->when($request->search, function ($query, $search) {
             $query->where(function ($query) use ($search) {
                 $query->orWhere('description', 'like', '%' . $search . '%')
                     ->orWhere('title', 'like', '%' . $search . '%')
                     ->orWhere('instructions', 'like', '%' . $search . '%');
             });
-        })->when($request->ingredients, function ($query, $ingredients) {
-            $query->whereHas('ingredients', function ($query) use ($ingredients) {
-                $query->whereIn('ingredient_id', $ingredients);
-            });
-        })->when($request->collections, function ($query, $collections) {
-            if (Auth::user()) {
-                $query->whereHas('collections', function ($query) use ($collections) {
-                    $query->whereIn('collection_id', $collections);
-                });
-            }
-        })->when($request->categories, function ($query, $categories) {
+        });
+    }
+
+    /*
+     * Filter recipes by categories
+     */
+    public function scopeFilterCategories($query, $request)
+    {
+        $query->when($request->categories, function ($query, $categories) {
             $query->whereHas('categories', function ($query) use ($categories) {
                 $query->whereIn('category_id', $categories);
             });
         });
+    }
+
+    /*
+     * Filter recipes by ingredients
+     */
+    public function scopeFilterIngredients($query, $request)
+    {
+        $query->when($request->ingredients, function ($query, $ingredients) {
+            $query->whereHas('ingredients', function ($query) use ($ingredients) {
+                $query->whereIn('ingredient_id', $ingredients);
+            });
+        });
+    }
+
+    /*
+     * Filter recipes by collections
+     */
+    public function scopeFilterCollections($query, $request)
+    {
+        if (Auth::user()) {
+            $query->when($request->collections, function ($query, $collections) {
+                $query->whereHas('collections', function ($query) use ($collections) {
+                    $query->whereIn('collection_id', $collections);
+                });
+            });
+        }
+    }
+
+    /*
+     * Filter recipes by rating
+     */
+    public function scopeByRating($query, $request)
+    {
+        $query->select('recipes.*', \DB::raw('COALESCE(ROUND(AVG(reviews.rating),2),0) as average_rating'), \DB::raw('COUNT(reviews.id) as review_count'))
+            ->leftJoin('reviews', 'reviews.recipe_id', '=', 'recipes.id')
+            ->groupBy('recipes.id');
+        $from = ($request->r_from > 0) && ($request->r_from <= 5) ? $request->r_from : "0.00";
+        $to = ($request->r_to <= 5) && ($request->r_to > 0) ? $request->r_to : "5.00";
+        $query->havingBetween("average_rating", [$from, $to]);
     }
 
     /*
@@ -149,10 +187,13 @@ class Recipe extends Model
         return $query->where("is_public", 1);
     }
 
+    /*
+     * Filter recipes if they are favorite to a user
+     */
     public function scopeFavorites($query, $request)
     {
-        if (Auth::user() && $request->favorites) {
-            return $query->where("recipes.is_favorite", 1)->where('recipes.user_id', Auth::user()->id);
+        if (Auth::user() && $request->favorites == "true") {
+            $query->where("recipes.is_favorite", 1)->where('recipes.user_id', Auth::user()->id);
         }
     }
 

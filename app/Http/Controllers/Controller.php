@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Recipe;
+use Exception;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Routing\Controller as BasController;
 use Inertia\Inertia;
+use function Symfony\Component\String\b;
 
 class Controller extends BasController
 {
@@ -13,15 +16,33 @@ class Controller extends BasController
 
     const DEFAULT_ORDER_COLUMN = "created_at";
     const DEFAULT_ORDER_DIRECTION = "desc";
-    protected function orderBy($query,$request){
-        $order = explode("-",$request->order);
+
+    /**
+     * Generates the function comment for the given function body.
+     */
+    protected function orderBy($query, $request)
+    {
+        if ($request->order) {
+            $order = explode("-", $request->order);
+        }
         $orderColumn = $order[0] ?? self::DEFAULT_ORDER_COLUMN;
         $orderDirection = $order[1] ?? self::DEFAULT_ORDER_DIRECTION;
-        return $query->orderBy($orderColumn,$orderDirection);
+        return $query->orderBy($orderColumn, $orderDirection);
     }
 
-    protected function paginate($query,$request){
+    /**
+     * Paginate the given query.
+     */
+    protected function paginate($query, $request)
+    {
         $per_page = $request->per_page ?? 10;
         return $query->paginate($per_page);
     }
+
+    protected function OrderAndPaginate($query, $request)
+    {
+        $query = $this->orderBy($query, $request);
+        return $this->paginate($query, $request);
+    }
+
 }

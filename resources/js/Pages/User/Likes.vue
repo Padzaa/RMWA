@@ -19,7 +19,7 @@ export default {
     <Head>
         <title>Liked Recipes</title>
     </Head>
-    <div class="container">
+    <div class="contain">
         <h1 class="text-center">Liked recipes</h1>
         <GridNet :recipes="likes.data" :auth="this.$attrs.auth"></GridNet>
         <Paginator :recipes="likes"/>
@@ -29,7 +29,7 @@ export default {
 </template>
 
 <style scoped>
-.container {
+.contain {
     padding: 2em 0;
 }
 </style>

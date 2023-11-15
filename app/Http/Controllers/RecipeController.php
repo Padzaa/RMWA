@@ -30,14 +30,15 @@ class RecipeController extends Controller
     public function index(Request $request)
     {
 
-        $filteredRecipes = Recipe::forUser()
-            ->Filter($request)
-            ->Favorites($request)
-            ->paginate(1);
+        $recipes = Recipe
+            ::forUser()
+            ->FilterRecipes($request);
+
+        $recipes = $this->OrderAndPaginate($recipes, $request);
 
         return Inertia::render('Recipe/All', [
             "title" => "Recipes",
-            'recipes' => $filteredRecipes,
+            'recipes' => $recipes,
             'categories' => Category::all(),
             'ingredients' => Ingredient::orderBy('name')->get(),
             'filtersData' => $request->query->all(),
@@ -110,8 +111,8 @@ class RecipeController extends Controller
 
             if (Auth::user()) {
                 $shared_to = $recipe->shared()->get()->pluck("id");
-                $review = $recipe->reviews()->where('user_id', Auth::user()->id)->first();
-                $reviews = $recipe->reviews()->where("user_id", "!=", Auth::user()->id)->get();
+                $review = $recipe->reviewForRecipeByUser(Auth::user());
+                $reviews = $recipe->reviews()->where("user_id", "!=", Auth::user()->id)->with('user')->get();
                 $is_liked = $recipe->likes()->where('user_id', Auth::user()->id)->count();
                 $users = User::all()->except(Auth::user()->id);
             }
@@ -260,7 +261,7 @@ class RecipeController extends Controller
         try {
             $this->authorize('view', $recipe);
 
-            $rating = $recipe->reviews()->where("user_id", Auth::user()->id)->first();
+            $rating = $recipe->reviewForRecipeByUser(Auth::user());
 
             $request->request = $request->validate([
                 "rating" => ['required', 'integer', 'max:5', 'min:1'],

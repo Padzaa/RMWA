@@ -10,6 +10,14 @@ export default {
         ingredients: Object,
         filters: Object,
     },
+    watch: {
+        "form.r_from"(newVal) {
+            this.adjustValues();
+        },
+        "form.r_to"(newVal) {
+            this.adjustValues();
+        }
+    },
     methods: {
         /**
          * Submit the filter form.
@@ -44,6 +52,30 @@ export default {
             if (this.form.search === "" || e.key === "Enter") {
                 this.submit();
             }
+        },
+        /**
+         * Adjusting values for ratings filters
+         */
+        adjustValues() {
+
+            let from = this.form.r_from;//Selected rating from
+            let to = this.form.r_to;//Selected rating to
+            if(from > 5 || to > 5){
+                from = 1;
+                to = 5;
+            }
+            let ratings_to = [1, 2, 3, 4, 5];
+            let ratings_from = [1, 2, 3, 4, 5];
+            if (from != null) {
+                ratings_to = ratings_to.filter(number => number > from);
+            }
+            if (to != null) {
+                ratings_from = ratings_from.filter(number => number < to);
+            }
+            this.form.r_to = to;
+            this.form.r_from = from;
+            this.ratings_to = ratings_to;
+            this.ratings_from = ratings_from;
         }
     },
     data() {
@@ -56,14 +88,23 @@ export default {
                 order: this.filters.order ? this.filters.order : null,
                 search: this.filters.search ? this.filters.search : '',
                 collections: [],
+                r_from: this.filters.r_from ?? null,
+                r_to: this.filters.r_to ?? null,
             },
+            ratings_from: [
+                1, 2, 3, 4, 5
+            ],
+            ratings_to: [
+                1, 2, 3, 4, 5
+            ],
+
             dialog: false,
-            order:[
+            order: [
                 {
                     name: "Created At Desc",
                     value: "created_at-desc"
                 },
-                 {
+                {
                     name: "Created At Asc",
                     value: "created_at-asc"
                 },
@@ -101,6 +142,7 @@ export default {
             });
 
         }
+        this.adjustValues();
 
     }
 }
@@ -134,7 +176,7 @@ export default {
                 width="fit-content"
             >
 
-                <v-card style="border-radius:15px;min-height:400px;">
+                <v-card style="border-radius:15px;min-height:400px;min-width:350px;">
                     <form @submit.prevent="submit" class="filter-form">
                         <div class="pickers">
                             <v-container fluid style="padding:0 !important;">
@@ -159,7 +201,7 @@ export default {
                                 </v-row>
                             </v-container>
 
-                            <v-container fluid style="padding:0 !important;">
+                            <v-container v-if="this.$page.props.auth" fluid style="padding:0 !important;">
                                 <v-row>
                                     <v-col cols="12" style="padding:15px 12px 0 12px !important;">
                                         <v-select
@@ -221,16 +263,26 @@ export default {
                             <div class="for-fav" v-if="$page.props.auth">
                                 <v-checkbox-btn v-model="form.favorites" label="Favorite"></v-checkbox-btn>
                             </div>
-                            <div class="rating">
-                                Rating:
-                                <v-checkbox v-model="form.ratings" label="1+" value="1"></v-checkbox>
-                                <v-checkbox v-model="form.ratings" label="2+" value="2"></v-checkbox>
-                                <v-checkbox v-model="form.ratings" label="3+" value="3"></v-checkbox>
-                                <v-checkbox v-model="form.ratings" label="4+" value="4"></v-checkbox>
-                                <v-checkbox v-model="form.ratings" label="5" value="5"></v-checkbox>
+                            <div class="rating" style="width: 100%">
+
+                                <v-select
+                                    label="Rating from"
+                                    v-model="form.r_from"
+                                    :items="ratings_from"
+                                    item-title="ratings_from"
+                                    item-value="ratings_from"
+                                >
+                                </v-select>
+
+                                <v-select
+                                    label="Rating to"
+                                    v-model="form.r_to"
+                                    :items="ratings_to"
+                                    item-title="ratings_to"
+                                    item-value="ratings_to"
+                                >
+                                </v-select>
                             </div>
-
-
 
 
                         </div>
@@ -262,9 +314,11 @@ export default {
     padding: 2em 2em;
     height: 100% !important;
     grid-template-rows: 1fr min-content;
+    width: 100%;
 }
 
 .pickers {
+    width: 100%;
     display: grid;
     justify-self: center;
     place-items: center;
@@ -296,10 +350,11 @@ export default {
 
 .rating {
 
-    display: flex;
-    gap: 5px;
+    display: grid;
+    gap: 20px;
     align-items: center;
     font-size: 20px;
+    grid-template-columns: 1fr 1fr;
 }
 
 .btn-check:checked + .btn, .btn.active, .btn.show, .btn:first-child:active, :not(.btn-check) + .btn:active {
@@ -320,7 +375,6 @@ button.fr {
     color: white;
     font-size: 1.1em;
 }
-
 
 
 .v-checkbox >>> .v-input__details {

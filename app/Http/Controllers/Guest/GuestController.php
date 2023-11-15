@@ -48,11 +48,15 @@ class GuestController extends Controller
     */
     public function public(Request $request)
     {
-        $filteredRecipes = Recipe::query()->Public()->Filter($request)->paginate(10);
+        $recipes = Recipe
+            ::query()
+            ->Public()
+            ->FilterRecipes($request);
+        $recipes = $this->OrderAndPaginate($recipes, $request);
 
         return Inertia::render('Recipe/All', [
             "title" => "Public Recipes",
-            "recipes" => $filteredRecipes,
+            "recipes" => $recipes,
             'categories' => Category::all(),
             'ingredients' => Ingredient::orderBy('name')->get(),
             'filtersData' => $request->query->all(),

@@ -55,8 +55,8 @@ Route::middleware(['auth'])->group(function () {
     });
     //SHARED-RECIPES ROUTES
     Route::group([], function () {
-        Route::get('/my-shared', [SharedRecipeController::class, 'myShared'])->name('my-shared');//Show shared recipes
-        Route::get('/shared-with-me', [SharedRecipeController::class, 'sharedWithMe'])->name('shared-with-me');//Show shared with me recipes
+        Route::get('/myshared', [SharedRecipeController::class, 'myShared'])->name('my-shared');//Show shared recipes
+        Route::get('/sharedwithme', [SharedRecipeController::class, 'sharedWithMe'])->name('shared-with-me');//Show shared with me recipes
     });
     //USER ROUTES
     Route::put('/user/{user}/follow', [UserController::class, 'follow'])->name('follow');//Follow a user

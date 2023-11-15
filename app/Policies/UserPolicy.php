@@ -26,7 +26,7 @@ class UserPolicy
             $query->where('user_shared_to', $user->id);
         })->get();
         //IF USER 1 FOLLOWS A USER 2 THEN USER 2 CAN VIEW THE USER'S 1 PROFILE
-        $follow = $user->follow()->where('followed_user_id', $model->id)->get();
+        $follow = $user->followedByMe()->where('followed_user_id', $model->id)->get();
         //IF USER 1 HAS A PUBLIC RECIPE THEN USER 2 CAN VIEW THE USER'S 1 PROFILE
         $has_public = $model->recipes()->where('is_public', 1)->get();
 
