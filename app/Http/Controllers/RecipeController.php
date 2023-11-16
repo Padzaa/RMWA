@@ -223,9 +223,7 @@ class RecipeController extends Controller
     {
         try {
             $this->authorize('view', $recipe);
-
             $rating = $recipe->reviewForRecipeByUser(Auth::user());
-
             $request->request = $request->validate([
                 "rating" => ['required', 'integer', 'max:5', 'min:1'],
                 "msg" => ['required', 'string', 'max:500', 'min:1']
@@ -251,7 +249,7 @@ class RecipeController extends Controller
             $this->flashSuccessMessage('Review added successfully.');
 
             return redirect()->back();
-        } catch (Exception $e) {
+        }catch (Exception $e) {
             $this->flashErrorMessage($e->getMessage());
             return Inertia::location('/recipe/' . $recipe->id);
         }

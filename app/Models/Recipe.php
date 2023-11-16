@@ -12,7 +12,7 @@ class Recipe extends Model
 
     protected $fillable = ['title', 'description', 'instructions', 'user_id', 'is_favorite', 'is_public'];
 
-    /*
+    /**
      Retrieve every ingredient that is associated to certain recipe
      */
     public function ingredients()
@@ -20,7 +20,7 @@ class Recipe extends Model
         return $this->belongsToMany(Ingredient::class, 'recipe_ingredients');
     }
 
-    /*
+    /**
          Retrieve every category that is associated to certain recipe
          */
     public function categories()
@@ -28,7 +28,7 @@ class Recipe extends Model
         return $this->belongsToMany(Category::class, 'recipe_categories');
     }
 
-    /*
+    /**
          Retrieve a user that owns this recipe
          */
     public function user()
@@ -36,7 +36,7 @@ class Recipe extends Model
         return $this->belongsTo(User::class);
     }
 
-    /*
+    /**
      Retrieve every review that belongs to certain recipe
      */
     public function reviews()
@@ -52,7 +52,7 @@ class Recipe extends Model
         return $this->reviews()->where('user_id', $user->id)->with('user')->first();
     }
 
-    /*
+    /**
      Retrieve every record where a certain recipe appears to be shared
      */
     public function shared()
@@ -60,7 +60,7 @@ class Recipe extends Model
         return $this->belongsToMany(User::class, "shared_recipes", 'recipe_id', 'user_shared_to')->withTimestamps();
     }
 
-    /*
+    /**
      Retrieve every collection that is associated to certain recipe
      */
     public function collections()
@@ -68,7 +68,7 @@ class Recipe extends Model
         return $this->belongsToMany(Collection::class, "collection_recipes");
     }
 
-    /*
+    /**
      Retrieve every comment that belongs to certain recipe
      */
     public function comments()
@@ -76,7 +76,7 @@ class Recipe extends Model
         return $this->hasMany(Comment::class);
     }
 
-    /*
+    /**
      Retrieve every like that belongs to certain recipe
      */
     public function likes()
@@ -84,7 +84,7 @@ class Recipe extends Model
         return $this->belongsToMany(User::class, "likes", 'recipe_id', 'user_id');
     }
 
-    /*
+    /**
     Retrieve every recipe that a certain user can access(His own Recipes and Recipes shared with him)
      */
     public function scopeForUser($query)
@@ -99,7 +99,7 @@ class Recipe extends Model
         }
     }
 
-    /*
+    /**
      * Filtering through recipes
      */
     public function scopeFilterRecipes($query, $request)
@@ -109,11 +109,11 @@ class Recipe extends Model
             ->FilterIngredients($request)
             ->FilterCollections($request)
             ->FilterCategories($request)
-            ->byRating($request)
-            ->Favorites($request);
+            ->FilterByRating($request)
+            ->FilterFavorites($request);
     }
 
-    /*
+    /**
      * Filter recipes by search
      */
     public function scopeSearch($query, $request)
@@ -127,7 +127,7 @@ class Recipe extends Model
         });
     }
 
-    /*
+    /**
      * Filter recipes by categories
      */
     public function scopeFilterCategories($query, $request)
@@ -139,7 +139,7 @@ class Recipe extends Model
         });
     }
 
-    /*
+    /**
      * Filter recipes by ingredients
      */
     public function scopeFilterIngredients($query, $request)
@@ -151,7 +151,7 @@ class Recipe extends Model
         });
     }
 
-    /*
+    /**
      * Filter recipes by collections
      */
     public function scopeFilterCollections($query, $request)
@@ -165,10 +165,10 @@ class Recipe extends Model
         }
     }
 
-    /*
+    /**
      * Filter recipes by rating
      */
-    public function scopeByRating($query, $request)
+    public function scopeFilterByRating($query, $request)
     {
         $query->select('recipes.*', \DB::raw('COALESCE(ROUND(AVG(reviews.rating),2),0) as average_rating'), \DB::raw('COUNT(reviews.id) as review_count'))
             ->leftJoin('reviews', 'reviews.recipe_id', '=', 'recipes.id')
@@ -178,18 +178,18 @@ class Recipe extends Model
         $query->havingBetween("average_rating", [$from, $to]);
     }
 
-    /*
+    /**
      * Check if a recipe is public
      */
     public function scopePublic($query)
     {
-        return $query->where("is_public", 1);
+        $query->where("is_public", 1);
     }
 
-    /*
+    /**
      * Filter recipes if they are favorite to a user
      */
-    public function scopeFavorites($query, $request)
+    public function scopeFilterFavorites($query, $request)
     {
         if (Auth::user() && $request->favorites == "true") {
             $query->where("recipes.is_favorite", 1)->where('recipes.user_id', Auth::user()->id);

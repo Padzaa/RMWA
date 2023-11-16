@@ -48,7 +48,7 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
-    /*
+    /**
      Retrieve all recipes that a user owns
      */
     public function recipes()
@@ -56,7 +56,7 @@ class User extends Authenticatable
         return $this->hasMany(Recipe::class);
     }
 
-    /*
+    /**
      Retrieve recipes that are favorite to a user/paginating them
      */
     public function favorites()
@@ -64,7 +64,19 @@ class User extends Authenticatable
         return Recipe::where('is_favorite', true)->where('user_id', Auth::user()->id);
     }
 
-    /*
+    /**
+     * Retrieves the shared recipes for this user.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasManyThrough
+     */
+    public function sharedRecipes(){
+        return $this
+            ->recipes()
+            ->join('shared_recipes', 'recipes.id', '=', 'shared_recipes.recipe_id')
+            ->select('recipes.*')
+            ->groupBy('recipes.id');
+    }
+    /**
      Retrieve all recipes that are shared to a user
      */
     public function sharedWithMe()
@@ -72,21 +84,21 @@ class User extends Authenticatable
         return $this->belongsToMany(Recipe::class, 'shared_recipes', 'user_shared_to', 'recipe_id')->withTimestamps();
     }
 
-    /*
+    /**
      Retrieve every collection that a certain user owns
      */
     public function collections()
     {
         return $this->hasMany(Collection::class);
     }
-    /*
+    /**
      Retrieve every comment that a certain user has written
      */
     public function comments()
     {
         return $this->hasMany(Comment::class);
     }
-    /*
+    /**
     Retrieve every review that a certain user has written
     */
     public function reviews()
@@ -94,10 +106,13 @@ class User extends Authenticatable
         return $this->hasMany(Review::class);
     }
 
+    /**
+     * Checking if there is a record of me following a certain user
+     */
     public function followsUser($user){
         return $this->followedByMe()->where('followed_user_id', $user->id);
     }
-    /*
+    /**
      Retrieve every user that a certain user follows
      */
     public function followedByMe()
@@ -105,7 +120,7 @@ class User extends Authenticatable
         return $this->belongsToMany(User::class, 'follows', 'user_id', 'followed_user_id')->withTimestamps();
     }
 
-    /*
+    /**
      Retrieve every user that follows a certain user
      */
     public function myFollowers()
@@ -113,7 +128,7 @@ class User extends Authenticatable
         return $this->belongsToMany(User::class, 'follows', 'followed_user_id', 'user_id')->withTimestamps();
     }
 
-    /*
+    /**
      Retrieve every like that a certain user has
      */
     public function likes()

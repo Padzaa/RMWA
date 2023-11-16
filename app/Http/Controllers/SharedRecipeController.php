@@ -39,11 +39,7 @@ class SharedRecipeController extends Controller
      */
     public function myShared(Request $request)
     {
-        $recipes = Recipe::where('user_id', Auth::user()->id)->whereExists(function ($query) {
-            $query->select(DB::raw(1))
-                ->from('shared_recipes')
-                ->whereRaw('shared_recipes.recipe_id = recipes.id');
-        });
+        $recipes = Auth::user()->sharedRecipes();
         $recipes = $this->OrderAndPaginate($recipes,$request);
 
         return Inertia::render('User/Shared_Recipes', [

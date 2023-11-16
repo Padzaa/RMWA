@@ -23,30 +23,27 @@ class GuestController extends Controller
         try {
             $this->authorize("view", $recipe);
             $recipe->load('user');
-            $average = round($recipe->reviews()->avg("rating", 2), 2);
+            $average_rating = round($recipe->reviews()->avg("rating"), 2);
 
-            return Inertia::render('Recipe/Show',
-                [
-                    "recipe" => $recipe,
-                    "ingredients" => $recipe->ingredients,
-                    "average" => $average != 0 ? $average : "No Rating Yet",
-                    "users" => $users ?? User::all(),
-                    "comments" => $recipe->comments()->with('user')->orderBy('created_at', 'desc')->get(),
-                ]);
+            return Inertia::render('Recipe/Show', [
+                "recipe" => $recipe,
+                "ingredients" => $recipe->ingredients,
+                "average" => $average_rating != 0 ? $average_rating : "No Ratings Yet",
+                "comments" => $recipe->comments()->with('user')->orderBy('created_at', 'desc')->get(),
+            ]);
         } catch (\Exception $e) {
             $this->flashErrorMessage($e->getMessage());
             return redirect()->route('recipe.index');
         }
     }
 
-    /*
+    /**
         Public page of the site, so mainly guest can access
     */
     public function public(Request $request)
     {
         $recipes = Recipe
-            ::query()
-            ->Public()
+            ::Public()
             ->FilterRecipes($request);
         $recipes = $this->OrderAndPaginate($recipes, $request);
 

@@ -50,13 +50,11 @@ class UserController extends Controller
             if (Auth::user()->id === $user->id) {
                 return redirect()->route('user.edit', $user->id);
             }
-            Auth::user()->followsUser($user)->count() ? $is_following = true : $is_following = false;
-
             return Inertia::render('User/User_Show', [
                 "user" => $user,
-                "is_following" => $is_following,
+                "is_following" => boolval(Auth::user()->followsUser($user)->get()),
             ]);
-        } catch (Exception $e) {
+        }catch(Exception $e) {
             $this->flashErrorMessage($e->getMessage());
             return Inertia::location('/');
         }
@@ -124,9 +122,9 @@ class UserController extends Controller
      */
     public function follow(User $user)
     {
-        if(Auth::user()->followedByMe()->where('followed_user_id', $user->id)->count()){
+        if (Auth::user()->followsUser($user)->get()) {
             Auth::user()->followedByMe()->detach($user->id);
-        }else{
+        } else {
             Auth::user()->followedByMe()->attach($user->id);
             Notification::send(User::find($user->id), new UserFollowed(Auth::user()));
         }

@@ -1,14 +1,9 @@
 <?php
 
 namespace App\Http\Controllers;
-
-use App\Models\Recipe;
-use Exception;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Routing\Controller as BasController;
-use Inertia\Inertia;
-use function Symfony\Component\String\b;
 
 class Controller extends BasController
 {
@@ -48,7 +43,7 @@ class Controller extends BasController
         return $this->paginate($query, $request);
     }
 
-    /*
+    /**
      * Sending a success message to user interface
      */
     protected function flashSuccessMessage($message): void
@@ -60,7 +55,7 @@ class Controller extends BasController
         ]);
     }
 
-    /*
+    /**
      * Sending an error message to user interface
      */
     protected function flashErrorMessage($message): void
