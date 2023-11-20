@@ -99,7 +99,7 @@ class RecipeController extends Controller
             $recipe->load('user');
 
             if (Auth::user()) {
-                $shared_to = $recipe->shared()->get()->pluck("id");
+                $shared_to = $recipe->shared->pluck("id");
                 $review = $recipe->reviewForRecipeByUser(Auth::user());
                 $reviews = $recipe->reviews()->where("user_id", "!=", Auth::user()->id)->with('user')->get();
                 $is_liked = $recipe->likes()->where('user_id', Auth::user()->id)->count();
@@ -112,11 +112,11 @@ class RecipeController extends Controller
                 [
                     "recipe" => $recipe,
                     "ingredients" => $recipe->ingredients,
-                    "review" => $review ?? null,
-                    "average" => $average != 0 ? $average : "No Rating Yet",
+                    "review" => $review,
+                    "average" => $average ?: "No Rating Yet",
                     "reviews" => $reviews ?? [],
-                    "users" => $users ?? User::all(),
-                    "shared_to" => $shared_to ?? null,
+                    "users" => $users,
+                    "shared_to" => $shared_to,
                     "comments" => $recipe->comments()->with('user')->orderBy('created_at', 'desc')->get(),
                     "is_liked" => $is_liked ?? false,
                 ]);
@@ -184,12 +184,16 @@ class RecipeController extends Controller
 
         try {
             $this->authorize('delete', $recipe);
-            $collections = $recipe->collections()->withCount("recipes")->get();
-            foreach ($collections as $collection) {
-                if ($collection->recipes_count == 1) {
-                    $collection->delete();
-                }
-            }
+            $recipe
+                ->collections()
+                ->withCount("recipes")
+                ->get()
+                ->each(function ($collection) {
+                    if ($collection->recipes_count == 1) {
+                        $collection->delete();
+                    }
+                });
+
             $recipe->delete();
             $this->flashSuccessMessage('Recipe deleted successfully.');
             return redirect()->back();
@@ -201,8 +205,8 @@ class RecipeController extends Controller
     }
 
     /**
-    *Makes a recipe favorite to a user
-   */
+     *Makes a recipe favorite to a user
+     */
     public function favorite(Recipe $recipe, Request $request)
     {
         try {
@@ -217,13 +221,12 @@ class RecipeController extends Controller
     }
 
     /**
-        Creates a review(rate the recipe)
-       */
+     * Creates a review(rate the recipe)
+     */
     public function rate(Recipe $recipe, Request $request)
     {
         try {
             $this->authorize('view', $recipe);
-            $rating = $recipe->reviewForRecipeByUser(Auth::user());
             $request->request = $request->validate([
                 "rating" => ['required', 'integer', 'max:5', 'min:1'],
                 "msg" => ['required', 'string', 'max:500', 'min:1']
@@ -232,24 +235,17 @@ class RecipeController extends Controller
                     "rating.required" => "Rating is required!",
                     "msg.required" => "Message is required!",
                 ]);
-            if ($rating) {
-                $rating->rating = $request->rating;
-                $rating->message = $request->msg;
-                $rating->save();
-            }
-            if ($rating === null) {
-                $rating = Review::create([
-                    "rating" => $request->rating,
-                    "message" => $request->msg,
-                    "user_id" => Auth::user()->id,
-                    "recipe_id" => $recipe->id
-                ]);
-            }
+            $rating = Review::updateOrCreate([
+                'user_id' => Auth::user()->id,
+                'recipe_id' => $recipe->id,
+            ], [
+                'rating' => $request->rating,
+                'message' => $request->msg,
+            ]);
             NotificationF::send(User::find($recipe->user_id), new RecipeRated($recipe->title, $rating->rating, Auth::user()));
             $this->flashSuccessMessage('Review added successfully.');
-
             return redirect()->back();
-        }catch (Exception $e) {
+        } catch (Exception $e) {
             $this->flashErrorMessage($e->getMessage());
             return Inertia::location('/recipe/' . $recipe->id);
         }
@@ -258,11 +254,10 @@ class RecipeController extends Controller
     }
 
     /**
-       Share a recipe with other users
+     * Share a recipe with other users
      */
     public function share(Recipe $recipe, Request $request)
     {
-
         try {
             $this->authorize('update', $recipe);
             $recipe->shared()->sync($request->users);
@@ -278,8 +273,8 @@ class RecipeController extends Controller
     }
 
     /**
-     Adds a comment for the recipe
-    */
+     * Adds a comment for the recipe
+     */
     public function comment(Recipe $recipe, Request $request)
     {
 
@@ -305,8 +300,8 @@ class RecipeController extends Controller
     }
 
     /**
-     Likes the recipe for a user
-    */
+     * Likes the recipe for a user
+     */
     public function like(Recipe $recipe)
     {
 
@@ -329,7 +324,7 @@ class RecipeController extends Controller
     }
 
     /**
-     Goes to favorites page
+     * Goes to favorites page
      */
     public function favorites(Request $request)
     {

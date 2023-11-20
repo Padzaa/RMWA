@@ -79,7 +79,7 @@ class CollectionController extends Controller
             return Inertia::render('Collection/Collection_Edit', [
                 "recipes" => Auth::user()->recipes,
                 "collection" => $collection,
-                "active" => $collection->load('recipes')->getRelation("recipes")->pluck("id"),
+                "active" => $collection->recipes->pluck("id"),
             ]);
         } catch (Exception $e) {
             $this->flashErrorMessage($e->getMessage());
@@ -121,7 +121,5 @@ class CollectionController extends Controller
             return redirect()->route('collection.index');
 
         }
-
-
     }
 }

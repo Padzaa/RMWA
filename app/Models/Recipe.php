@@ -13,7 +13,7 @@ class Recipe extends Model
     protected $fillable = ['title', 'description', 'instructions', 'user_id', 'is_favorite', 'is_public'];
 
     /**
-     Retrieve every ingredient that is associated to certain recipe
+     * Retrieve every ingredient that is associated to certain recipe
      */
     public function ingredients()
     {
@@ -21,23 +21,23 @@ class Recipe extends Model
     }
 
     /**
-         Retrieve every category that is associated to certain recipe
-         */
+     * Retrieve every category that is associated to certain recipe
+     */
     public function categories()
     {
         return $this->belongsToMany(Category::class, 'recipe_categories');
     }
 
     /**
-         Retrieve a user that owns this recipe
-         */
+     * Retrieve a user that owns this recipe
+     */
     public function user()
     {
         return $this->belongsTo(User::class);
     }
 
     /**
-     Retrieve every review that belongs to certain recipe
+     * Retrieve every review that belongs to certain recipe
      */
     public function reviews()
     {
@@ -53,7 +53,7 @@ class Recipe extends Model
     }
 
     /**
-     Retrieve every record where a certain recipe appears to be shared
+     * Retrieve every record where a certain recipe appears to be shared
      */
     public function shared()
     {
@@ -61,7 +61,7 @@ class Recipe extends Model
     }
 
     /**
-     Retrieve every collection that is associated to certain recipe
+     * Retrieve every collection that is associated to certain recipe
      */
     public function collections()
     {
@@ -69,7 +69,7 @@ class Recipe extends Model
     }
 
     /**
-     Retrieve every comment that belongs to certain recipe
+     * Retrieve every comment that belongs to certain recipe
      */
     public function comments()
     {
@@ -77,7 +77,7 @@ class Recipe extends Model
     }
 
     /**
-     Retrieve every like that belongs to certain recipe
+     * Retrieve every like that belongs to certain recipe
      */
     public function likes()
     {
@@ -85,18 +85,16 @@ class Recipe extends Model
     }
 
     /**
-    Retrieve every recipe that a certain user can access(His own Recipes and Recipes shared with him)
+     * Retrieve every recipe that a certain user can access(His own Recipes and Recipes shared with him)
      */
     public function scopeForUser($query)
     {
         $user = Auth::user();
-        if ($user) {
-            return $query->whereHas('user', function ($query) use ($user) {
-                $query->where('id', $user->id);
-            })->orWhereHas('shared', function ($query) use ($user) {
-                $query->where('user_shared_to', $user->id);
-            });
-        }
+        return $query->whereHas('user', function ($query) use ($user) {
+            $query->where('id', $user->id);
+        })->orWhereHas('shared', function ($query) use ($user) {
+            $query->where('user_shared_to', $user->id);
+        });
     }
 
     /**

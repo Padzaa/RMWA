@@ -19,14 +19,10 @@ class RecipePolicy
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user = null, Recipe $recipe): bool
+    public function view(User $user, Recipe $recipe): bool
     {
-        if($user){
-            $user ? $exist = $recipe->shared()->where("user_shared_to", $user->id)->get() : $exist = [];
+            $exist = $recipe->shared()->where("user_shared_to", $user->id)->get();
             return ($user->id === $recipe->user_id) || ($exist->count() > 0) || ($recipe->is_public === 1);
-        }
-        return $recipe->is_public === 1;
-
     }
 
     /**

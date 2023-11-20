@@ -21,14 +21,13 @@ class GuestController extends Controller
     public function show(Recipe $recipe)
     {
         try {
-            $this->authorize("view", $recipe);
             $recipe->load('user');
             $average_rating = round($recipe->reviews()->avg("rating"), 2);
 
             return Inertia::render('Recipe/Show', [
                 "recipe" => $recipe,
                 "ingredients" => $recipe->ingredients,
-                "average" => $average_rating != 0 ? $average_rating : "No Ratings Yet",
+                "average" => $average_rating ?: "No Ratings Yet",
                 "comments" => $recipe->comments()->with('user')->orderBy('created_at', 'desc')->get(),
             ]);
         } catch (\Exception $e) {

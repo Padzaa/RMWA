@@ -67,9 +67,8 @@ Route::middleware(['auth'])->group(function () {
 
 Auth::routes([]);
 Route::prefix('guest')->group(function () {
-    Route::get('/recipe/{recipe}', [GuestController::class, 'show'])->name('guest-recipe-show');
-        //Public page of the site, so mainly guest can access
-    Route::get("/public", [GuestController::class, "public"])->name("public");
+    Route::get('/recipe/{recipe}', [GuestController::class, 'show'])->name('guest-recipe-show');//Show public recipe;
+    Route::get("/public", [GuestController::class, "public"])->name("public");//All public recipes
 });
 
 
