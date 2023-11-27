@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreReviewRequest;
 use App\Http\Requests\UpdateReviewRequest;
 use App\Models\Review;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
@@ -13,9 +14,11 @@ class ReviewController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $reviews = Auth::user()->reviews()->with('recipe')->paginate(10);
+        $reviews = Auth::user()->reviews()->with('recipe');
+        $reviews = $this->OrderAndPaginate($reviews, $request);
+
         return Inertia::render('User/Reviews', [
             "reviews" => $reviews
         ]);

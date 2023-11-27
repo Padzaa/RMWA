@@ -11,22 +11,24 @@ use Illuminate\Notifications\Messages\BroadcastMessage;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class PublicRecipeCreated extends Notification implements ShouldQueue
+class RecipeCreated extends Notification implements ShouldQueue
 {
     use Queueable;
 
     public string $recipeTitle;
     public $user;
     public string $message;
+    public string $type;
     public $notifiable;
     /**
      * Create a new notification instance.
      */
-    public function __construct($recipeTitle,$user)
+    public function __construct($recipeTitle,$user,$type = "")
     {
         $this->recipeTitle = $recipeTitle;
         $this->user = $user;
-        $this->message = "Recipe \"{$this->recipeTitle}\" has been created by {$user->firstname} {$user->lastname}";
+        $this->type = $type;
+        $this->message = "\"$this->type\"Recipe \"{$this->recipeTitle}\" has been created by {$user->firstname} {$user->lastname}.";
 
     }
 
@@ -89,6 +91,6 @@ class PublicRecipeCreated extends Notification implements ShouldQueue
      * @return array The resulting array.
      */
     public function toArray(): array{
-        return ['publicRecipeCreated' =>\App\Models\Notification::where('notifiable_id',$this->notifiable)->where('type','App\Notifications\PublicRecipeCreated')->where('read_at',null)->latest()->first()->toArray()];
+        return ['publicRecipeCreated' =>\App\Models\Notification::where('notifiable_id',$this->notifiable)->where('type', 'App\Notifications\RecipeCreated')->where('read_at',null)->latest()->first()->toArray()];
     }
 }

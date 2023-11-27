@@ -11,22 +11,6 @@ export default {
             $('.modal').modal("hide");
 
         },
-        /**
-         * Converts the given recipe date to a normal date format.
-         *
-         * @param {string} recipeDate - The date of the recipe.
-         * @return {string} The date in the format 'YYYY-MM-DD'.
-         */
-        normalDate(recipeDate) {
-
-            const dateObject = new Date(recipeDate);
-            const year = dateObject.getFullYear();
-            const month = dateObject.getMonth() + 1; // Month is zero-based
-            const day = dateObject.getDate();
-            return `${year}-${month < 10 ? '0' : ''}${month}-${day < 10 ? '0' : ''}${day}`;
-
-        },
-
 
     },
     props: {
@@ -70,13 +54,13 @@ export default {
             </template>
 
             <template v-slot:posted_at>
-                <span style="font-style: italic;">Posted at: {{ normalDate(recipe.created_at) }}</span>
+                <span style="font-style: italic;">Posted at: {{ this.$utils.normalDate(recipe.created_at) }}</span>
             </template>
 
             <template v-slot:actions>
                 <v-card-actions class="actions">
                     <Link
-                        :href="'/recipe/' + recipe.id"
+                        :href="auth ? '/recipe/' + recipe.id : '/guest/recipe/' + recipe.id"
                         method="GET">
                         <img src="../../../public/show.svg" alt="edit">
                     </Link>

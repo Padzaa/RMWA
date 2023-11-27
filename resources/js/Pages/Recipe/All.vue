@@ -35,7 +35,6 @@ export default {
         rating: 0,
         collections: Object,
         title: String,
-
     },
 
     components: {

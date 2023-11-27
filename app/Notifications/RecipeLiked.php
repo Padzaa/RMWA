@@ -24,7 +24,7 @@ class RecipeLiked extends Notification implements ShouldQueue
     {
         $this->user = $user;
         $this->recipeTitle = $recipeTitle;
-        $this->message = "Recipe \"{$this->recipeTitle}\" liked by {$user->firstname} {$user->lastname}";
+        $this->message = "Recipe \"{$this->recipeTitle}\" liked by {$user->firstname} {$user->lastname}.";
     }
 
     /**
