@@ -3,11 +3,12 @@
     <header>
         <Link href="/" class="logo-holder">
             <img src="https://png.pngtree.com/png-vector/20220709/ourmid/pngtree-hat-chef-logo-png-image_5820915.png"
-                 alt="logo" class="logo"></Link>
+                 alt="logo" class="logo">
+        </Link>
         <div class="menu">
-            <Link v-if="this.$page.props.auth" as="button" @click="opener = !opener" class="opener">
+            <button v-if="this.$page.props.auth" @click="opener = !opener" class="opener">
                 <img src="../../../public/menu.svg" alt="menu">
-            </Link>
+            </button>
             <v-app v-if="this.$page.props.auth" style="position:absolute;">
 
                 <v-navigation-drawer :key="$props.pageUrl"
@@ -17,9 +18,9 @@
 
                 >
                     <div class="space">
-                        <Link as="button" @click="opener = !opener" class="opener">
+                        <button @click="opener = !opener" class="opener">
                             <img src="../../../public/close.svg" alt="menu">
-                        </Link>
+                        </button>
                     </div>
                     <v-divider style="color:white;margin: 0;"></v-divider>
                     <div style="display: grid;">
@@ -58,7 +59,13 @@
                               class="text-white home-btn"
                         >Home
                         </Link>
-
+                        <Link v-if="this.$page.props.auth.user.is_admin == 1" as="button" href="/dashboard"
+                              style="background-color: #494949;font-size:1.25rem;border-radius: 0;height: 70px;width:100%;font-weight: 550;text-align: start;padding: 16px 24px;"
+                              @click="opener = !opener"
+                              :class="this.$page.url == '/dashboard' ? 'active' : ''"
+                              class="text-white home-btn"
+                        >Admin Dashboard
+                        </Link>
 
                         <v-expansion-panel style="background-color: #494949;border-radius:0;"
                                            v-for="panel in panels"
@@ -89,11 +96,11 @@
 
         </div>
         <div class="menu">
-            <Link v-if="this.$page.props.auth" as="button" @click="notificationOpener = !notificationOpener"
-                  class="notification">
+            <button v-if="this.$page.props.auth" @click="notificationOpener = !notificationOpener"
+                    class="notification">
                 <v-icon v-if="notifications.length == 0" style="color:#bebebe;">mdi-bell-outline</v-icon>
                 <v-icon v-else style="color:white;">mdi-bell-ring</v-icon>
-            </Link>
+            </button>
             <v-app v-if="this.$page.props.auth" style="position:absolute;">
 
                 <v-navigation-drawer :key="$props.pageUrl"
@@ -102,26 +109,27 @@
                                      location="right"
                                      style="top:0;width:320px;background-color: rgb(43,43,43);border: none;">
                     <div class="space-notification">
-                        <Link as="button" @click="notificationOpener = !notificationOpener" class="opener">
+                        <button @click="notificationOpener = !notificationOpener" class="opener">
                             <img src="../../../public/close.svg" alt="menu">
-                        </Link>
+                        </button>
                     </div>
                     <v-divider style="color:white;margin: 0;"></v-divider>
 
                     <div class="notifications">
                         <div style="display:grid;place-items: center"
-                        :style="notifications.length > 0 ? 'grid-template-columns: 4fr 1fr;' : 'grid-template-columns:1fr'">
+                             :style="notifications.length > 0 ? 'grid-template-columns: 4fr 1fr;' : 'grid-template-columns:1fr'">
                             <h3 class="text-white text-center m-3 fw-bold">Notifications
                             </h3>
                             <v-btn
-                                @click="markAsRead" v-if="notifications.length > 0" variant="flat" icon="mdi-delete"></v-btn>
+                                @click="markAsRead" v-if="notifications.length > 0" variant="flat"
+                                icon="mdi-delete"></v-btn>
                         </div>
                         <v-divider style="color:white;margin: 0;"></v-divider>
 
 
                         <div v-for="notification in notifications" class="notification-card">
                             <p class="notification-text">
-                                {{ JSON.parse(notification.data).message }}
+                                {{ notification.data.message }}
                             </p>
 
 
@@ -147,6 +155,7 @@
 <script>
 import Pusher from "pusher-js";
 import {Inertia} from "@inertiajs/inertia";
+
 export default {
     name: "Header.vue",
     components: {},
@@ -262,7 +271,6 @@ export default {
         },
 
 
-
     },
     mounted() {
         this.active = this.setItemAndPanelActive();
@@ -298,7 +306,6 @@ export default {
          */
         markAsRead() {
             sessionStorage.removeItem('notifications');
-
             Inertia.put('/notifications');
         },
     }
@@ -310,12 +317,14 @@ export default {
 <style scoped>
 .notification-card {
     background-color: #bdbdbd;
-    border-bottom:1px solid white;
+    border-bottom: 1px solid white;
     padding: 1em;
 }
+
 .notification-text {
     margin: 0;
 }
+
 .opener {
     width: fit-content;
 

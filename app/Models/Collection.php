@@ -8,10 +8,11 @@ use Illuminate\Database\Eloquent\Model;
 class Collection extends Model
 {
     use HasFactory;
+
     protected $fillable = ['name', 'user_id'];
 
     /**
-     Retrieve every recipe that has certain collection
+     * Retrieve every recipe that has certain collection
      */
     public function recipes()
     {
@@ -19,10 +20,19 @@ class Collection extends Model
     }
 
     /**
-     Retrieve the user that owns this collection
+     * Retrieve the user that owns this collection
      */
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    /**
+     * Retrieve statistics of new collections for each month
+     */
+    public static function monthlyCollections()
+    {
+        return self::selectRaw('MONTH(created_at) as Month, COUNT(id) as Count')
+            ->groupBy('Month');
     }
 }

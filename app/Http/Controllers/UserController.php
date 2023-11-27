@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\URL;
 use Inertia\Inertia;
 
 
@@ -115,7 +116,18 @@ class UserController extends Controller
      */
     public function destroy(User $user)
     {
-        //
+        try {
+            $this->authorize('delete', $user);
+            $this->flashSuccessMessage("User deleted successfully.");
+            $user->delete();
+            return Inertia::location(URL::previous());
+
+        } catch (Exception $e) {
+            $this->flashErrorMessage($e->getMessage());
+            return redirect()->back();
+        }
+
+
     }
 
     /**

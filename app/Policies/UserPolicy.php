@@ -30,7 +30,7 @@ class UserPolicy
         //IF USER 2 HAS A PUBLIC RECIPE THEN I CAN VIEW THE USER'S 2 PROFILE
         $has_public = boolval($model->recipes()->Public()->get());
 
-        if ($follow || $user->id === $model->id || $shared || $has_public) {
+        if ($follow || $user->id === $model->id || $shared || $has_public || $user->is_admin === 1) {
             return true;
         } else {
             return false;
@@ -59,7 +59,7 @@ class UserPolicy
      */
     public function delete(User $user, User $model): bool
     {
-        //
+        return $user->is_admin === "1" && $model->is_admin === "0" && $user->id != $model->id;
     }
 
     /**

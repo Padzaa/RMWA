@@ -14,22 +14,6 @@ export default {
             rating: 0,
         }
     },
-    methods: {
-        /**
-         * Convert a given date to a normal date format.
-         *
-         * @param {string} recipeDate - The date to be converted.
-         * @return {string} The date in the format "DD-MM-YYYY".
-         */
-        normalDate(recipeDate) {
-            const dateObject = new Date(recipeDate);
-            const year = dateObject.getFullYear();
-            const month = dateObject.getMonth() + 1; // Month is zero-based
-            const day = dateObject.getDate();
-            return `${day < 10 ? '0' : ''}${day}-${month < 10 ? '0' : ''}${month}-${year}`;
-
-        }
-    }
 }
 </script>
 
@@ -64,7 +48,7 @@ export default {
                         <p class="comment"><cite><q>{{ review.message }}</q></cite></p>
                     </div>
 
-                    <span class="posted-at">Rated: {{ normalDate(review.created_at) }}</span>
+                    <span class="posted-at">Rated: {{ this.$utils.normalDate(review.created_at) }}</span>
                 </div>
 
             </template>

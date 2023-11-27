@@ -28,8 +28,11 @@ export default {
                     <p>Number of recipes: {{ collection.recipes.length }}</p>
                     <div>
                         <h4>Recipes:</h4>
-                        <template v-for="recipe in collection.recipes">
-                            <p class="titles">{{ recipe.title }}</p>
+                        <template v-for="(recipe,index) in collection.recipes">
+                            <p class="titles" v-if="index <= 2">{{ recipe.title }}</p>
+                        </template>
+                        <template v-if="collection.recipes.length > 3">
+                            <p class="titles-more">{{ collection.recipes.length - 2 }} more</p>
                         </template>
                     </div>
 
@@ -115,7 +118,10 @@ div.actions > a {
     color: #646464;
     font-style: oblique 20deg;
 }
-
+.titles-more{
+    font-style: italic;
+    color: #000000;
+}
 .add-new {
     background-color: #0080ff;
 

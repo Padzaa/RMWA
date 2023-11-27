@@ -1,9 +1,13 @@
 <?php
 
 namespace App\Http\Controllers;
+
+use App\Models\BaseModel;
+use http\Client\Curl\User;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Routing\Controller as BasController;
+use Illuminate\Support\Facades\Log;
 
 class Controller extends BasController
 {
@@ -12,12 +16,13 @@ class Controller extends BasController
     const DEFAULT_ORDER_COLUMN = "created_at";
     const DEFAULT_ORDER_DIRECTION = "desc";
 
+
     /**
      * Generates the function comment for the given function body.
      */
-    protected function orderBy($query, $request)
+    protected function orderBy($query, $request = null)
     {
-        if ($request->order) {
+        if (isset($request->order)) {
             $order = explode("-", $request->order);
         }
         $orderColumn = $order[0] ?? self::DEFAULT_ORDER_COLUMN;
@@ -28,9 +33,9 @@ class Controller extends BasController
     /**
      * Paginate the given query.
      */
-    protected function paginate($query, $request)
+    protected function paginate($query, $request = null)
     {
-        $per_page = $request->per_page ?? 10;
+        $per_page = isset($request->per_page) ?? 10;
         return $query->paginate($per_page);
     }
 
@@ -65,6 +70,40 @@ class Controller extends BasController
             'message' => $message,
             'type' => 'error'
         ]);
+    }
+
+    /**
+     * Reconstructing the data to be adapted for displaying charts
+     * @param $data
+     * @return mixed
+     */
+    protected function reconstructDataForCharts($data): mixed
+    {
+        for ($i = 1; $i <= 12; $i++) {
+            $inf = $data->firstWhere('Month', $i);
+            if (!$inf) {
+                // If the user for the current month doesn't exist, create a new one.
+                $inf = new BaseModel();
+                $inf->Month = $i;
+                $inf->Count = 0;
+                $data->push($inf);
+            }
+
+        }
+        return $data->sortBy('Month')->pluck('Count');
+
+    }
+
+    /**
+     * Make recipients for notifications
+     */
+    protected function finalRecipients($users_id)
+    {
+        $users_id = gettype($users_id) == "array" ? $users_id : [$users_id];
+        $admins = \App\Models\User::getAdmins();
+        $users = \App\Models\User::whereIn("id", $users_id)->get();
+
+        return collect()->merge($users)->merge($admins)->unique();
     }
 
 }

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\FollowController;
 use App\Http\Controllers\Guest\GuestController;
@@ -43,6 +44,11 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('/follow', FollowController::class);
     Route::resource('/like', LikeController::class);
     Route::resource('/shared', SharedRecipeController::class);
+
+    Route::middleware('admin')->group(function () {
+        Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
+    });
+
     //RECIPE ROUTES
     Route::group([], function () {
         Route::put('/recipe/{recipe}/comment', [RecipeController::class, 'comment'])->name('comment');//Comment a recipe
@@ -50,7 +56,7 @@ Route::middleware(['auth'])->group(function () {
         Route::put('/recipe/{recipe}/like', [RecipeController::class, 'like'])->name('like');//Like a recipe
         Route::put('/recipe/{recipe}/rate', [RecipeController::class, 'rate'])->name('rate');//Rate a recipe
         Route::put('/recipe/{recipe}/share', [RecipeController::class, 'share'])->name('share');//Share a recipe
-        Route::put('/notifications', [RecipeController::class, 'notifications'])->name('notifications');//Mark notification as read
+        Route::put('/notifications/{id?}', [RecipeController::class, 'notifications'])->name('notifications');//Mark notification as read
         Route::get('/favorites', [RecipeController::class, 'favorites'])->name('favorites');//Show favorite recipes
     });
     //SHARED-RECIPES ROUTES
@@ -60,6 +66,7 @@ Route::middleware(['auth'])->group(function () {
     });
     //USER ROUTES
     Route::put('/user/{user}/follow', [UserController::class, 'follow'])->name('follow');//Follow a user
+
 });
 /*---------------------------------------------------------------------------------------*/
 /*------------------END OF (ONLY ACCESSABLE WHEN USER LOGGED IN) ROUTES------------------*/

@@ -194,4 +194,13 @@ class Recipe extends Model
         }
     }
 
+    /**
+     * Retrieve statistics of new recipes for each month
+     */
+    public static function monthlyRecipes()
+    {
+        return self::selectRaw('MONTH(created_at) as Month, COUNT(id) as Count')
+            ->groupBy('Month');
+    }
+
 }

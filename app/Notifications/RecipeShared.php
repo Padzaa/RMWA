@@ -24,7 +24,7 @@ class RecipeShared extends Notification implements ShouldQueue
     {
         $this->user = $user;
         $this->recipeTitle = $recipeTitle;
-        $this->message = "Recipe \"{$this->recipeTitle}\" shared by {$user->firstname} {$user->lastname}";
+        $this->message = "Recipe \"{$this->recipeTitle}\" is shared by {$user->firstname} {$user->lastname}.";
     }
 
     /**

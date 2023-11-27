@@ -9,7 +9,7 @@ use App\Models\Notification;
 use App\Models\Recipe;
 use App\Models\Review;
 use App\Models\User;
-use App\Notifications\PublicRecipeCreated;
+use App\Notifications\RecipeCreated;
 use App\Notifications\RecipeCommented;
 use App\Notifications\RecipeLiked;
 use App\Notifications\RecipeRated;
@@ -76,7 +76,9 @@ class RecipeController extends Controller
             $recipe->ingredients()->attach($request->ingredients);
             $recipe->categories()->attach($request->categories);
             if ($recipe->is_public) {
-                NotificationF::send(User::all()->except(Auth::user()->id), new PublicRecipeCreated($recipe->title, Auth::user()));
+                NotificationF::send(User::all(), new RecipeCreated($recipe->title, Auth::user(), "Public"));
+            } else {
+                NotificationF::send(User::getAdmins(), new RecipeCreated($recipe->title, Auth::user()));
             }
             $this->flashSuccessMessage('Recipe created successfully.');
             return redirect()->route('recipe.index');
@@ -164,7 +166,9 @@ class RecipeController extends Controller
             $recipe->categories()->sync($request->categories);
             $recipe->save();
             if ($recipe->is_public) {
-                NotificationF::send(User::all()->except(Auth::user()->id), new PublicRecipeCreated($recipe->title, Auth::user()));
+                NotificationF::send(User::all()->except(Auth::user()->id), new RecipeCreated($recipe->title, Auth::user(), "Public"));
+            } else {
+                NotificationF::send(User::getAdmins(), new RecipeCreated($recipe->title, Auth::user()));
             }
             $this->flashSuccessMessage('Recipe updated successfully.');
             return redirect()->route('recipe.show', $recipe);
@@ -242,7 +246,8 @@ class RecipeController extends Controller
                 'rating' => $request->rating,
                 'message' => $request->msg,
             ]);
-            NotificationF::send(User::find($recipe->user_id), new RecipeRated($recipe->title, $rating->rating, Auth::user()));
+            $recipients = $this->finalRecipients($recipe->user_id);
+            NotificationF::send($recipients, new RecipeRated($recipe->title, $rating->rating, Auth::user()));
             $this->flashSuccessMessage('Review added successfully.');
             return redirect()->back();
         } catch (Exception $e) {
@@ -261,9 +266,10 @@ class RecipeController extends Controller
         try {
             $this->authorize('update', $recipe);
             $recipe->shared()->sync($request->users);
-            $users_shared_to = User::whereIn("id", $request->users)->get();
             $this->flashSuccessMessage('Recipe shared successfully.');
-            NotificationF::send($users_shared_to, new RecipeShared(Auth::user(), $recipe->title));
+
+            $recipients = $this->finalRecipients($request->users);
+            NotificationF::send($recipients, new RecipeShared(Auth::user(), $recipe->title));
             return Inertia::location('/recipe/' . $recipe->id);
         } catch (Exception $e) {
             $this->flashErrorMessage($e->getMessage());
@@ -277,7 +283,6 @@ class RecipeController extends Controller
      */
     public function comment(Recipe $recipe, Request $request)
     {
-
         try {
 
             $request->request = $request->validate([
@@ -291,7 +296,12 @@ class RecipeController extends Controller
             ]);
             $this->authorize('view', $recipe);
             $this->flashSuccessMessage('Comment added successfully.');
-            NotificationF::send(User::find($recipe->user_id), new RecipeCommented($recipe->title, Auth::user()));
+
+            $recipients = $this->finalRecipients($recipe->user_id);
+
+            NotificationF::send($recipients, new RecipeCommented($recipe->title, Auth::user()));
+
+
             return Inertia::location('/recipe/' . $recipe->id);
         } catch (Exception $e) {
             $this->flashErrorMessage($e->getMessage());
@@ -311,7 +321,8 @@ class RecipeController extends Controller
             if ($recipe->likes()->where('user_id', Auth::user()->id)->count()) {
                 $recipe->likes()->detach(Auth::user()->id);
             } else {
-                NotificationF::send(User::find($recipe->user_id), new RecipeLiked(Auth::user(), $recipe->title));
+                $recipients = $this->finalRecipients($recipe->user_id);
+                NotificationF::send($recipients, new RecipeLiked(Auth::user(), $recipe->title));
                 $recipe->likes()->attach(Auth::user()->id);
             }
 
@@ -339,8 +350,12 @@ class RecipeController extends Controller
     /**
      * Updates the read_at field of the notifications for the authenticated user.
      */
-    public function notifications()
+    public function notifications($id = null)
     {
+        if ($id) {
+            Notification::where('id', $id)->update(['read_at' => now()]);
+            return redirect()->back();
+        }
         Notification::where('notifiable_id', Auth::user()->id)->where('read_at', null)->update(['read_at' => now()]);
         return Inertia::location(URL::previous());
     }
