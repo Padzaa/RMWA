@@ -18,4 +18,12 @@ class Review extends Model
     {
         return $this->belongsTo(Recipe::class);
     }
+
+    /*
+     *  Retrieve a user that owns this review
+     */
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

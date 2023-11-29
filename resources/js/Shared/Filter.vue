@@ -24,7 +24,9 @@
 export default {
     name: "filters.vue",
     props: {
-        categories: Array,
+        categories: {
+            type: [Object, Array],
+        },
     }
 }
 </script>

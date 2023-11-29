@@ -21,7 +21,10 @@ class CollectionPolicy
      */
     public function view(User $user, Collection $collection): bool
     {
-        return $user->id === $collection->user_id;
+        if ($user->is_admin != "1") {
+            return $user->id === $collection->user_id;
+        }
+        return true;
     }
 
     /**
@@ -37,7 +40,10 @@ class CollectionPolicy
      */
     public function update(User $user, Collection $collection): bool
     {
-        return $user->id === $collection->user_id;
+        if ($user->is_admin != "1") {
+            return $user->id === $collection->user_id;
+        }
+        return true;
     }
 
     /**
@@ -45,7 +51,10 @@ class CollectionPolicy
      */
     public function delete(User $user, Collection $collection): bool
     {
-        return $user->id === $collection->user_id;
+        if ($user->is_admin != "1") {
+            return $user->id === $collection->user_id;
+        }
+        return true;
     }
 
     /**

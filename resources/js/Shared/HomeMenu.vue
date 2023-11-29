@@ -1,6 +1,14 @@
 <template>
 
-    <div id="recipes_menu">
+    <div id="menu">
+        <div v-if="this.$page.props?.auth?.user.is_admin == 1" class="admin">
+            <h1>Admin</h1>
+            <div class="admin-actions">
+                <Link class="link" v-for="link in admin" :href="link.link">
+                    <v-list-item :prepend-icon="link.icon">{{ link.title }}</v-list-item>
+                </Link>
+            </div>
+        </div>
         <div class="recipes">
             <h1>Recipes <!--<v-icon>mdi-book-open-variant</v-icon>--></h1>
             <div class="recipes-actions">
@@ -35,7 +43,7 @@
             </div>
         </div>
 
-<!--        <Link href="/sendmail" method="POST">SEND MAIL</Link>-->
+        <!--        <Link href="/sendmail" method="POST">SEND MAIL</Link>-->
 
 
     </div>
@@ -48,6 +56,13 @@ export default {
     name: "HomeMenu.vue",
     data() {
         return {
+            admin: this.$page.props?.auth?.user.is_admin == 1 ? [
+                {
+                    link: "/dashboard",
+                    title: "Dashboard",
+                    icon: "mdi-view-dashboard"
+                }
+            ] : [],
             recipes: [
                 {
                     link: "/recipe/create",
@@ -112,7 +127,7 @@ export default {
             ],
             public: [
                 {
-                    link: "/public",
+                    link: "/guest/public",
                     title: "Public recipes",
                     icon: "mdi-earth"
                 }
@@ -124,14 +139,12 @@ export default {
 </script>
 
 <style scoped>
-#recipes_menu {
+#menu {
     padding: 2em;
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
     gap: 1.5em;
     height: fit-content;
-
-
 }
 
 h1 {
@@ -143,12 +156,10 @@ h1 {
 }
 
 .link {
-
     font-style: italic;
-
     border-radius: 1px;
     display: grid;
-    box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
+    box-shadow: rgba(50, 50, 93, 0.25) 0 6px 12px -2px, rgba(0, 0, 0, 0.3) 0 3px 7px -3px;
 }
 
 .link:hover {
@@ -162,7 +173,8 @@ h1 {
 .recipes-actions,
 .collections-actions,
 .user-actions,
-.public-actions {
+.public-actions,
+.admin-actions {
     display: grid;
     gap: 10px;
     grid-auto-rows: 75px;
@@ -170,7 +182,6 @@ h1 {
 
 h2 {
     text-align: center;
-
 }
 
 .v-list-item >>> .v-list-item__spacer {

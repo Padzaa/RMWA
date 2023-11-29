@@ -1,8 +1,12 @@
 <script>
 export default {
     props: {
-        follows: Object,
-        my_followers: Object
+        follows: {
+            type: [Object, Array],
+        },
+        my_followers: {
+            type: [Object, Array],
+        },
     },
     data() {
         return {
@@ -45,8 +49,8 @@ export default {
                     </td>
                     <td>{{ follow.lastname }}</td>
                     <td>{{ follow.email }}</td>
-                    <td>{{ follow.followed_count }}</td>
-                    <td>{{ follow.follow_count }}</td>
+                    <td>{{ follow.my_followers_count }}</td>
+                    <td>{{ follow.followed_by_me_count }}</td>
                 </tr>
                 </tbody>
 

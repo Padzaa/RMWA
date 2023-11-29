@@ -1,11 +1,14 @@
 +
 <script>
 import Header from "../../Shared/Header.vue";
+import Paginator from "../../Shared/Paginator.vue";
 
 export default {
-    components: {Header},
+    components: {Paginator, Header},
     props: {
-        reviews: Object,
+        reviews: {
+            type: [Object, Array],
+        },
 
     },
     data() {
@@ -13,22 +16,6 @@ export default {
             rating: 0,
         }
     },
-    methods: {
-        /**
-         * Convert a given date to a normal date format.
-         *
-         * @param {string} recipeDate - The date to be converted.
-         * @return {string} The date in the format "DD-MM-YYYY".
-         */
-        normalDate(recipeDate) {
-            const dateObject = new Date(recipeDate);
-            const year = dateObject.getFullYear();
-            const month = dateObject.getMonth() + 1; // Month is zero-based
-            const day = dateObject.getDate();
-            return `${day < 10 ? '0' : ''}${day}-${month < 10 ? '0' : ''}${month}-${year}`;
-
-        }
-    }
 }
 </script>
 
@@ -63,34 +50,14 @@ export default {
                         <p class="comment"><cite><q>{{ review.message }}</q></cite></p>
                     </div>
 
-                    <span class="posted-at">Rated: {{ normalDate(review.created_at) }}</span>
+                    <span class="posted-at">Rated: {{ this.$utils.normalDate(review.created_at) }}</span>
                 </div>
 
             </template>
         </div>
 
     </div>
-    <div id="paginator">
-        <p>Recipes from {{ reviews.from ? reviews.from : 0 }} to {{ reviews.to ? reviews.to : 0 }} of total {{
-                reviews.total
-            }}</p>
-        Page:
-        <template v-for="(link,index) in reviews.links">
-
-            <Link v-if="index !== 0 && index !== (reviews.links.length - 1)"
-                  :style="{
-                'font-weight' : link.active ? 'bold' : 400,
-                'color' : link.active ? 'red' : 'inherit'
-                            }"
-                  :href="link.url"
-
-            >
-
-                {{ link.label }}
-            </Link>
-
-        </template>
-    </div>
+    <Paginator :recipes="reviews"></Paginator>
 </template>
 
 <style scoped>

@@ -10,7 +10,9 @@ import {Inertia} from "@inertiajs/inertia";
 
 export default {
     props: {
-        messages:Object
+        messages:{
+            type: [Object, Array],
+        },
     },
     name: "Sms",
     data() {

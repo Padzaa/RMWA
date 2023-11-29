@@ -17,8 +17,8 @@ class FollowController extends Controller
     {
 
         return Inertia::render('User/Follows', [
-            'follows' => Auth::user()->follow()->withCount('followed','follow')->get(),
-            "my_followers" => Auth::user()->followed()->withCount('followed','follow')->get()
+            'follows' => Auth::user()->followedByMe()->withCount('myFollowers','followedByMe')->get(),
+            "my_followers" => Auth::user()->myFollowers()->withCount('myFollowers','followedByMe')->get()
         ]);
     }
 
