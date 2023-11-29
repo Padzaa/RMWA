@@ -6,7 +6,9 @@ import Paginator from "../../Shared/Paginator.vue";
 export default {
     components: {Paginator, Header},
     props: {
-        reviews: Object,
+        reviews: {
+            type: [Object, Array],
+        },
 
     },
     data() {

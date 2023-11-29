@@ -37,7 +37,7 @@
                         </Link>
                         <v-divider style="color:white;margin: 0;"></v-divider>
                         <div style="display: grid;padding: 10px 0;">
-                            <Link href="/logout" method="POST" style="justify-self:center;width:90%;">
+                            <Link href="/logout" as="button" method="POST" style="justify-self:center;width:90%;">
                                 <v-btn class="logout-btn" style="justify-self:center;font-size: 1em;width:100%;"
                                        variant="outlined" color="white"
                                        append-icon="mdi-logout">Logout
@@ -101,7 +101,8 @@
                 <v-icon v-if="notifications.length == 0" style="color:#bebebe;">mdi-bell-outline</v-icon>
                 <v-icon v-else style="color:white;">mdi-bell-ring</v-icon>
             </button>
-            <v-app v-if="this.$page.props.auth" style="position:absolute;">
+            <v-app v-if="this.$page.props.auth"
+                   style="position:absolute;">
 
                 <v-navigation-drawer :key="$props.pageUrl"
                                      v-model="notificationOpener"
@@ -129,7 +130,9 @@
 
                         <div v-for="notification in notifications" class="notification-card">
                             <p class="notification-text">
-                                {{ notification.data.message }}
+                                {{
+                                    notification.data.message ? notification.data.message : JSON.parse(notification.data).message
+                                }}
                             </p>
 
 
@@ -162,7 +165,9 @@ export default {
     props: {
         title: String,
         pageUrl: String,
-        notifications: Array,
+        notifications: {
+            type: [Object, Array],
+        },
 
     },
     data() {
@@ -260,6 +265,7 @@ export default {
                 }
             ],
             active: null,
+
 
         }
     },

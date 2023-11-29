@@ -1,8 +1,12 @@
 <script>
 export default {
     props: {
-        follows: Object,
-        my_followers: Object
+        follows: {
+            type: [Object, Array],
+        },
+        my_followers: {
+            type: [Object, Array],
+        },
     },
     data() {
         return {

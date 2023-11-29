@@ -35,18 +35,39 @@ export default {
     },
     props: {
         title: String,
-        users: Array,
-        recipes: Array,
-        public_recipes: Array,
-        collections: Array,
-        ingredients: Array,
-        categories: Array,
+        users: {
+            type: [Array, Object],
+        },
+        recipes: {
+            type: [Array, Object],
+        },
+        public_recipes: {
+            type: [Array, Object],
+        },
+        collections: {
+            type: [Array, Object],
+        },
+        ingredients: {
+            type: [Array, Object],
+        },
+        categories: {
+            type: [Array, Object],
+        },
         charts: {
             type: [Array, Object],
         },
-        top_users: Array,
-        activities: Array,
-        last_user_logins: Array
+        top_users: {
+            type: [Array, Object],
+        },
+        activities: {
+            type: [Array, Object],
+        },
+        last_user_logins: {
+            type: [Array, Object],
+        },
+        users_comments: {
+            type: [Array, Object],
+        },
     },
     components: {
         ADCards,
@@ -131,7 +152,7 @@ export default {
             dialogFields:
                 [],
             chartData: {
-                labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+                labels: ['01/2023', '02/2023', '03/2023', '04/2023', '05/2023', '06/2023', '07/2023', '08/2023', '09/2023', '10/2023', '11/2023', '12/2023'],
                 datasets: [
                     {
                         data: []
@@ -206,12 +227,17 @@ export default {
                 "Created At": "created_at",
                 "Read at": "read_at",
             },
-            userLoginsFields:{
+            usersLoginsFields: {
                 "First name": 'firstname',
                 "Last name": 'lastname',
                 "Email": 'email',
                 'Login at': 'last_login',
-            }
+            },
+            usersCommentsFields: {
+                "User": 'user',
+                "Email" : 'user_email',
+                'Comment': 'comment',
+            },
 
         }
     },
@@ -263,7 +289,22 @@ export default {
     <div class="dashboard">
         <ADCards :cards="cards"/>
         <Dialog ref="childDialog" :dialogData="dialogData" :dialogTitle="dialogTitle" :dialogFields="dialogFields"/>
+        <div class="additional-buttons">
+            <v-btn variant="outlined"
+                   @click="openDialogAndPassData('User activities',activities,this.activitiesFields)">New User
+                Activities
+            </v-btn>
 
+            <v-btn variant="outlined"
+                   @click="openDialogAndPassData('Users last logins',last_user_logins,this.usersLoginsFields)">Users
+                Last Logins
+            </v-btn>
+
+            <v-btn variant="outlined"
+                   @click="openDialogAndPassData('Users comments',users_comments,this.usersCommentsFields)">Users
+                Comments
+            </v-btn>
+        </div>
         <div class="charts">
             <div class="top-users">
                 <Bar
@@ -293,16 +334,7 @@ export default {
 
             </div>
         </div>
-        <div class="additional-buttons">
-            <v-btn variant="outlined"
-                   @click="openDialogAndPassData('User activities',activities,this.activitiesFields)">New User
-                Activities
-            </v-btn>
 
-            <v-btn variant="outlined"
-                   @click="openDialogAndPassData('User logins',last_user_logins,this.userLoginsFields)">User Logins
-            </v-btn>
-        </div>
     </div>
 </template>
 
@@ -341,8 +373,8 @@ export default {
     grid-auto-flow: column;
 }
 
-.additional-buttons{
-    display:flex;
+.additional-buttons {
+    display: flex;
     gap: 10px;
 }
 </style>

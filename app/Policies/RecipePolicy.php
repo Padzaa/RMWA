@@ -21,8 +21,11 @@ class RecipePolicy
      */
     public function view(User $user, Recipe $recipe): bool
     {
+        if ($user->is_admin != "1") {
             $exist = $recipe->shared()->where("user_shared_to", $user->id)->get();
-            return ($user->id === $recipe->user_id) || ($exist->count() > 0) || ($recipe->is_public === 1) || ($user->is_admin === 1);
+            return ($user->id === $recipe->user_id) || ($exist->count() > 0) || ($recipe->is_public === 1);
+        }
+        return true;
     }
 
     /**
@@ -38,7 +41,10 @@ class RecipePolicy
      */
     public function update(User $user, Recipe $recipe): bool
     {
-        return $user->id === $recipe->user_id || $user->is_admin === 1;
+        if ($user->is_admin != "1") {
+            return $user->id === $recipe->user_id;
+        }
+        return true;
     }
 
     /**
@@ -46,7 +52,11 @@ class RecipePolicy
      */
     public function delete(User $user, Recipe $recipe): bool
     {
-        return $user->id === $recipe->user_id || $user->is_admin === 1;
+        if ($user->is_admin != "1") {
+            return $user->id === $recipe->user_id;
+        }
+        return true;
+
     }
 
     /**

@@ -4,11 +4,21 @@ import {Inertia} from "@inertiajs/inertia";
 
 export default {
     props: {
-        categories: Object,
-        collections: Object,
-        recipes: Object,
-        ingredients: Object,
-        filters: Object,
+        categories: {
+            type: [Object, Array],
+        },
+        collections: {
+            type: [Object, Array],
+        },
+        recipes: {
+            type: [Object, Array],
+        },
+        ingredients: {
+            type: [Object, Array],
+        },
+        filters: {
+            type: [Object, Array],
+        },
     },
     watch: {
         "form.r_from"(newVal) {

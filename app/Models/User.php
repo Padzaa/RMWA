@@ -150,13 +150,14 @@ class User extends Authenticatable
     public static function monthlyUsers()
     {
         return self::selectRaw('MONTH(created_at) as Month, COUNT(id) as Count')
+            ->whereYear('created_at', now()->year)
             ->groupBy('Month');
     }
 
     /**
      * Retrieve top 5 users who have written the recipes with the best ratings
      */
-    public static function topUsers()
+    public static function top5Users()
     {
         return
             self::join('recipes', 'users.id', 'recipes.user_id')
@@ -168,10 +169,10 @@ class User extends Authenticatable
     }
 
     /**
-     * Get admins
+     * Retrieve admins
      */
     public static function getAdmins(){
-        return self::where('is_admin', 1)->get();
+        return self::where('is_admin', 1);
     }
 
 

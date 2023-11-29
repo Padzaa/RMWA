@@ -6,7 +6,9 @@ import Paginator from "../../Shared/Paginator.vue";
 export default {
     components: {Paginator, GridNet, Header},
     props: {
-        recipes: Array
+        recipes: {
+            type: [Object, Array],
+        },
     },
 }
 </script>

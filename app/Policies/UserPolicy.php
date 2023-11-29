@@ -21,20 +21,23 @@ class UserPolicy
      */
     public function view(User $user, User $model): bool
     {
-        //IF USER 2 SHARED A RECIPE TO ME THEN I CAN VIEW THE USER'S 2 PROFILE
-        $shared = boolval($model->recipes()->whereHas('shared', function ($query) use ($user) {
-            $query->where('user_shared_to', $user->id);
-        })->get());
-        //IF I FOLLOW A USER 2 THEN USER 2 CAN VIEW MY PROFILE
-        $follow = boolval($user->followsUser($model)->get());
-        //IF USER 2 HAS A PUBLIC RECIPE THEN I CAN VIEW THE USER'S 2 PROFILE
-        $has_public = boolval($model->recipes()->Public()->get());
+        if($user->is_admin != "1"){
+//IF USER 2 SHARED A RECIPE TO ME THEN I CAN VIEW THE USER'S 2 PROFILE
+            $shared = boolval($model->recipes()->whereHas('shared', function ($query) use ($user) {
+                $query->where('user_shared_to', $user->id);
+            })->get());
+            //IF I FOLLOW A USER 2 THEN USER 2 CAN VIEW MY PROFILE
+            $follow = boolval($user->followsUser($model)->get());
+            //IF USER 2 HAS A PUBLIC RECIPE THEN I CAN VIEW THE USER'S 2 PROFILE
+            $has_public = boolval($model->recipes()->Public()->get());
 
-        if ($follow || $user->id === $model->id || $shared || $has_public || $user->is_admin === 1) {
-            return true;
-        } else {
-            return false;
+            if ($follow || $user->id === $model->id || $shared || $has_public) {
+                return true;
+            } else {
+                return false;
+            }
         }
+        return true;
     }
 
     /**
@@ -50,8 +53,10 @@ class UserPolicy
      */
     public function update(User $user, User $model): bool
     {
-
-        return $user->id === $model->id;
+        if($user->is_admin != "1") {
+            return $user->id === $model->id;
+        }
+        return true;
     }
 
     /**

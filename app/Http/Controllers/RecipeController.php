@@ -31,7 +31,7 @@ class RecipeController extends Controller
     {
 
         $recipes = Recipe
-            ::ForUser()
+            ::forUser()
             ->FilterRecipes($request);
 
         $recipes = $this->OrderAndPaginate($recipes, $request);
@@ -42,7 +42,7 @@ class RecipeController extends Controller
             'categories' => Category::all(),
             'ingredients' => Ingredient::orderBy('name')->get(),
             'filtersData' => $request->query->all(),
-            'collections' => Auth::user()->collections()->orderBy('name')->get()
+            'collections' => Auth::user()->collections()->orderBy('name')->get(),
 
         ]);
     }
@@ -104,7 +104,7 @@ class RecipeController extends Controller
                 $shared_to = $recipe->shared->pluck("id");
                 $review = $recipe->reviewForRecipeByUser(Auth::user());
                 $reviews = $recipe->reviews()->where("user_id", "!=", Auth::user()->id)->with('user')->get();
-                $is_liked = $recipe->likes()->where('user_id', Auth::user()->id)->count();
+                $is_liked = $recipe->likes()->where('user_id', Auth::user()->id)->exists();
                 $users = User::all()->except(Auth::user()->id);
             }
 
@@ -185,7 +185,6 @@ class RecipeController extends Controller
      */
     public function destroy(Recipe $recipe)
     {
-
         try {
             $this->authorize('delete', $recipe);
             $recipe
@@ -200,10 +199,10 @@ class RecipeController extends Controller
 
             $recipe->delete();
             $this->flashSuccessMessage('Recipe deleted successfully.');
-            return redirect()->back();
+            return Inertia::location(URL::previous());
         } catch (Exception $e) {
             $this->flashErrorMessage($e->getMessage());
-            return redirect()->back();
+            return Inertia::location(URL::previous());
         }
 
     }
@@ -317,15 +316,13 @@ class RecipeController extends Controller
 
         try {
             $this->authorize('view', $recipe);
-
-            if ($recipe->likes()->where('user_id', Auth::user()->id)->count()) {
+            if ($recipe->likes()->where('user_id', Auth::user()->id)->exists()) {
                 $recipe->likes()->detach(Auth::user()->id);
             } else {
                 $recipients = $this->finalRecipients($recipe->user_id);
                 NotificationF::send($recipients, new RecipeLiked(Auth::user(), $recipe->title));
                 $recipe->likes()->attach(Auth::user()->id);
             }
-
             return redirect()->back();
         } catch (Exception $e) {
             $this->flashErrorMessage($e->getMessage());

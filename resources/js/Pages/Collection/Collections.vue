@@ -4,7 +4,9 @@ import Header from "../../Shared/Header.vue";
 export default {
     components: {Header},
     props: {
-        collections: Object
+        collections:{
+            type: [Object, Array],
+        },
     }
 }
 </script>

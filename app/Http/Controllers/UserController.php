@@ -54,7 +54,7 @@ class UserController extends Controller
 
             return Inertia::render('User/User_Show', [
                 "user" => $user,
-                "is_following" => boolval(Auth::user()->followsUser($user)->count()),
+                "is_following" => Auth::user()->followsUser($user)->exists(),
             ]);
         } catch (Exception $e) {
             $this->flashErrorMessage($e->getMessage());
@@ -73,6 +73,7 @@ class UserController extends Controller
             $recipes = $this->OrderAndPaginate($recipes, $request);
             return Inertia::render('User/User_Edit', [
                     "recipes" => $recipes,
+                    "user" => $user,
                 ]
             );
         } catch (Exception $e) {

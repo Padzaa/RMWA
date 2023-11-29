@@ -13,4 +13,5 @@ class Notification extends Model
 {
     use HasFactory;
     protected $table = 'notifications';
+
 }

@@ -246,14 +246,28 @@ import {Inertia} from "@inertiajs/inertia";
 export default {
     name: "Show.vue",
     props: {
-        recipe: Object,
-        ingredients: Array,
-        review: Object,
+        recipe: {
+            type: [Object, Array],
+        },
+        ingredients: {
+            type: [Object, Array],
+        },
+        review: {
+            type: [Object, Array],
+        },
         average: Number,
-        reviews: Object,
-        users: Object,
-        shared_to: Object,
-        comments: Object,
+        reviews: {
+            type: [Object, Array],
+        },
+        users: {
+            type: [Object, Array],
+        },
+        shared_to: {
+            type: [Object, Array],
+        },
+        comments: {
+            type: [Object, Array],
+        },
         is_liked: Boolean
     },
     components: {},

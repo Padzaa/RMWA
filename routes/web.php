@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\FollowController;
 use App\Http\Controllers\Guest\GuestController;
@@ -67,6 +68,10 @@ Route::middleware(['auth'])->group(function () {
     //USER ROUTES
     Route::put('/user/{user}/follow', [UserController::class, 'follow'])->name('follow');//Follow a user
 
+    //COMMENT ROUTES
+    Route::group([], function () {
+        Route::delete('/comment/{comment}', [CommentController::class, 'destroy'])->name('delete-comment');//Like a comment
+    });
 });
 /*---------------------------------------------------------------------------------------*/
 /*------------------END OF (ONLY ACCESSABLE WHEN USER LOGGED IN) ROUTES------------------*/

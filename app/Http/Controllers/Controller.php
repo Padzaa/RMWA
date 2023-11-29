@@ -77,7 +77,7 @@ class Controller extends BasController
      * @param $data
      * @return mixed
      */
-    protected function reconstructDataForCharts($data): mixed
+    protected function reconstructDataForMonthlyCharts($data): mixed
     {
         for ($i = 1; $i <= 12; $i++) {
             $inf = $data->firstWhere('Month', $i);
@@ -100,7 +100,7 @@ class Controller extends BasController
     protected function finalRecipients($users_id)
     {
         $users_id = gettype($users_id) == "array" ? $users_id : [$users_id];
-        $admins = \App\Models\User::getAdmins();
+        $admins = \App\Models\User::getAdmins()->get();
         $users = \App\Models\User::whereIn("id", $users_id)->get();
 
         return collect()->merge($users)->merge($admins)->unique();

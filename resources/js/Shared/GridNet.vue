@@ -22,11 +22,12 @@ export default {
     components: {
         Card,
     },
-    created() {
-        this.recipes.forEach(recipe => {
-            recipe.dialog = false;
-        })
-    }
+    data() {
+        return {
+            dialog: false,
+            dialogData: [],
+        }
+    },
 
 
 }
@@ -70,34 +71,10 @@ export default {
                         <img src="../../../public/edit.svg" alt="edit">
                     </Link>
                     <button v-if="auth ? auth.user.id == recipe.user_id : false"
-                            @click="recipe.dialog = true;">
+                            @click="[dialogData = recipe,dialog = true]">
                         <img src="../../../public/delete.svg" alt="delete">
                     </button>
-                    <v-dialog v-model="recipe.dialog" class="vd" style="display: grid">
-                        <div class="bg-white dialog">
-
-                            <div class="dialog-header">
-                                <h1 class="modal-title fs-4">Confirm your deletion</h1>
-                                <button type="button" class="btn-close" @click="recipe.dialog = false"
-                                        aria-label="Close"></button>
-
-                            </div>
-                            <div class="dialog-message">
-                                Are you sure you want to delete recipe <b>"{{ recipe.title }}"</b> permanently?
-                            </div>
-                            <div class="dialog-actions">
-                                <button type="button" class="btn btn-outline-secondary" @click="recipe.dialog = false">
-                                    Cancel
-                                </button>
-                                <Link @click="submit" method="DELETE" :href="'/recipe/' + recipe.id"
-                                      class="btn btn-outline-danger" id="delete_recipe">Delete Recipe
-                                </Link>
-                            </div>
-
-                        </div>
-                    </v-dialog>
-
-                    <Link v-if="auth ? auth.user.id == recipe.user_id : false" class="heart" method="PUT"
+                    <Link v-if="auth ? auth.user.id == recipe.user_id : false" as="button" class="heart" method="PUT"
                           :href="'/recipe/' + recipe.id + '/favorite'" preserve-scroll>
                         <svg width="48px" height="48px" viewBox="0 0 24 24" fill="none"
                              xmlns="http://www.w3.org/2000/svg">
@@ -111,6 +88,30 @@ export default {
             </template>
 
         </Card>
+        <v-dialog v-model="dialog" class="vd" style="display: grid">
+            <div class="bg-white dialog">
+
+                <div class="dialog-header">
+                    <h1 class="modal-title fs-4">Confirm your deletion</h1>
+                    <button type="button" class="btn-close" @click="dialog = false"
+                            aria-label="Close"></button>
+
+                </div>
+                <div class="dialog-message">
+                    Are you sure you want to delete recipe <b>"{{ dialogData.title }}"</b> permanently?
+                </div>
+                <div class="dialog-actions">
+                    <button type="button" class="btn btn-outline-secondary" @click="dialog = false">
+                        Cancel
+                    </button>
+                    <Link @click="submit" method="DELETE" :href="'/recipe/' + dialogData.id"
+                          class="btn btn-outline-danger" id="delete_recipe">Delete Recipe
+                    </Link>
+                </div>
+
+            </div>
+        </v-dialog>
+
     </div>
 
 </template>
@@ -173,7 +174,7 @@ h5 {
 .dialog {
     display: grid;
     padding: 1em;
-    border-radius: 15px;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
     width: fit-content;
     align-self: center;
     gap: 1em;

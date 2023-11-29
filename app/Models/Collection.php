@@ -33,6 +33,7 @@ class Collection extends Model
     public static function monthlyCollections()
     {
         return self::selectRaw('MONTH(created_at) as Month, COUNT(id) as Count')
+            ->whereYear('created_at', now()->year)
             ->groupBy('Month');
     }
 }

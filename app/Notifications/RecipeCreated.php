@@ -91,6 +91,8 @@ class RecipeCreated extends Notification implements ShouldQueue
      * @return array The resulting array.
      */
     public function toArray(): array{
-        return ['publicRecipeCreated' =>\App\Models\Notification::where('notifiable_id',$this->notifiable)->where('type', 'App\Notifications\RecipeCreated')->where('read_at',null)->latest()->first()->toArray()];
+        $notification = \App\Models\Notification::find($this->id)->toArray();
+        $notification['id'] = $this->id;
+        return ['publicRecipeCreated' => $notification];
     }
 }

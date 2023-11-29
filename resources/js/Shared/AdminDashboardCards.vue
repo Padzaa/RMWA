@@ -32,7 +32,8 @@ export default {
             </div>
             <v-btn style="border-radius: 0 0 4px 4px" variant="flat"
                    @click="openDialogAndPassData(card.title, card.value, card.fields)"
-                   class="read-more">
+                   class="read-more"
+                    :disabled="card.value.length === 0">
                 <v-icon>mdi-arrow-down</v-icon>
             </v-btn>
         </div>

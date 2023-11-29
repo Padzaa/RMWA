@@ -1,7 +1,9 @@
 <script>
 export default {
     props: {
-        alertFlash: Array,
+        alertFlash: {
+            type: [Object, Array],
+        },
     },
     data() {
         return {

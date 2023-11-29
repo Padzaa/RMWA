@@ -20,8 +20,8 @@
                         <input @change="onFileChange" type="File" name="fileToUpload" id="fileToUpload"
                                @input="form.file = $event.target.files[0]" accept="image/jpg, image/jpeg, image/png">
 
-                        <span class="font-weight-bold">{{ $page.props.auth.user.firstname }}</span>
-                        <span class="text-black-50">{{ $page.props.auth.user.email }}</span>
+                        <span class="font-weight-bold">{{ user.firstname }}</span>
+                        <span class="text-black-50">{{ user.email }}</span>
                         <span> </span>
                     </div>
                 </div>
@@ -72,9 +72,9 @@
             </div>
         </form>
     </div>
-    <div class="rec">
+    <div class="rec" v-if="user.id == this.$page.props.auth.user.id">
         <h1 class="text-center">My recipes</h1>
-        <GridNet :recipes="recipes.data" :auth="this.$attrs.auth"></GridNet>
+        <GridNet :recipes="recipes.data" :auth="this.$attrs.auth" ></GridNet>
         <Paginator :recipes="recipes"></Paginator>
     </div>
 
@@ -89,7 +89,12 @@ import Paginator from "../../Shared/Paginator.vue";
 
 export default {
     props: {
-        recipes: Object
+        recipes: {
+            type: [Object, Array],
+        },
+        user : {
+            type: [Object, Array],
+        }
     },
     components: {
         Paginator,
@@ -98,14 +103,14 @@ export default {
     data() {
         return {
             form: {
-                firstname: this.$page.props.auth.user.firstname,
-                lastname: this.$page.props.auth.user.lastname,
-                email: this.$page.props.auth.user.email,
+                firstname: this.user.firstname,
+                lastname: this.user.firstname,
+                email: this.user.firstname,
                 filename: "",
                 file: null,
                 _method: "put"
             },
-            pic: this.$page.props.auth.user.picture ? this.$page.props.auth.user.picture : "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_640.png",
+            pic: this.user.picture ? this.user.picture : "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_640.png",
             url: "",
 
 

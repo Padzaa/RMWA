@@ -28,12 +28,22 @@ import {usePage} from "@inertiajs/inertia-vue3";
 
 export default {
     props: {
-        recipes: Object,
-        categories: Object,
-        ingredients: Object,
-        filtersData: Object,
+        recipes: {
+            type: [Object, Array],
+        },
+        categories: {
+            type: [Object, Array],
+        },
+        ingredients: {
+            type: [Object, Array],
+        },
+        filtersData: {
+            type: [Object, Array],
+        },
         rating: 0,
-        collections: Object,
+        collections: {
+            type: [Object, Array],
+        },
         title: String,
     },
 
