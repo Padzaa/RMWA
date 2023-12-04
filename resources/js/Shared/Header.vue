@@ -3,11 +3,12 @@
     <header>
         <Link href="/" class="logo-holder">
             <img src="https://png.pngtree.com/png-vector/20220709/ourmid/pngtree-hat-chef-logo-png-image_5820915.png"
-                 alt="logo" class="logo"></Link>
+                 alt="logo" class="logo">
+        </Link>
         <div class="menu">
-            <Link v-if="this.$page.props.auth" as="button" @click="opener = !opener" class="opener">
+            <button v-if="this.$page.props.auth" @click="opener = !opener" class="opener">
                 <img src="../../../public/menu.svg" alt="menu">
-            </Link>
+            </button>
             <v-app v-if="this.$page.props.auth" style="position:absolute;">
 
                 <v-navigation-drawer :key="$props.pageUrl"
@@ -17,9 +18,9 @@
 
                 >
                     <div class="space">
-                        <Link as="button" @click="opener = !opener" class="opener">
+                        <button @click="opener = !opener" class="opener">
                             <img src="../../../public/close.svg" alt="menu">
-                        </Link>
+                        </button>
                     </div>
                     <v-divider style="color:white;margin: 0;"></v-divider>
                     <div style="display: grid;">
@@ -36,7 +37,7 @@
                         </Link>
                         <v-divider style="color:white;margin: 0;"></v-divider>
                         <div style="display: grid;padding: 10px 0;">
-                            <Link href="/logout" method="POST" style="justify-self:center;width:90%;">
+                            <Link href="/logout" as="button" method="POST" style="justify-self:center;width:90%;">
                                 <v-btn class="logout-btn" style="justify-self:center;font-size: 1em;width:100%;"
                                        variant="outlined" color="white"
                                        append-icon="mdi-logout">Logout
@@ -58,7 +59,13 @@
                               class="text-white home-btn"
                         >Home
                         </Link>
-
+                        <Link v-if="this.$page.props.auth.user.is_admin == 1" as="button" href="/dashboard"
+                              style="background-color: #494949;font-size:1.25rem;border-radius: 0;height: 70px;width:100%;font-weight: 550;text-align: start;padding: 16px 24px;"
+                              @click="opener = !opener"
+                              :class="this.$page.url == '/dashboard' ? 'active' : ''"
+                              class="text-white home-btn"
+                        >Admin Dashboard
+                        </Link>
 
                         <v-expansion-panel style="background-color: #494949;border-radius:0;"
                                            v-for="panel in panels"
@@ -89,12 +96,13 @@
 
         </div>
         <div class="menu">
-            <Link v-if="this.$page.props.auth" as="button" @click="notificationOpener = !notificationOpener"
-                  class="notification">
+            <button v-if="this.$page.props.auth" @click="notificationOpener = !notificationOpener"
+                    class="notification">
                 <v-icon v-if="notifications.length == 0" style="color:#bebebe;">mdi-bell-outline</v-icon>
                 <v-icon v-else style="color:white;">mdi-bell-ring</v-icon>
-            </Link>
-            <v-app v-if="this.$page.props.auth" style="position:absolute;">
+            </button>
+            <v-app v-if="this.$page.props.auth"
+                   style="position:absolute;">
 
                 <v-navigation-drawer :key="$props.pageUrl"
                                      v-model="notificationOpener"
@@ -102,26 +110,29 @@
                                      location="right"
                                      style="top:0;width:320px;background-color: rgb(43,43,43);border: none;">
                     <div class="space-notification">
-                        <Link as="button" @click="notificationOpener = !notificationOpener" class="opener">
+                        <button @click="notificationOpener = !notificationOpener" class="opener">
                             <img src="../../../public/close.svg" alt="menu">
-                        </Link>
+                        </button>
                     </div>
                     <v-divider style="color:white;margin: 0;"></v-divider>
 
                     <div class="notifications">
                         <div style="display:grid;place-items: center"
-                        :style="notifications.length > 0 ? 'grid-template-columns: 4fr 1fr;' : 'grid-template-columns:1fr'">
+                             :style="notifications.length > 0 ? 'grid-template-columns: 4fr 1fr;' : 'grid-template-columns:1fr'">
                             <h3 class="text-white text-center m-3 fw-bold">Notifications
                             </h3>
                             <v-btn
-                                @click="markAsRead" v-if="notifications.length > 0" variant="flat" icon="mdi-delete"></v-btn>
+                                @click="markAsRead" v-if="notifications.length > 0" variant="flat"
+                                icon="mdi-delete"></v-btn>
                         </div>
                         <v-divider style="color:white;margin: 0;"></v-divider>
 
 
                         <div v-for="notification in notifications" class="notification-card">
                             <p class="notification-text">
-                                {{ JSON.parse(notification.data).message }}
+                                {{
+                                    notification.data.message ? notification.data.message : JSON.parse(notification.data).message
+                                }}
                             </p>
 
 
@@ -136,7 +147,7 @@
 
         <div v-if="!$page.props.auth" class="profile-section">
 
-            <Link class="btn btn-outline-light" href="/public">Public</Link>
+            <Link class="btn btn-outline-light" href="/guest/public">Public</Link>
             <Link class="btn btn-outline-light" href="/login">Login</Link>
             <Link class="btn btn-outline-light" href="/register">Register</Link>
 
@@ -147,13 +158,16 @@
 <script>
 import Pusher from "pusher-js";
 import {Inertia} from "@inertiajs/inertia";
+
 export default {
     name: "Header.vue",
     components: {},
     props: {
         title: String,
         pageUrl: String,
-        notifications: Array,
+        notifications: {
+            type: [Object, Array],
+        },
 
     },
     data() {
@@ -242,7 +256,7 @@ export default {
                     section: "Public",
                     items: [
                         {
-                            link: "/public",
+                            link: "/guest/public",
                             title: "Public recipes",
                             icon: "mdi-earth"
                         }
@@ -252,6 +266,7 @@ export default {
             ],
             active: null,
 
+
         }
     },
     watch: {
@@ -260,7 +275,6 @@ export default {
             this.notificationOpener = false;
             this.active = this.setItemAndPanelActive();
         },
-
 
 
     },
@@ -298,7 +312,6 @@ export default {
          */
         markAsRead() {
             sessionStorage.removeItem('notifications');
-
             Inertia.put('/notifications');
         },
     }
@@ -310,12 +323,14 @@ export default {
 <style scoped>
 .notification-card {
     background-color: #bdbdbd;
-    border-bottom:1px solid white;
+    border-bottom: 1px solid white;
     padding: 1em;
 }
+
 .notification-text {
     margin: 0;
 }
+
 .opener {
     width: fit-content;
 
@@ -336,7 +351,7 @@ export default {
     right: 27.5px;
 }
 
-.notification >>> .v-icon {
+.notification:deep( .v-icon) {
     font-size: 45px;
 }
 
@@ -351,7 +366,7 @@ export default {
     padding-top: 1.5px;
 }
 
-.side-list >>> .v-list-item {
+.side-list:deep( .v-list-item) {
     font-size: 1.35rem;
     color: white;
 
@@ -364,7 +379,7 @@ export default {
 
 }
 
-.side-list >>> i {
+.side-list:deep(i) {
     opacity: 1;
     height: 50px;
     /*Because of padding on parent item*/
@@ -384,7 +399,7 @@ export default {
     font-style: italic;
 }
 
-.side-user >>> .v-avatar {
+.side-user:deep( .v-avatar ) {
     height: 75px;
     width: 75px;
 }
@@ -479,7 +494,7 @@ h2 {
     font-size: 1.25rem;
 }
 
-.logout-btn >>> .v-btn__append {
+.logout-btn:deep( .v-btn__append) {
     margin-inline-start: 0 !important;
 }
 
@@ -510,23 +525,23 @@ h2 {
     grid-auto-rows: 75px;
 }
 
-.v-list-item >>> .v-list-item__spacer {
+.v-list-item:deep( .v-list-item__spacer ) {
     width: 10px !important;
 }
 
-.v-expansion-panel >>> .v-expansion-panel-text__wrapper {
+.v-expansion-panel:deep( .v-expansion-panel-text__wrapper ) {
     padding: 0;
     width: 100%;
     height: fit-content;
 
 }
 
-.v-expansion-panel >>> .v-btn {
+.v-expansion-panel:deep( .v-btn) {
     width: 100%;
     height: 60px;
 }
 
-.v-expansion-panel >>> .v-expansion-panel-title {
+.v-expansion-panel:deep(.v-expansion-panel-title) {
     font-size: 1.25rem;
     height: 70px;
     color: white;
@@ -537,7 +552,7 @@ h2 {
     background-color: rgba(249, 251, 252, 0.2) !important;
 }
 
-.v-expansion-panel >>> .v-btn:hover {
+.v-expansion-panel:deep( .v-btn:hover) {
     background-color: rgba(12, 48, 58, 0.2) !important;
 }
 

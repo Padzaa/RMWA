@@ -19,7 +19,7 @@ class IngredientPolicy
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, Ingredient $ingridient): bool
+    public function view(User $user, Ingredient $ingredient): bool
     {
         //
     }
@@ -29,29 +29,30 @@ class IngredientPolicy
      */
     public function create(User $user): bool
     {
-        //
+        return $user->is_admin;
     }
+
 
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, Ingredient $ingridient): bool
+    public function update(User $user, Ingredient $ingredient): bool
     {
-        //
+        return $user->is_admin;
     }
 
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, Ingredient $ingridient): bool
+    public function delete(User $user, Ingredient $ingredient): bool
     {
-        //
+        return $user->is_admin;
     }
 
     /**
      * Determine whether the user can restore the model.
      */
-    public function restore(User $user, Ingredient $ingridient): bool
+    public function restore(User $user, Ingredient $ingredient): bool
     {
         //
     }
@@ -59,7 +60,7 @@ class IngredientPolicy
     /**
      * Determine whether the user can permanently delete the model.
      */
-    public function forceDelete(User $user, Ingredient $ingridient): bool
+    public function forceDelete(User $user, Ingredient $ingredient): bool
     {
         //
     }

@@ -7,13 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class Comment extends Model
 {
+    use HasFactory;
 
     protected $fillable = [
         'recipe_id', 'user_id', 'comment'
     ];
-    use HasFactory;
-
-    /*
+    /**
      Retrieve a recipe that has certain comment
      */
     public function recipe()
@@ -21,7 +20,7 @@ class Comment extends Model
         return $this->belongsTo(Recipe::class);
     }
 
-    /*
+    /**
      Retrieve a user that owns this comment
      */
     public function user()

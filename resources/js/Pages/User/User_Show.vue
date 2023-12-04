@@ -1,7 +1,9 @@
 <script>
 export default {
     props: {
-        user: Object,
+        user: {
+            type: [Object, Array],
+        },
         is_following: Boolean
     }
 }

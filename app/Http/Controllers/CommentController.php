@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreCommentRequest;
 use App\Http\Requests\UpdateCommentRequest;
 use App\Models\Comment;
+use Illuminate\Support\Facades\URL;
+use Inertia\Inertia;
 
 class CommentController extends Controller
 {
@@ -61,6 +63,14 @@ class CommentController extends Controller
      */
     public function destroy(Comment $comment)
     {
-        //
+        try {
+            $this->authorize('delete', $comment);
+            $comment->delete();
+            $this->flashSuccessMessage("Comment deleted successfully");
+            return Inertia::location(URL::previous());
+        } catch (\Exception $e) {
+            $this->flashErrorMessage($e->getMessage());
+            return Inertia::location(URL::previous());
+        }
     }
 }

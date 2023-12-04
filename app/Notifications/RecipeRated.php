@@ -78,6 +78,8 @@ class RecipeRated extends Notification implements ShouldQueue
 
     public function toArray(): array
     {
-        return ['recipeRated' => \App\Models\Notification::where('notifiable_id', $this->notifiable)->where('type', 'App\Notifications\RecipeRated')->where('read_at', null)->latest()->first()->toArray()];
+        $notification = \App\Models\Notification::find($this->id)->toArray();
+        $notification['id'] = $this->id;
+        return ['recipeRated' => $notification];
     }
 }

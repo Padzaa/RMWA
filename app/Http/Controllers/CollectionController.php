@@ -18,8 +18,7 @@ class CollectionController extends Controller
      */
     public function index()
     {
-        $collections = Auth::user()->collections()->with('recipes')->get();
-
+        $collections = Auth::user()->collections->load('recipes');
         return Inertia::render('Collection/Collections', [
             "collections" => $collections
         ]);
@@ -31,7 +30,7 @@ class CollectionController extends Controller
     public function create()
     {
         return Inertia::render('Collection/Collection_Create', [
-            "recipes" => Recipe::where("user_id", Auth::user()->id)->get(),
+            "recipes" => Auth::user()->recipes
         ]);
     }
 
@@ -46,21 +45,12 @@ class CollectionController extends Controller
                 'user_id' => Auth::user()->id
             ]);
             $collection->recipes()->sync($request->recipes);
-            session()->flash('alert', [
-                'title' => 'Collection Created',
-                'message' => 'Collection created successfully',
-                'type' => 'success'
-            ]);
+            $this->flashSuccessMessage('Collection created successfully');
             return redirect()->route('collection.index');
         } catch (Exception $e) {
-            session()->flash('alert', [
-                'title' => 'Collection Error',
-                'message' => $e->getMessage(),
-                'type' => 'error'
-            ]);
+            $this->flashErrorMessage($e->getMessage());
             return redirect()->route('collection.index');
         }
-
     }
 
     /**
@@ -74,14 +64,9 @@ class CollectionController extends Controller
                 "collection" => $collection->load('recipes')
             ]);
         } catch (Exception $e) {
-            session()->flash('alert', [
-                'title' => 'Collection Error',
-                'message' => $e->getMessage(),
-                'type' => 'error'
-            ]);
+            $this->flashErrorMessage($e->getMessage());
             return redirect()->route('collection.index');
         }
-
     }
 
     /**
@@ -91,19 +76,13 @@ class CollectionController extends Controller
     {
         try {
             $this->authorize('update', $collection);
-
             return Inertia::render('Collection/Collection_Edit', [
-                "recipes" => Auth::user()->recipes()->get(),
+                "recipes" => Auth::user()->recipes,
                 "collection" => $collection,
-                "active" => $collection->load('recipes')->getRelation("recipes")->pluck("id"),
-
+                "active" => $collection->recipes->pluck("id"),
             ]);
         } catch (Exception $e) {
-            session()->flash('alert', [
-                'title' => 'Collection Error',
-                'message' => $e->getMessage(),
-                'type' => 'error'
-            ]);
+            $this->flashErrorMessage($e->getMessage());
             return redirect()->route('collection.index');
         }
 
@@ -120,22 +99,12 @@ class CollectionController extends Controller
                 'name' => $request->name,
             ]);
             $collection->recipes()->sync($request->recipes);
-            session()->flash('alert', [
-                'title' => 'Collection Updated',
-                'message' => 'Collection updated successfully',
-                'type' => 'success'
-            ]);
+            $this->flashSuccessMessage('Collection updated successfully');
             return redirect()->route('collection.index');
         } catch (Exception $e) {
-            session()->flash('alert', [
-                'title' => 'Collection Error',
-                'message' => $e->getMessage(),
-                'type' => 'error'
-            ]);
+            $this->flashErrorMessage($e->getMessage());
             return redirect()->route('collection.index');
         }
-
-
     }
 
     /**
@@ -143,21 +112,12 @@ class CollectionController extends Controller
      */
     public function destroy(Collection $collection)
     {
-
         try {
             $this->authorize('delete', $collection);
             $collection->delete();
-            return redirect()->route('collection.index');
         } catch (Exception $e) {
-            session()->flash('alert', [
-                'title' => 'Collection Error',
-                'message' => $e->getMessage(),
-                'type' => 'error'
-            ]);
-            return redirect()->route('collection.index');
-
+            $this->flashErrorMessage($e->getMessage());
         }
-
-
+        
     }
 }

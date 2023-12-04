@@ -4,11 +4,29 @@ import {Inertia} from "@inertiajs/inertia";
 
 export default {
     props: {
-        categories: Object,
-        collections: Object,
-        recipes: Object,
-        ingredients: Object,
-        filters: Object,
+        categories: {
+            type: [Object, Array],
+        },
+        collections: {
+            type: [Object, Array],
+        },
+        recipes: {
+            type: [Object, Array],
+        },
+        ingredients: {
+            type: [Object, Array],
+        },
+        filters: {
+            type: [Object, Array],
+        },
+    },
+    watch: {
+        "form.r_from"(newVal) {
+            this.adjustValues();
+        },
+        "form.r_to"(newVal) {
+            this.adjustValues();
+        }
     },
     methods: {
         /**
@@ -17,7 +35,7 @@ export default {
          * @return {void}
          */
         submit() {
-            let url = this.$page.url.includes('/recipe') ? '/recipe' : '/public';
+            let url = this.$page.url.includes('/recipe') ? '/recipe' : '/guest/public';
             Inertia.get(url, this.form);
         },
         /**
@@ -44,26 +62,62 @@ export default {
             if (this.form.search === "" || e.key === "Enter") {
                 this.submit();
             }
+        },
+        /**
+         * Adjusting values for filters
+         */
+        adjustValues() {
+
+            let from = this.form.r_from;//Selected rating from
+            let to = this.form.r_to;//Selected rating to
+            if (from > 5 || to > 5) {
+                from = 1;
+                to = 5;
+            }
+            let ratings_to = [1, 2, 3, 4, 5];
+            let ratings_from = [1, 2, 3, 4, 5];
+            //Filtering the ratings when fromNUMBER or toNUMBER are selected
+            if (from != null) {
+                ratings_to = ratings_to.filter(number => number > from);
+            }
+            if (to != null) {
+                ratings_from = ratings_from.filter(number => number < to);
+            }
+            //Adjusting values for form
+            this.form.r_to = to;//Rating to-value
+            this.form.r_from = from;//Rating from-value
+            this.ratings_to = ratings_to;//Array of ratings to
+            this.ratings_from = ratings_from;//Array of ratings from
+
         }
     },
     data() {
         return {
             form: {
-                categories: [],
-                ingredients: [],
+                categories: this.filters.categories ? this.filters.categories.map(category => parseInt(category)) : [],
+                ingredients: this.filters.ingredients ? this.filters.ingredients.map(ingredient => parseInt(ingredient)) : [],
                 favorites: this.filters.favorites ? JSON.parse(this.filters.favorites) : null,
                 ratings: this.filters.ratings ? this.filters.ratings : [],
-                order: this.filters.order ? this.filters.order : null,
+                order: null,
                 search: this.filters.search ? this.filters.search : '',
-                collections: [],
+                collections: this.filters.collections ? this.filters.collections.map(collection => parseInt(collection)) : [],
+                r_from: this.filters.r_from ?? null,
+                r_to: this.filters.r_to ?? null,
             },
+            ratings_from: [
+                1, 2, 3, 4, 5
+            ],
+            ratings_to: [
+                1, 2, 3, 4, 5
+            ],
+
             dialog: false,
-            order:[
+            order: [
                 {
                     name: "Created At Desc",
                     value: "created_at-desc"
                 },
-                 {
+                {
                     name: "Created At Asc",
                     value: "created_at-asc"
                 },
@@ -80,28 +134,8 @@ export default {
         }
     },
     mounted() {
-        if (this.filters.categories) {
-            this.filters.categories.forEach((el) => {
-                el = parseInt(el);
-                this.form.categories.push(el);
-            });
-
-        }
-        if (this.filters.ingredients) {
-            this.filters.ingredients.forEach((el) => {
-                el = parseInt(el);
-                this.form.ingredients.push(el);
-            });
-
-        }
-        if (this.filters.collections) {
-            this.filters.collections.forEach((el) => {
-                el = parseInt(el);
-                this.form.collections.push(el);
-            });
-
-        }
-
+        this.adjustValues();
+        this.form.order = this.filters.order ?? this.order[0].value //Setting form order;
     }
 }
 </script>
@@ -134,7 +168,7 @@ export default {
                 width="fit-content"
             >
 
-                <v-card style="border-radius:15px;min-height:400px;">
+                <v-card style="border-radius:15px;min-height:400px;min-width:350px;">
                     <form @submit.prevent="submit" class="filter-form">
                         <div class="pickers">
                             <v-container fluid style="padding:0 !important;">
@@ -147,10 +181,10 @@ export default {
                                             item-title="name"
                                             item-value="id"
                                             label="Select categories"
-                                            multiple=true
-                                            chips=true
+                                            multiple
+                                            chips
                                             closable-chips
-                                            clearable=true
+                                            clearable
 
                                         >
 
@@ -159,7 +193,7 @@ export default {
                                 </v-row>
                             </v-container>
 
-                            <v-container fluid style="padding:0 !important;">
+                            <v-container v-if="this.$page.props.auth" fluid style="padding:0 !important;">
                                 <v-row>
                                     <v-col cols="12" style="padding:15px 12px 0 12px !important;">
                                         <v-select
@@ -169,10 +203,10 @@ export default {
                                             item-title="name"
                                             item-value="id"
                                             label="Select collections"
-                                            multiple=true
-                                            chips=true
+                                            multiple
+                                            chips
                                             closable-chips
-                                            clearable=true
+                                            clearable
 
                                         >
 
@@ -192,10 +226,10 @@ export default {
                                             item-title="name"
                                             item-value="id"
                                             label="Select ingredients"
-                                            multiple=true
-                                            chips=true
+                                            multiple
+                                            chips
                                             closable-chips
-                                            clearable=true
+                                            clearable
 
                                         >
 
@@ -221,16 +255,26 @@ export default {
                             <div class="for-fav" v-if="$page.props.auth">
                                 <v-checkbox-btn v-model="form.favorites" label="Favorite"></v-checkbox-btn>
                             </div>
-                            <div class="rating">
-                                Rating:
-                                <v-checkbox v-model="form.ratings" label="1+" value="1"></v-checkbox>
-                                <v-checkbox v-model="form.ratings" label="2+" value="2"></v-checkbox>
-                                <v-checkbox v-model="form.ratings" label="3+" value="3"></v-checkbox>
-                                <v-checkbox v-model="form.ratings" label="4+" value="4"></v-checkbox>
-                                <v-checkbox v-model="form.ratings" label="5" value="5"></v-checkbox>
+                            <div class="rating" style="width: 100%">
+
+                                <v-select
+                                    label="Rating from"
+                                    v-model="form.r_from"
+                                    :items="ratings_from"
+                                    item-title="ratings_from"
+                                    item-value="ratings_from"
+                                >
+                                </v-select>
+
+                                <v-select
+                                    label="Rating to"
+                                    v-model="form.r_to"
+                                    :items="ratings_to"
+                                    item-title="ratings_to"
+                                    item-value="ratings_to"
+                                >
+                                </v-select>
                             </div>
-
-
 
 
                         </div>
@@ -249,11 +293,11 @@ export default {
 
 <style scoped>
 
-.v-dialog >>> .v-card {
+.v-dialog:deep(.v-card) {
     display: grid !important;
 }
 
-.v-dialog >>> .v-card__underlay {
+.v-dialog:deep(.v-card__underlay) {
     display: none;
 }
 
@@ -262,9 +306,11 @@ export default {
     padding: 2em 2em;
     height: 100% !important;
     grid-template-rows: 1fr min-content;
+    width: 100%;
 }
 
 .pickers {
+    width: 100%;
     display: grid;
     justify-self: center;
     place-items: center;
@@ -288,7 +334,7 @@ export default {
     place-items: center;
 }
 
-.v-checkbox-btn >>> label, .v-checkbox >>> label {
+.v-checkbox-btn:deep(label), .v-checkbox:deep(label) {
     font-size: 1.25rem;
     color: black;
 
@@ -296,10 +342,11 @@ export default {
 
 .rating {
 
-    display: flex;
-    gap: 5px;
+    display: grid;
+    gap: 20px;
     align-items: center;
     font-size: 20px;
+    grid-template-columns: 1fr 1fr;
 }
 
 .btn-check:checked + .btn, .btn.active, .btn.show, .btn:first-child:active, :not(.btn-check) + .btn:active {
@@ -322,12 +369,11 @@ button.fr {
 }
 
 
-
-.v-checkbox >>> .v-input__details {
+.v-checkbox:deep( .v-input__details ) {
     display: none !important;
 }
 
-.v-container >>> .v-field__input {
+.v-container:deep(.v-field__input) {
     max-width: 400px;
 
 

@@ -3,9 +3,15 @@ import {Inertia} from '@inertiajs/inertia';
 
 export default {
     props: {
-        recipes: Object,
-        collection: Object,
-        active: Object
+        recipes: {
+            type: [Object, Array],
+        },
+        collection: {
+            type: [Object, Array],
+        },
+        active: {
+            type: [Object, Array],
+        },
     },
     data() {
         return {

@@ -4,22 +4,16 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
-use App\Jobs\SendSMS;
-use App\Mail\TestingMail;
-use App\Models\Recipe;
 use App\Models\User;
 use App\Notifications\UserFollowed;
-use App\Services\TwilioService;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\URL;
 use Inertia\Inertia;
-use function Illuminate\Events\queueable;
+
 
 class UserController extends Controller
 {
@@ -57,18 +51,13 @@ class UserController extends Controller
             if (Auth::user()->id === $user->id) {
                 return redirect()->route('user.edit', $user->id);
             }
-            Auth::user()->follow()->where('followed_user_id', $user->id)->count() ? $is_following = true : $is_following = false;
 
             return Inertia::render('User/User_Show', [
                 "user" => $user,
-                "is_following" => $is_following,
+                "is_following" => Auth::user()->followsUser($user)->exists(),
             ]);
         } catch (Exception $e) {
-            session()->flash("alert", [
-                "title" => "Error!",
-                "message" => $e->getMessage(),
-                "type" => "error"
-            ]);
+            $this->flashErrorMessage($e->getMessage());
             return Inertia::location('/');
         }
     }
@@ -76,21 +65,19 @@ class UserController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(User $user)
+    public function edit(User $user, Request $request)
     {
         try {
             $this->authorize('update', $user);
-            $recipes = $user->recipes()->paginate(10);
+            $recipes = $user->recipes();
+            $recipes = $this->OrderAndPaginate($recipes, $request);
             return Inertia::render('User/User_Edit', [
                     "recipes" => $recipes,
+                    "user" => $user,
                 ]
             );
         } catch (Exception $e) {
-            session()->flash("alert", [
-                "title" => "Error!",
-                "message" => $e->getMessage(),
-                "type" => "error"
-            ]);
+            $this->flashErrorMessage($e->getMessage());
             return Inertia::location('/');
         }
 
@@ -109,26 +96,17 @@ class UserController extends Controller
                 }
                 $uploadedFile = $request->file('file');
                 $filename = time() . '_' . $uploadedFile->getClientOriginalName();
-                $path = $uploadedFile->storeAs('public', $filename);
+                $uploadedFile->storeAs('public', $filename);
                 $user->picture = "/storage/" . $filename;
             }
-
             $user->firstname = $request->firstname;
             $user->lastname = $request->lastname;
             $user->email = $request->email;
             $user->save();
-            session()->flash("alert", [
-                "title" => "Success!",
-                "message" => "Your profile has been updated!",
-                "type" => "success"
-            ]);
+            $this->flashSuccessMessage('User updated successfully.');
             return Inertia::location('/');
         } catch (Exception $e) {
-            session()->flash("alert", [
-                "title" => "Error!",
-                "message" => $e->getMessage(),
-                "type" => "error"
-            ]);
+            $this->flashErrorMessage($e->getMessage());
             return Inertia::location('/');
         }
 
@@ -139,16 +117,28 @@ class UserController extends Controller
      */
     public function destroy(User $user)
     {
-        //
+        try {
+            $this->authorize('delete', $user);
+            $this->flashSuccessMessage("User deleted successfully.");
+            $user->delete();
+            return Inertia::location(URL::previous());
+
+        } catch (Exception $e) {
+            $this->flashErrorMessage($e->getMessage());
+            return redirect()->back();
+        }
+
+
     }
 
-//Follow/Unfollow a certain user
-    public function follow(Request $request, User $user)
+    /**
+     *Follows/Unfollows a user
+     */
+    public function follow(User $user)
     {
-        if(Auth::user()->follow()->where('followed_user_id', $user->id)->count()){
-            Auth::user()->follow()->detach($user->id);
-        }else{
-            Auth::user()->follow()->attach($user->id);
+        Auth::user()->followedByMe()->toggle($user->id);
+
+        if (Auth::user()->followsUser($user)->exists()) {
             Notification::send(User::find($user->id), new UserFollowed(Auth::user()));
         }
         return redirect()->back();
