@@ -209,7 +209,7 @@ export default {
                         <th v-if="dialogFields.hasOwnProperty('Notification')">
                             Mark As Read
                         </th>
-                        <th v-if="dialogTitle != 'Public Recipes'">
+                        <th v-if="dialogTitle != 'Public Recipes' && !dialogTitle.includes('activities') && !dialogTitle.includes('logins') ">
                             Actions
                         </th>
                     </tr>
@@ -242,7 +242,7 @@ export default {
                             />
                         </td>
                         <td
-                            v-if="dialogTitle != 'Public Recipes'">
+                            v-if="dialogTitle != 'Public Recipes' && !dialogTitle.includes('activities') && !dialogTitle.includes('logins')">
                             <v-btn v-if="(data['id'] != this.$page.props.auth.user.id || data['is_admin'] != 1) "
                                    @click="[setCheckActiveDialogData(data),checkActiveDialog = true]"
                                    color="error">
