@@ -184,7 +184,7 @@ h2 {
     text-align: center;
 }
 
-.v-list-item >>> .v-list-item__spacer {
+.v-list-item:deep( .v-list-item__spacer ) {
     width: 10px !important;
 }
 </style>

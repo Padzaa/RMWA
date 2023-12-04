@@ -33,6 +33,30 @@ export function deleteRecipe(id) {
 }
 
 /**
+ * Deletes a category
+ * @param id
+ */
+export function deleteCategory(id) {
+    Inertia.delete('/category/' + id);
+}
+
+/**
+ * Deletes an ingredient
+ * @param id
+ */
+export function deleteIngredient(id) {
+    Inertia.delete('/ingredient/' + id);
+}
+
+/**
+ * Deletes a collection
+ * @param id
+ */
+export function deleteCollection(id) {
+    Inertia.delete('/collection/' + id);
+}
+
+/**
  * Edit a user
  */
 export function editUser(id) {
@@ -73,4 +97,127 @@ export function getNotifications() {
  */
 export function deleteComment(id) {
     Inertia.delete('/comment/' + id);
+}
+
+/**
+ * Decides what to delete
+ */
+export function deleteItem(id, type) {
+    switch (type) {
+        case 'user':
+            this.deleteUser(id);
+            break;
+        case 'title':
+            this.deleteRecipe(id);
+            break;
+        case 'comment':
+            this.deleteComment(id);
+            break;
+        case 'ingredient':
+            this.deleteIngredient(id);
+            break;
+        case 'category':
+            this.deleteCategory(id);
+            break;
+        case 'collection':
+            this.deleteCollection(id);
+            break;
+        // Add more cases as needed
+    }
+}
+
+/**
+ * Decides what to edit
+ */
+export function editItem(data, type) {
+    let id = data['id'];
+    switch (type) {
+        case 'user':
+            this.editUser(id);
+            break;
+        case 'recipe':
+            this.editRecipe(id);
+            break;
+        case 'collection':
+            this.editCollection(id);
+            break;
+        // Add more cases as needed
+    }
+}
+
+/**
+ * Update an item
+ */
+export function updateItem(id, type, editData) {
+    switch (type) {
+        case 'ingredient':
+            this.updateIngredient(id, editData);
+            break;
+        case 'category':
+            this.updateCategory(id, editData);
+            break;
+        // Add more cases as needed
+    }
+}
+
+/**
+ * Create an item
+ */
+export function addItem(type, editData) {
+    switch (type) {
+        case 'ingredient':
+            this.addIngredient(editData);
+            break;
+        case 'category':
+            this.addCategory(editData);
+            break;
+        // Add more cases as needed
+    }
+}
+
+/**
+ * Edit an ingredient
+ */
+export function updateIngredient(id, editData) {
+    Inertia.put('/ingredient/' + id, {
+        name: editData
+    });
+}
+
+/**
+ * Edit a category
+ */
+export function updateCategory(id, editData) {
+    Inertia.put('/category/' + id, {
+        name: editData
+    });
+}
+
+/**
+ * Edit a collection
+ */
+export function editCollection(id) {
+    Inertia.get('/collection/' + id + '/edit');
+}
+
+/**
+ * Create a category
+ * @param id
+ * @param editData
+ */
+export function addCategory(editData) {
+    Inertia.post('/category', {
+        name: editData
+    });
+}
+
+/**
+ * Create an ingredient
+ * @param id
+ * @param editData
+ */
+export function addIngredient(editData) {
+    Inertia.post('/ingredient', {
+        name: editData
+    });
 }

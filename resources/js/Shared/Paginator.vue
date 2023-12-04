@@ -73,7 +73,7 @@ p {
     margin-bottom: 0;
 }
 
-.v-pagination >>> .v-pagination__list {
+.v-pagination:deep(.v-pagination__list) {
     padding-left: 0;
 }
 </style>

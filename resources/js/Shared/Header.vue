@@ -351,7 +351,7 @@ export default {
     right: 27.5px;
 }
 
-.notification >>> .v-icon {
+.notification:deep( .v-icon) {
     font-size: 45px;
 }
 
@@ -366,7 +366,7 @@ export default {
     padding-top: 1.5px;
 }
 
-.side-list >>> .v-list-item {
+.side-list:deep( .v-list-item) {
     font-size: 1.35rem;
     color: white;
 
@@ -379,7 +379,7 @@ export default {
 
 }
 
-.side-list >>> i {
+.side-list:deep(i) {
     opacity: 1;
     height: 50px;
     /*Because of padding on parent item*/
@@ -399,7 +399,7 @@ export default {
     font-style: italic;
 }
 
-.side-user >>> .v-avatar {
+.side-user:deep( .v-avatar ) {
     height: 75px;
     width: 75px;
 }
@@ -494,7 +494,7 @@ h2 {
     font-size: 1.25rem;
 }
 
-.logout-btn >>> .v-btn__append {
+.logout-btn:deep( .v-btn__append) {
     margin-inline-start: 0 !important;
 }
 
@@ -525,23 +525,23 @@ h2 {
     grid-auto-rows: 75px;
 }
 
-.v-list-item >>> .v-list-item__spacer {
+.v-list-item:deep( .v-list-item__spacer ) {
     width: 10px !important;
 }
 
-.v-expansion-panel >>> .v-expansion-panel-text__wrapper {
+.v-expansion-panel:deep( .v-expansion-panel-text__wrapper ) {
     padding: 0;
     width: 100%;
     height: fit-content;
 
 }
 
-.v-expansion-panel >>> .v-btn {
+.v-expansion-panel:deep( .v-btn) {
     width: 100%;
     height: 60px;
 }
 
-.v-expansion-panel >>> .v-expansion-panel-title {
+.v-expansion-panel:deep(.v-expansion-panel-title) {
     font-size: 1.25rem;
     height: 70px;
     color: white;
@@ -552,7 +552,7 @@ h2 {
     background-color: rgba(249, 251, 252, 0.2) !important;
 }
 
-.v-expansion-panel >>> .v-btn:hover {
+.v-expansion-panel:deep( .v-btn:hover) {
     background-color: rgba(12, 48, 58, 0.2) !important;
 }
 

@@ -1,10 +1,12 @@
 <?php
 
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\FollowController;
 use App\Http\Controllers\Guest\GuestController;
+use App\Http\Controllers\IngredientController;
 use App\Http\Controllers\LikeController;
 use App\Http\Controllers\RecipeController;
 use App\Http\Controllers\ReviewController;
@@ -45,6 +47,8 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('/follow', FollowController::class);
     Route::resource('/like', LikeController::class);
     Route::resource('/shared', SharedRecipeController::class);
+    Route::resource('/ingredient', IngredientController::class);
+    Route::resource('/category', CategoryController::class);
 
     Route::middleware('admin')->group(function () {
         Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
@@ -72,6 +76,7 @@ Route::middleware(['auth'])->group(function () {
     Route::group([], function () {
         Route::delete('/comment/{comment}', [CommentController::class, 'destroy'])->name('delete-comment');//Like a comment
     });
+
 });
 /*---------------------------------------------------------------------------------------*/
 /*------------------END OF (ONLY ACCESSABLE WHEN USER LOGGED IN) ROUTES------------------*/

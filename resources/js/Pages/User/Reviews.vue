@@ -131,7 +131,7 @@ h4 {
     margin: 0 0 1em 0;
 }
 
-.review-card >>> .v-btn--icon.v-btn--size-default {
+.review-card:deep(.v-btn--icon.v-btn--size-default) {
     --v-btn-size: 1.5rem;
 }
 
@@ -141,7 +141,7 @@ h4 {
     margin-right: 20px;
 }
 
-.v-rating >>> * {
+.v-rating:deep( * ) {
     cursor: unset;
 }
 

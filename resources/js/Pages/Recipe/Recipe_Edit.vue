@@ -166,7 +166,7 @@ form > button[type="submit"] {
     width: fit-content;
 }
 
-.v-checkbox-btn >>> label {
+.v-checkbox-btn:deep( label ){
     font-size: 1.30rem;
     color: black;
 }

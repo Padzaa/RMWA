@@ -1,5 +1,6 @@
 <script>
 import {Inertia} from "@inertiajs/inertia";
+import {capitalize} from "vue";
 
 export default {
     props: {
@@ -10,6 +11,7 @@ export default {
         dialogFields: {
             type: [Array, Object],
         },
+        cardType: String,
     },
     data() {
         return {
@@ -17,25 +19,41 @@ export default {
             newDialogData: [],
             checkActiveDialog: false,
             checkActiveDialogData: [],
+            formData: '',
         }
     }
     ,
     methods: {
         /**
-         * Decides what to delete
+         * Returns dialog heading text
          */
-        deleteItem(id, type) {
-            switch (type) {
-                case 'firstname':
-                    this.$utils.deleteUser(id);
-                    break;
-                case 'title':
-                    this.$utils.deleteRecipe(id);
-                    break;
-                case 'comment':
-                    this.$utils.deleteComment(id);
-                    break;
-                // Add more cases as needed
+        getDialogTitleText(checkActiveDialogData = null) {
+            if (checkActiveDialogData['action'] == 'delete') {
+                return checkActiveDialogData['title'] ? 'Confirm recipe deletion' :
+                    checkActiveDialogData['comment'] ? 'Confirm comment deletion' :
+                        checkActiveDialogData['firstname'] ? 'Confirm user deletion' :
+                            checkActiveDialogData['type'] == 'category' ? 'Confirm category deletion' :
+                                checkActiveDialogData['type'] == 'ingredient' ? 'Confirm ingredient deletion' :
+                                    checkActiveDialogData['type'] == 'collection' ? 'Confirm collection deletion' : ''
+            }
+            if (checkActiveDialogData['action'] == 'edit') {
+                return 'Edit' + ' ' + checkActiveDialogData['name'];
+            }
+            if (checkActiveDialogData['action'] == 'add') {
+                return 'Add' + ' ' + capitalize(checkActiveDialogData['type']);
+            }
+
+        },
+        /**
+         * Get dialog text
+         */
+        getDialogText(checkActiveDialogData = null) {
+            if (checkActiveDialogData['action'] == 'delete') {
+                return checkActiveDialogData['title'] ? checkActiveDialogData['title'] :
+                    checkActiveDialogData['firstname'] ? checkActiveDialogData['firstname'] + ' ' + checkActiveDialogData['lastname'] :
+                        checkActiveDialogData['type'] == 'category' ? 'Delete category' + ' ' + checkActiveDialogData['name'] :
+                            checkActiveDialogData['type'] == 'ingredient' ? 'Delete ingredient' + ' ' + checkActiveDialogData['name'] :
+                                checkActiveDialogData['type'] == 'collection' ? 'Delete collection' + ' ' + checkActiveDialogData['name'] : ''
             }
         },
         /**
@@ -45,15 +63,8 @@ export default {
             let checked = []
             dialogData.forEach((data) => {
                 if (data['read_at']) {
-                    // checked.push({
-                    //     "id": data['id'],
-                    //     "read_at": data['read_at'],
-                    // });
-
                     checked.push(data['id']);
                 }
-
-
             });
             return checked;
         },
@@ -66,14 +77,19 @@ export default {
         /**
          * Set the data for the check dialog when deleting a user
          */
-        setCheckActiveDialogData(data) {
+        setCheckActiveDialogData(data = null, type = 'delete') {
             this.checkActiveDialogData = data;
+            let title = this.dialogTitle;
+            this.checkActiveDialogData['action'] = type;
             this.checkActiveDialogData['type'] =
-                data['firstname'] ? "firstname" :
-                    data['title'] ? "title" : "comment";
-        }
-
-        ,
+                data['firstname'] ? "user" :
+                    data['title'] ? "recipe" :
+                        data['comment'] ? "comment" :
+                            title.includes('Categories') ? "category" :
+                                title.includes('Ingredients') ? "ingredient" :
+                                    title.includes('Collections') ? "collection" : null;
+            this.formData = type === 'edit' ? data['name'] : '';
+        },
         /**
          * Marks the notifications as read.
          */
@@ -108,8 +124,49 @@ export default {
                 default:
                     return data[field];
             }
-        }
+        },
+        /**
+         * Get button action
+         */
+        handleAction(action, id, type, formData) {
+            switch (action) {
+                case 'delete':
+                    this.$utils.deleteItem(id, type);
+                    break;
+                case 'edit':
+                    this.$utils.updateItem(id, type, formData);
+                    break;
+                case 'add':
+                    this.$utils.addItem(type, formData);
+                    break;
+                // Add more cases if needed
+                default:
+                    break;
+            }
+        },
+        /**
+         * Get button label
+         */
+        getButtonLabel(checkActiveDialogData) {
+            let label = checkActiveDialogData['type'] === 'user'
+                ? 'user'
+                : checkActiveDialogData['type'].charAt(0).toUpperCase() + checkActiveDialogData['type'].slice(1);
+            return checkActiveDialogData['action'] == 'edit' ? 'Update' + ' ' + label : checkActiveDialogData['action'] + ' ' + label;
 
+        },
+        /**
+         * Get button color
+         */
+        getButtonColor(action) {
+            switch (action) {
+                case 'delete':
+                    return 'error';
+                case 'edit':
+                    return 'white';
+                case 'add':
+                    return 'blue'
+            }
+        }
     },
     watch: {
         dialogData: {
@@ -118,8 +175,6 @@ export default {
                     // Prop is defined, update your data property
                     this.checked = this.setCheckedValues(dialogData);
                     this.newDialogData = dialogData;
-
-
                 }
             },
             immediate: true, // Trigger the watcher immediately when the component is created
@@ -130,18 +185,21 @@ export default {
 </script>
 
 <template>
-    <v-dialog :dialogData="dialogData"
-              :dialogTitle="dialogTitle"
-              :dialogFields="dialogFields"
-              min-width="400px"
+    <v-dialog min-width="400px"
               width="fit-content"
               v-model="this.$parent.$data.isActive"
     >
 
         <v-card class="position-relative" :title="dialogTitle">
             <v-card-text>
-
-                <table class="table table-striped" v-if="newDialogData.length != 0">
+                <v-btn style="position:absolute;right: 10px"
+                       v-if="dialogTitle.includes('Categories') ||
+                                    dialogTitle.includes('Ingredients')"
+                       @click="[setCheckActiveDialogData([], 'add'),checkActiveDialog = true]"
+                       color="blue">
+                    Add
+                </v-btn>
+                <table class="table mt-2 table-striped" v-if="newDialogData.length != 0">
                     <thead>
                     <tr>
                         <th>#</th>
@@ -151,7 +209,7 @@ export default {
                         <th v-if="dialogFields.hasOwnProperty('Notification')">
                             Mark As Read
                         </th>
-                        <th v-if="dialogFields.hasOwnProperty('Role') || (dialogFields.hasOwnProperty('Title') && dialogTitle == 'Total Recipes') || dialogTitle=='Users comments'">
+                        <th v-if="dialogTitle != 'Public Recipes'">
                             Actions
                         </th>
                     </tr>
@@ -163,8 +221,13 @@ export default {
                         <td style="font-weight: bold;">{{ index + 1 }}</td>
                         <td v-for="field in dialogFields" :key="field">
                             <Link
-                                v-if="field === 'firstname' || (dialogTitle.includes('Recipes') && field === 'title') || field === 'user'"
-                                :href="[field === 'firstname' ? '/user/' + data['id'] : '/recipe/' + data['id']]">
+                                v-if="field === 'firstname' || (dialogTitle.includes('Recipes') && field === 'title') || field === 'user' || dialogTitle.includes('Collections')"
+                                :href="[
+                                    field === 'firstname' ? '/user/' + data['id'] :
+                                    field === 'user' ? '/user/' + data['user']['id'] :
+                                    field === 'title' ? '/recipe/' + data['id'] :
+                                    dialogTitle.includes('Collections') ? '/collection/' + data['id'] : ''
+                                ]">
                                 {{
                                     this.getFieldContent(field, data)
                                 }}
@@ -176,12 +239,10 @@ export default {
                             <v-checkbox-btn v-model="checked" :value="data['id']"
                                             :disabled="checked.some(item => item == data['id'])"
                                             @click="[updateNewDialogData(data['id']),markAsRead(data['id'])]"
-                            >
-
-                            </v-checkbox-btn>
+                            />
                         </td>
                         <td
-                            v-if="dialogFields.hasOwnProperty('Role') || (dialogFields.hasOwnProperty('Title') && dialogTitle == 'Total Recipes') || dialogTitle=='Users comments'">
+                            v-if="dialogTitle != 'Public Recipes'">
                             <v-btn v-if="(data['id'] != this.$page.props.auth.user.id || data['is_admin'] != 1) "
                                    @click="[setCheckActiveDialogData(data),checkActiveDialog = true]"
                                    color="error">
@@ -189,17 +250,18 @@ export default {
                             </v-btn>
                             <span v-if="data['is_admin'] != 1">&nbsp;&nbsp;</span>
                             <v-btn
-                                v-if="(data['id'] != this.$page.props.auth.user.id || data['is_admin'] != 1) && dialogTitle == 'Total Recipes'"
-                                @click="this.$utils.editRecipe(data['id'])"
-                                color="blue">
+                                v-if="(data['id'] != this.$page.props.auth.user.id || data['is_admin'] != 1) && (
+                                    dialogTitle == 'Total Recipes' ||
+                                    dialogTitle == 'Total Users' ||
+                                    dialogTitle.includes('Categories') ||
+                                    dialogTitle.includes('Ingredients') ||
+                                    dialogTitle.includes('Collections'))"
+                                @click="dialogTitle.includes('Categories') ||
+                                    dialogTitle.includes('Ingredients') ? [setCheckActiveDialogData(data,'edit'),checkActiveDialog = true] : this.$utils.editItem(data,cardType)"
+                                color="white">
                                 Edit
                             </v-btn>
-                            <v-btn
-                                v-if="(data['id'] != this.$page.props.auth.user.id || data['is_admin'] != 1) && dialogTitle == 'Total Users'"
-                                @click="this.$utils.editUser(data['id'])"
-                                color="blue">
-                                Edit
-                            </v-btn>
+
                         </td>
 
                     </tr>
@@ -209,58 +271,46 @@ export default {
                 <p v-else class="text-center mt-2 fst-italic fs-5 text-grey-darken-1">No data</p>
             </v-card-text>
             <v-dialog
-                v-if="dialogFields.hasOwnProperty('Role') || (dialogFields.hasOwnProperty('Title') && dialogTitle == 'Total Recipes') || dialogTitle=='Users comments'"
+                v-if="dialogTitle != 'Public Recipes'"
                 v-model="checkActiveDialog" class="vd"
                 style="display: grid;">
                 <div class="bg-white dialog">
 
                     <div class="dialog-header">
-
-                        <h1 v-if="checkActiveDialogData['title']" class="modal-title fs-4">Confirm recipe deletion</h1>
-                        <h1 v-if="checkActiveDialogData['comment']" class="modal-title fs-4">Comment by
-                            {{
-                                checkActiveDialogData['user']['firstname'] + ' ' + checkActiveDialogData['user']['lastname']
-                            }}</h1>
-                        <h1 v-if="checkActiveDialogData['firstname']" class="modal-title fs-4">Confirm user
-                            deletion</h1>
+                        <h1 v-text="this.getDialogTitleText(checkActiveDialogData)" class="modal-title fs-4"></h1>
                         <button type="button" class="btn-close" @click="checkActiveDialog = false"
                                 aria-label="Close">
                         </button>
                     </div>
                     <div class="dialog-message">
-                        <p v-if="!checkActiveDialogData['comment']">Are you sure you want to delete a user
-                            <b>{{
-                                    checkActiveDialogData['firstname'] ? checkActiveDialogData['firstname'] + ' ' + checkActiveDialogData['lastname'] :
-                                        checkActiveDialogData['title'] ? checkActiveDialogData['title'] : ""
-                                }}</b>
-                            permanently?</p>
-                        <p v-else-if="checkActiveDialogData['firstname']">
-                            When you delete a certain user, all of their recipes, comments, reviews and collections will
-                            be
-                            deleted as well.
+                        <p v-if="!checkActiveDialogData['comment']" v-text="this.getDialogText(checkActiveDialogData)">
                         </p>
-                        <p v-else style="max-width: 50ch;word-wrap: break-word">
+                        <p v-if="checkActiveDialogData['comment']" style="max-width: 50ch;word-wrap: break-word">
                             Comment:
                             {{ checkActiveDialogData['comment'] }}
                         </p>
 
                     </div>
+                    <div class="dialog-message"
+                         v-if="checkActiveDialogData['action'] == 'edit' || checkActiveDialogData['action'] == 'add'"
+                    >
+                        <v-text-field v-model="formData" name="name" label="Name">
+
+                        </v-text-field>
+                    </div>
+
                     <div class="dialog-actions">
                         <v-btn class="btn btn-outline-secondary" @click="checkActiveDialog = false">
                             Cancel
                         </v-btn>
                         <v-btn
-                            v-if="checkActiveDialogData['firstname'] || checkActiveDialogData['title'] || checkActiveDialogData['comment']"
-                            @click="deleteItem(checkActiveDialogData['id'], checkActiveDialogData['type'])"
-                            method="DELETE"
-                            color="error" id="delete_recipe"
+                            @click="handleAction(checkActiveDialogData['action'], checkActiveDialogData['id'], checkActiveDialogData['type'], formData)"
+                            :color="getButtonColor(checkActiveDialogData['action'])"
+                            :method="checkActiveDialogData['action']"
+                            id="delete_recipe"
                         >
-                            Delete {{
-                                checkActiveDialogData['type'] === 'firstname' ? 'User' :
-                                    checkActiveDialogData['type'].charAt(0).toUpperCase() + checkActiveDialogData['type'].slice(1)
-                            }}
+                            {{ getButtonLabel(checkActiveDialogData) }}
                         </v-btn>
-
                     </div>
 
                 </div>

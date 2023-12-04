@@ -81,6 +81,7 @@ export default {
                     'title': 'Total Users',
                     'value': this.users,
                     'icon': 'mdi-account-group',
+                    'type': 'user',
                     'fields': {
                         "First Name": "firstname",
                         "Last Name": "lastname",
@@ -93,6 +94,7 @@ export default {
                     'title': 'Total Recipes',
                     'value': this.recipes,
                     'icon': 'mdi-book',
+                    'type': 'recipe',
                     'fields':
                         {
                             "Title": 'title',
@@ -105,6 +107,7 @@ export default {
                     'title': 'Public Recipes',
                     'value': this.public_recipes,
                     'icon': 'mdi-earth',
+                    'type': 'public-recipe',
                     'fields':
                         {
                             "Title": 'title',
@@ -117,6 +120,7 @@ export default {
                     'title': 'Total Collections',
                     'value': this.collections,
                     'icon': 'mdi-folder',
+                    'type': 'collection',
                     'fields':
                         {
                             "Name": "name",
@@ -128,6 +132,7 @@ export default {
                     'title': 'Available Ingredients',
                     'value': this.ingredients,
                     'icon': 'mdi-food',
+                    'type': 'ingredient',
                     'fields':
                         {
                             "Name": "name",
@@ -138,6 +143,7 @@ export default {
                     'title': 'Available Categories',
                     'value': this.categories,
                     'icon': 'mdi-tag',
+                    'type': 'category',
                     'fields':
                         {
                             "Name": "name",
@@ -151,6 +157,7 @@ export default {
                 null,
             dialogFields:
                 [],
+            cardType: null,
             chartData: {
                 labels: ['01/2023', '02/2023', '03/2023', '04/2023', '05/2023', '06/2023', '07/2023', '08/2023', '09/2023', '10/2023', '11/2023', '12/2023'],
                 datasets: [
@@ -235,7 +242,7 @@ export default {
             },
             usersCommentsFields: {
                 "User": 'user',
-                "Email" : 'user_email',
+                "Email": 'user_email',
                 'Comment': 'comment',
             },
 
@@ -288,7 +295,8 @@ export default {
     <Head :title="title"></Head>
     <div class="dashboard">
         <ADCards :cards="cards"/>
-        <Dialog ref="childDialog" :dialogData="dialogData" :dialogTitle="dialogTitle" :dialogFields="dialogFields"/>
+        <Dialog ref="childDialog" :dialogData="dialogData" :dialogTitle="dialogTitle" :dialogFields="dialogFields"
+                :cardType="cardType"/>
         <div class="additional-buttons">
             <v-btn variant="outlined"
                    @click="openDialogAndPassData('User activities',activities,this.activitiesFields)">New User

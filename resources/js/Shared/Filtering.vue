@@ -70,7 +70,7 @@ export default {
 
             let from = this.form.r_from;//Selected rating from
             let to = this.form.r_to;//Selected rating to
-            if(from > 5 || to > 5){
+            if (from > 5 || to > 5) {
                 from = 1;
                 to = 5;
             }
@@ -293,11 +293,11 @@ export default {
 
 <style scoped>
 
-.v-dialog >>> .v-card {
+.v-dialog:deep(.v-card) {
     display: grid !important;
 }
 
-.v-dialog >>> .v-card__underlay {
+.v-dialog:deep(.v-card__underlay) {
     display: none;
 }
 
@@ -334,7 +334,7 @@ export default {
     place-items: center;
 }
 
-.v-checkbox-btn >>> label, .v-checkbox >>> label {
+.v-checkbox-btn:deep(label), .v-checkbox:deep(label) {
     font-size: 1.25rem;
     color: black;
 
@@ -369,11 +369,11 @@ button.fr {
 }
 
 
-.v-checkbox >>> .v-input__details {
+.v-checkbox:deep( .v-input__details ) {
     display: none !important;
 }
 
-.v-container >>> .v-field__input {
+.v-container:deep(.v-field__input) {
     max-width: 400px;
 
 

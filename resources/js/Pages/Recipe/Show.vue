@@ -207,8 +207,13 @@
                                 disabled
                             ></v-rating>
                         </div>
-                        <p style="font-size: 14px;text-align: center"><Link href="'/user/' + review.user_id">{{review.user.firstname + " " + review.user.lastname}}</Link> this recipe with <b>{{ review.rating }}</b>
-                            stars</p>
+                        <p style="font-size: 14px;text-align: center">
+                            <Link href="'/user/' + review.user_id">
+                                {{ review.user.firstname + " " + review.user.lastname }}
+                            </Link>
+                            this recipe with <b>{{ review.rating }}</b>
+                            stars
+                        </p>
 
                         <p class="comment"><q>{{ review.message }}</q></p>
                     </div>
@@ -331,9 +336,6 @@ export default {
     position: relative;
 }
 
-.textarea-container >>> textarea {
-
-}
 
 .submit-button {
     font-size: 20px;
@@ -494,7 +496,7 @@ h1 {
     font-size: 1.35rem;
 }
 
-.vutext >>> * {
+.vutext:deep( *) {
     max-height: 150px;
 }
 
@@ -502,17 +504,17 @@ h1 {
     margin: 0 !important;
 }
 
-.vutext >>> .v-field {
+.vutext:deep(.v-field) {
     padding: 0 !important;
 }
 
-.vutext >>> .v-field__append-inner {
+.vutext:deep( .v-field__append-inner ) {
     cursor: pointer;
     padding: 0 12px !important;
 }
 
-.review .v-rating >>> *,
-.reviews .v-rating >>> *{
+.review .v-rating:deep( *),
+.reviews .v-rating:deep( *) {
     cursor: unset;
 }
 

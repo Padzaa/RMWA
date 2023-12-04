@@ -115,11 +115,9 @@ class CollectionController extends Controller
         try {
             $this->authorize('delete', $collection);
             $collection->delete();
-            return redirect()->route('collection.index');
         } catch (Exception $e) {
             $this->flashErrorMessage($e->getMessage());
-            return redirect()->route('collection.index');
-
         }
+        
     }
 }

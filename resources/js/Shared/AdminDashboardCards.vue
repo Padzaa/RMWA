@@ -10,11 +10,12 @@ export default {
         /**
          * Pass data to dialog and opens it
          */
-        openDialogAndPassData(title, data, fields) {
+        openDialogAndPassData(title, data, fields,cardType) {
             this.$parent.isActive = true;
             this.$parent.dialogTitle = title;
             this.$parent.dialogData = data;
             this.$parent.dialogFields = fields;
+            this.$parent.cardType = cardType;
         },
     }
 }
@@ -31,7 +32,7 @@ export default {
                 <v-icon color="blue">{{ card.icon }}</v-icon>
             </div>
             <v-btn style="border-radius: 0 0 4px 4px" variant="flat"
-                   @click="openDialogAndPassData(card.title, card.value, card.fields)"
+                   @click="openDialogAndPassData(card.title, card.value, card.fields, card.type)"
                    class="read-more"
                     :disabled="card.value.length === 0">
                 <v-icon>mdi-arrow-down</v-icon>
