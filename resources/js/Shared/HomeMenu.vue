@@ -123,6 +123,11 @@ export default {
                     title: "My reviews",
                     icon: "mdi-star"
                 },
+                {
+                    link: "/message",
+                    title: "Messages",
+                    icon: "mdi-message"
+                },
 
             ],
             public: [

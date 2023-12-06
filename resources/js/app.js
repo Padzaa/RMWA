@@ -37,6 +37,7 @@ const app = createInertiaApp({
     },
     setup({el, App, props, plugin}) {
 
+
         const VueApp = createApp({render: () => h(App, props)});
 
         VueApp.config.globalProperties.$utils = utils;

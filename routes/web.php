@@ -8,6 +8,7 @@ use App\Http\Controllers\FollowController;
 use App\Http\Controllers\Guest\GuestController;
 use App\Http\Controllers\IngredientController;
 use App\Http\Controllers\LikeController;
+use App\Http\Controllers\MessageController;
 use App\Http\Controllers\RecipeController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\SharedRecipeController;
@@ -47,8 +48,10 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('/follow', FollowController::class);
     Route::resource('/like', LikeController::class);
     Route::resource('/shared', SharedRecipeController::class);
-    Route::resource('/ingredient', IngredientController::class);
-    Route::resource('/category', CategoryController::class);
+    Route::resource('/ingredient', IngredientController::class)->except('show','index','edit','create');
+    Route::resource('/category', CategoryController::class)->except('show','index','edit','create');
+    Route::resource('/message',MessageController::class)->except('show','edit','create');
+
 
     Route::middleware('admin')->group(function () {
         Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');

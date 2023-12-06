@@ -121,6 +121,22 @@ class User extends Authenticatable
     }
 
     /**
+     * Retrieve all messages that a certain user has sent
+     */
+    public function sentMessages()
+    {
+        return $this->hasMany(Message::class, 'sender_id');
+    }
+
+    /**
+     * Retrieve all messages that a certain user has received
+     */
+    public function receivedMessages()
+    {
+        return $this->hasMany(Message::class, 'receiver_id');
+    }
+
+    /**
      * Retrieve every user that a certain user follows
      */
     public function followedByMe()
@@ -171,10 +187,10 @@ class User extends Authenticatable
     /**
      * Retrieve admins
      */
-    public static function getAdmins(){
+    public static function getAdmins()
+    {
         return self::where('is_admin', 1);
     }
-
 
 
 }

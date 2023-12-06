@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Notification as NotificationF;
 class Notification extends Model
 {
     use HasFactory;
+
     protected $table = 'notifications';
 
 }
