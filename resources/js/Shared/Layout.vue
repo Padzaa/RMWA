@@ -77,7 +77,7 @@ export default {
 
 <template>
     <Header :pageUrl="this.$page.url" :notifications="this.notifications" :key="not_key_len"/>
-    <slot ></slot>
+    <slot></slot>
     <Alert v-if="this.$attrs.alertFlash" :alertFlash="this.$attrs.alertFlash"/>
     <!--    <v-btn class="previous-page" icon="mdi-reply" @click="$inertia.get('/back')"></v-btn>-->
 </template>

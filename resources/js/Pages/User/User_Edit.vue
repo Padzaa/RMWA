@@ -104,8 +104,8 @@ export default {
         return {
             form: {
                 firstname: this.user.firstname,
-                lastname: this.user.firstname,
-                email: this.user.firstname,
+                lastname: this.user.lastname,
+                email: this.user.email,
                 filename: "",
                 file: null,
                 _method: "put"

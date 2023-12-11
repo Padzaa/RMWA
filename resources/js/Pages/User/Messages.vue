@@ -20,6 +20,10 @@ export default {
         items: [],
         activeChat: null,
         msgContent: '',
+        fileName: '',
+        file: null,
+        url: '',
+        _method: "put"
     }),
     methods: {
         capitalize,
@@ -47,38 +51,41 @@ export default {
                 }
             ];
             data.forEach((user) => {
-                items.push({
-                    inbox_id: user.id,
-                    title: user.firstname,
-                    prependAvatar: user.picture ? user.picture : "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_640.png",
-                    subtitle: `<span class="text-primary">${user.last_message.sender_id == this.$page.props.auth.user.id ? 'You' : user.last_message.sender.firstname}</span> &mdash; ${user.last_message.content}`,
-                    messages: user.messages,
-                });
-                items.push({
-                    type: 'divider',
-                });
-                sessionStorage.setItem(user.id, JSON.stringify(user.messages.map(message => {
-                    return {
-                        sender_id: message.sender_id,
-                        content: message.content,
-                        receiver_id: message.receiver_id,
-                        created_at: message.created_at
-                    }
-                })));
-            });
+                    items.push({
+                        inbox_id: user.id,
+                        title: user.firstname,
+                        prependAvatar: user.picture ? user.picture : "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_640.png",
+                        subtitle: `<span class="text-primary">${user.last_message.sender_id == this.$page.props.auth.user.id ? 'You' : user.last_message.sender.firstname}</span> &mdash; ${user.last_message.content.includes('/storage/') ? '<i style="color:darkcyan;">Media Format</i>' : user.last_message.content}`,
+                        messages: user.messages,
+                    });
+                    items.push({
+                        type: 'divider',
+                    });
+                    sessionStorage.getItem(user.id) ? sessionStorage.removeItem(user.id) : null;
+                    sessionStorage.setItem(user.id, JSON.stringify(user.messages.map(message => {
+                        return {
+                            sender_id: message.sender_id,
+                            content: message.content,
+                            receiver_id: message.receiver_id,
+                            created_at: message.created_at
+                        }
+                    })));
+                }
+            )
+            ;
 
             this.users.forEach((user) => {
                 items.push({
                     inbox_id: user.id,
                     title: user.firstname,
                     prependAvatar: user.picture ? user.picture : "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_640.png",
-                    subtitle: `<span class="text-primary">Inbox</span> &mdash; No messages yet`,
-                    messages: [],
+                    subtitle: `<span class = "text-primary" > Inbox </span> &mdash; No messages yet`,
+                    messages: null,
                 });
                 items.push({
                     type: 'divider',
                 });
-
+                sessionStorage.getItem(user.id) ? sessionStorage.removeItem(user.id) : null;
             });
 
             return items;
@@ -88,12 +95,14 @@ export default {
          */
         setActiveChat(chat) {
             this.activeChat = chat;
-            let ref_id = chat.inbox_id;
-        },
+            this.activeChat.messages = JSON.parse(sessionStorage.getItem(chat.inbox_id)) ? JSON.parse(sessionStorage.getItem(chat.inbox_id)) : [];
+        }
+        ,
         /**
          * Send Message
          */
         sendMessage() {
+
             if (this.msgContent) {
 
                 let text = this.msgContent;
@@ -109,14 +118,63 @@ export default {
                     msg_content: text,
                     receiver_id: this.activeChat.inbox_id
                 });
+
+
             }
 
-        },
+        }
+        ,
+        /**
+         * Submit form and send file
+         */
+        submit() {
+            if (this.file) {
+                let formData = new FormData();
+                formData.append("file", this.file);
+                formData.append("filename", this.fileName);
+                formData.append("receiver_id", this.activeChat.inbox_id);
+                formData.append("sender_id", this.$page.props.auth.user.id);
+                let cnt = this.fileUrl;
+                this.activeChat.messages.push({
+                    sender_id: this.$page.props.auth.user.id,
+                    content: cnt,
+                    receiver_id: this.activeChat.inbox_id,
+                    created_at: new Date()
+                });
+
+                Inertia.post('/message', formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data', // Important: Set the content type
+                    }
+                });
+
+            }
+        }
+        ,
         /**
          * Scroll to the bottom of the div
          */
         scrollToBottom() {
             this.$refs.msgs.scrollTop = this.$refs.msgs.scrollHeight
+        }
+        ,
+        /**
+         * Handle file inputs
+         */
+        handleInput(e) {
+            const file = e.target.files[0];
+            this.fileName = file.name;
+
+            this.fileUrl = URL.createObjectURL(file);
+            this.submit();
+
+        }
+        ,
+        /**
+         * Open a form to pick a file
+         */
+        selectFile() {
+            this.$refs.fileInput.click();
         }
     },
     mounted() {
@@ -138,13 +196,16 @@ export default {
             this.reconstructAndDistribute(message);
         });
 
-    },
+    }
+    ,
     watch: {
-        'activeChat.messages.length': function () {
-            this.$nextTick(() => {
-                this.scrollToBottom();
-            })
-        }
+        'activeChat.messages.length':
+
+            function () {
+                this.$nextTick(() => {
+                    this.scrollToBottom();
+                })
+            }
     }
 }
 </script>
@@ -188,7 +249,12 @@ export default {
                                   :image="activeChat.prependAvatar"></v-avatar>
                         <p :style="message.sender_id == $page.props.auth.user.id ? 'justify-self: end' : 'justify-self: start'"
                            class="text-message">
-                            {{ capitalize(message.content) }}
+                            {{
+                                !(message.content.includes('/storage/') || message.content.includes('blob:')) ? capitalize(message.content) : ''
+                            }}
+                            <img ref="image" style="height:170px;aspect-ratio: auto;"
+                                 v-if="message.content.includes('/storage/') || message.content.includes('blob:')"
+                                 :src="message.content" alt="IF IMAGE IS NOT SHOWING PLEASE RELOAD">
                             <br>
                             <span style="color:grey;font-size: 14px;">{{
                                     this.$utils.normalDate(message?.created_at)
@@ -203,11 +269,20 @@ export default {
             <div class="input-message">
                 <v-text-field label="Message"
                               variant="outlined"
+                              prepend-inner-icon="mdi-paperclip"
                               append-inner-icon="mdi-send"
                               hide-details="auto"
                               v-model="msgContent"
                               @click:append-inner="sendMessage()"
+                              @click:prepend-inner="selectFile()"
                 ></v-text-field>
+                <form enctype="multipart/form-data" @submit.prevent="submit">
+                    <input ref="fileInput" style="display: none;" type="file" @change="handleInput"
+                           @input="this.file = $event.target.files[0]"
+                           accept="image/jpg, image/jpeg, image/png"
+                           class="file-input"/>
+
+                </form>
             </div>
         </div>
     </div>
@@ -252,6 +327,18 @@ export default {
     max-height: 100px;
 }
 
+.file-input:deep(.v-input__control) {
+    display: none;
+}
+
+.file-input:deep(.v-input__prepend) {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.file-input {
+    font-size: 1.5em;
+}
 
 .active-chat {
     display: grid;
@@ -269,6 +356,10 @@ export default {
 
 .input-message {
     align-self: end;
+    display: grid;
+    padding: 0.5em;
+    grid-template-columns:1fr min-content;
+    gap: 0.5em;
 }
 
 .chat-messages {

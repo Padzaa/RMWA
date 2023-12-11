@@ -45,11 +45,19 @@ class MessageController extends Controller
      */
     public function store(StoreMessageRequest $request)
     {
+
         try {
+            $path = '';
+            if ($request->hasFile('file')) {
+                $uploadedFile = $request->file('file');
+                $filename = time() . '_' . $uploadedFile->getClientOriginalName();
+                $uploadedFile->storeAs('public', $filename);
+                $path = "/storage/" . $filename;
+            }
             $message = [
                 'sender_id' => Auth::user()->id,
                 'receiver_id' => $request->receiver_id,
-                'content' => $request->msg_content,
+                'content' => $path != '' ? $path : $request->msg_content,
                 'created_at' => now(),
             ];
             Message::create($message);

@@ -78,11 +78,12 @@ class RecipeController extends Controller
             if ($recipe->is_public) {
                 NotificationF::send(User::all(), new RecipeCreated($recipe->title, Auth::user(), "Public"));
             } else {
-                NotificationF::send(User::getAdmins(), new RecipeCreated($recipe->title, Auth::user()));
+                NotificationF::send(User::getAdmins()->get(), new RecipeCreated($recipe->title, Auth::user()));
             }
             $this->flashSuccessMessage('Recipe created successfully.');
             return redirect()->route('recipe.index');
         } catch (Exception $e) {
+
             $this->flashErrorMessage($e->getMessage());
             return redirect()->route('recipe.index');
         }
@@ -165,11 +166,14 @@ class RecipeController extends Controller
             $recipe->ingredients()->sync($request->ingredients);
             $recipe->categories()->sync($request->categories);
             $recipe->save();
+
             if ($recipe->is_public) {
                 NotificationF::send(User::all()->except(Auth::user()->id), new RecipeCreated($recipe->title, Auth::user(), "Public"));
             } else {
-                NotificationF::send(User::getAdmins(), new RecipeCreated($recipe->title, Auth::user()));
+
+                NotificationF::send(User::getAdmins()->get(), new RecipeCreated($recipe->title, Auth::user()));
             }
+
             $this->flashSuccessMessage('Recipe updated successfully.');
             return redirect()->route('recipe.show', $recipe);
         } catch (Exception $e) {
@@ -199,12 +203,11 @@ class RecipeController extends Controller
 
             $recipe->delete();
             $this->flashSuccessMessage('Recipe deleted successfully.');
-            return Inertia::location(URL::previous());
         } catch (Exception $e) {
             $this->flashErrorMessage($e->getMessage());
-            return Inertia::location(URL::previous());
-        }
 
+        }
+        return Inertia::location(URL::previous());
     }
 
     /**
@@ -238,6 +241,7 @@ class RecipeController extends Controller
                     "rating.required" => "Rating is required!",
                     "msg.required" => "Message is required!",
                 ]);
+            //updateOrCreate --- If the first [data](param 1) exists it updates the row with second [data](param 2), if not it creates row with both [data](both params)
             $rating = Review::updateOrCreate([
                 'user_id' => Auth::user()->id,
                 'recipe_id' => $recipe->id,
