@@ -8,6 +8,8 @@ use App\Models\User;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Inertia\Inertia;
+use Inertia\Testing\Assert;
 
 
 class RegisterController extends Controller
@@ -25,6 +27,13 @@ class RegisterController extends Controller
 
     use RegistersUsers;
 
+    /**
+     * Returns registration form
+     */
+    public function showRegistrationForm()
+    {
+        return Inertia::render('User/User_Create');
+    }
     /**
      * Where to redirect users after registration.
      *
@@ -72,8 +81,10 @@ class RegisterController extends Controller
 
     /**
      * Create a new user instance after a valid registration.
-     *
-     * @param  array  $data
+     * Has to return an instance of User Model as argument for login() function,
+     * Automatic redirect to RouteServiceProvider::HOME which is set to '/'
+     * @param array $data
+     * @return mixed
      */
     protected function create(array $data)
     {
@@ -85,6 +96,7 @@ class RegisterController extends Controller
             'is_admin' => 0,
             'password' => Hash::make($data['password']),
         ]);
+
 
     }
 }

@@ -6,10 +6,10 @@ use App\Models\BaseModel;
 use http\Client\Curl\User;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Validation\ValidatesRequests;
-use Illuminate\Routing\Controller as BasController;
+use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Support\Facades\Log;
 
-class Controller extends BasController
+class Controller extends BaseController
 {
     use AuthorizesRequests, ValidatesRequests;
 
@@ -42,7 +42,7 @@ class Controller extends BasController
     /**
      * Order and paginate the query result.
      */
-    protected function OrderAndPaginate($query, $request)
+    protected function orderAndPaginate($query, $request)
     {
         $query = $this->orderBy($query, $request);
         return $this->paginate($query, $request);

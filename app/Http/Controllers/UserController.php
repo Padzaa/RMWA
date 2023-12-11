@@ -9,7 +9,7 @@ use App\Notifications\UserFollowed;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\Notification as NotificationFacade;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
 use Inertia\Inertia;
@@ -70,7 +70,7 @@ class UserController extends Controller
         try {
             $this->authorize('update', $user);
             $recipes = $user->recipes();
-            $recipes = $this->OrderAndPaginate($recipes, $request);
+            $recipes = $this->orderAndPaginate($recipes, $request);
             return Inertia::render('User/User_Edit', [
                     "recipes" => $recipes,
                     "user" => $user,
@@ -139,7 +139,7 @@ class UserController extends Controller
         Auth::user()->followedByMe()->toggle($user->id);
 
         if (Auth::user()->followsUser($user)->exists()) {
-            Notification::send(User::find($user->id), new UserFollowed(Auth::user()));
+            NotificationFacade::send($user, new UserFollowed(Auth::user()));
         }
         return redirect()->back();
     }

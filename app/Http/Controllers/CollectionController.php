@@ -18,7 +18,8 @@ class CollectionController extends Controller
      */
     public function index()
     {
-        $collections = Auth::user()->collections->load('recipes');
+
+        $collections = Auth::user()->collections()->with('recipes')->get();
         return Inertia::render('Collection/Collections', [
             "collections" => $collections
         ]);
@@ -79,7 +80,7 @@ class CollectionController extends Controller
             return Inertia::render('Collection/Collection_Edit', [
                 "recipes" => Auth::user()->recipes,
                 "collection" => $collection,
-                "active" => $collection->recipes->pluck("id"),
+                "active" => $collection->recipes()->pluck('recipes.id'),
             ]);
         } catch (Exception $e) {
             $this->flashErrorMessage($e->getMessage());
@@ -118,6 +119,6 @@ class CollectionController extends Controller
         } catch (Exception $e) {
             $this->flashErrorMessage($e->getMessage());
         }
-        
+
     }
 }
