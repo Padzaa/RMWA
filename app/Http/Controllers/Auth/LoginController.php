@@ -26,6 +26,7 @@ class LoginController extends Controller
 
     protected function showLoginForm()
     {
+
         return Inertia::render('User/Login');
     }
 
@@ -41,7 +42,6 @@ class LoginController extends Controller
 
     protected function logout(Request $request)
     {
-
         $this->guard()->logout();
 
         $request->session()->invalidate();

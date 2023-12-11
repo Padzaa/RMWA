@@ -20,7 +20,7 @@ use Illuminate\Support\Facades\URL;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
 use App\Models\Category;
-use Illuminate\Support\Facades\Notification as NotificationF;
+use Illuminate\Support\Facades\Notification as NotificationFacade;
 
 class RecipeController extends Controller
 {
@@ -31,10 +31,10 @@ class RecipeController extends Controller
     {
 
         $recipes = Recipe
-            ::ForUser()
-            ->FilterRecipes($request);
+            ::forUser(Auth::user())
+            ->filterRecipes($request);//Working with request cause it contains all filter functions at once, if needed they can be use separately with their own arguments
 
-        $recipes = $this->OrderAndPaginate($recipes, $request);
+        $recipes = $this->orderAndPaginate($recipes, $request);
 
         return Inertia::render('Recipe/All', [
             "title" => "Recipes",
@@ -42,8 +42,7 @@ class RecipeController extends Controller
             'categories' => Category::all(),
             'ingredients' => Ingredient::orderBy('name')->get(),
             'filtersData' => $request->query->all(),
-            'collections' => Auth::user()->collections()->orderBy('name')->get()
-
+            'collections' => Auth::user()->collections()->orderBy('name')->get(),
         ]);
     }
 
@@ -76,7 +75,7 @@ class RecipeController extends Controller
             $recipe->ingredients()->attach($request->ingredients);
             $recipe->categories()->attach($request->categories);
             if ($recipe->is_public) {
-                NotificationF::send(User::all()->except(Auth::user()->id), new PublicRecipeCreated($recipe->title, Auth::user()));
+                NotificationFacade::send(User::all()->except(Auth::user()->id), new PublicRecipeCreated($recipe->title, Auth::user()));
             }
             $this->flashSuccessMessage('Recipe created successfully.');
             return redirect()->route('recipe.index');
@@ -102,7 +101,7 @@ class RecipeController extends Controller
                 $shared_to = $recipe->shared->pluck("id");
                 $review = $recipe->reviewForRecipeByUser(Auth::user());
                 $reviews = $recipe->reviews()->where("user_id", "!=", Auth::user()->id)->with('user')->get();
-                $is_liked = $recipe->likes()->where('user_id', Auth::user()->id)->count();
+                $is_liked = $recipe->likes()->where('user_id', Auth::user()->id)->exists();
                 $users = User::all()->except(Auth::user()->id);
             }
 
@@ -151,8 +150,6 @@ class RecipeController extends Controller
      */
     public function update(UpdateRecipeRequest $request, Recipe $recipe)
     {
-
-
         try {
             $this->authorize('update', $recipe);
             $recipe->title = $request->title;
@@ -164,7 +161,7 @@ class RecipeController extends Controller
             $recipe->categories()->sync($request->categories);
             $recipe->save();
             if ($recipe->is_public) {
-                NotificationF::send(User::all()->except(Auth::user()->id), new PublicRecipeCreated($recipe->title, Auth::user()));
+                NotificationFacade::send(User::all()->except(Auth::user()->id), new PublicRecipeCreated($recipe->title, Auth::user()));
             }
             $this->flashSuccessMessage('Recipe updated successfully.');
             return redirect()->route('recipe.show', $recipe);
@@ -172,8 +169,6 @@ class RecipeController extends Controller
             $this->flashErrorMessage($e->getMessage());
             return redirect()->route('recipe.show', $recipe);
         }
-
-
     }
 
     /**
@@ -181,7 +176,6 @@ class RecipeController extends Controller
      */
     public function destroy(Recipe $recipe)
     {
-
         try {
             $this->authorize('delete', $recipe);
             $recipe
@@ -196,10 +190,10 @@ class RecipeController extends Controller
 
             $recipe->delete();
             $this->flashSuccessMessage('Recipe deleted successfully.');
-            return redirect()->back();
+            return Inertia::location(URL::previous());
         } catch (Exception $e) {
             $this->flashErrorMessage($e->getMessage());
-            return redirect()->back();
+            return Inertia::location(URL::previous());
         }
 
     }
@@ -242,7 +236,7 @@ class RecipeController extends Controller
                 'rating' => $request->rating,
                 'message' => $request->msg,
             ]);
-            NotificationF::send(User::find($recipe->user_id), new RecipeRated($recipe->title, $rating->rating, Auth::user()));
+            NotificationFacade::send(User::find($recipe->user_id), new RecipeRated($recipe->title, $rating->rating, Auth::user()));
             $this->flashSuccessMessage('Review added successfully.');
             return redirect()->back();
         } catch (Exception $e) {
@@ -263,7 +257,7 @@ class RecipeController extends Controller
             $recipe->shared()->sync($request->users);
             $users_shared_to = User::whereIn("id", $request->users)->get();
             $this->flashSuccessMessage('Recipe shared successfully.');
-            NotificationF::send($users_shared_to, new RecipeShared(Auth::user(), $recipe->title));
+            NotificationFacade::send($users_shared_to, new RecipeShared(Auth::user(), $recipe->title));
             return Inertia::location('/recipe/' . $recipe->id);
         } catch (Exception $e) {
             $this->flashErrorMessage($e->getMessage());
@@ -277,7 +271,6 @@ class RecipeController extends Controller
      */
     public function comment(Recipe $recipe, Request $request)
     {
-
         try {
 
             $request->request = $request->validate([
@@ -291,7 +284,7 @@ class RecipeController extends Controller
             ]);
             $this->authorize('view', $recipe);
             $this->flashSuccessMessage('Comment added successfully.');
-            NotificationF::send(User::find($recipe->user_id), new RecipeCommented($recipe->title, Auth::user()));
+            NotificationFacade::send($recipe->user()->get(), new RecipeCommented($recipe->title, Auth::user()));
             return Inertia::location('/recipe/' . $recipe->id);
         } catch (Exception $e) {
             $this->flashErrorMessage($e->getMessage());
@@ -307,14 +300,12 @@ class RecipeController extends Controller
 
         try {
             $this->authorize('view', $recipe);
-
-            if ($recipe->likes()->where('user_id', Auth::user()->id)->count()) {
+            if ($recipe->likes()->where('user_id', Auth::user()->id)->exists()) {
                 $recipe->likes()->detach(Auth::user()->id);
             } else {
-                NotificationF::send(User::find($recipe->user_id), new RecipeLiked(Auth::user(), $recipe->title));
+                NotificationFacade::send($recipe->user()->get(),new RecipeLiked(Auth::user(), $recipe->title));
                 $recipe->likes()->attach(Auth::user()->id);
             }
-
             return redirect()->back();
         } catch (Exception $e) {
             $this->flashErrorMessage($e->getMessage());
@@ -329,7 +320,7 @@ class RecipeController extends Controller
     public function favorites(Request $request)
     {
         $recipes = Auth::user()->favorites();
-        $recipes = $this->OrderAndPaginate($recipes, $request);
+        $recipes = $this->orderAndPaginate($recipes, $request);
         return Inertia::render('User/Favorites', [
             "recipes" => $recipes,
         ]);
@@ -339,8 +330,12 @@ class RecipeController extends Controller
     /**
      * Updates the read_at field of the notifications for the authenticated user.
      */
-    public function notifications()
+    public function notifications($id = null)
     {
+        if ($id) {
+            Notification::where('id', $id)->update(['read_at' => now()]);
+            return redirect()->back();
+        }
         Notification::where('notifiable_id', Auth::user()->id)->where('read_at', null)->update(['read_at' => now()]);
         return Inertia::location(URL::previous());
     }
