@@ -6,7 +6,9 @@ import Paginator from "../../Shared/Paginator.vue";
 export default {
     components: {Paginator, GridNet, Header},
     props: {
-        recipes: Array
+        recipes: {
+            type: [Object, Array],
+        },
     },
 }
 </script>
@@ -16,7 +18,7 @@ export default {
     <Head>
         <title>Favorites</title>
     </Head>
-    <div class="container">
+    <div class="contain">
         <h1 class="text-center">Favorites</h1>
         <GridNet :recipes="recipes.data" :auth="this.$attrs.auth"></GridNet>
         <Paginator :recipes="recipes"></Paginator>
@@ -56,7 +58,7 @@ div.actions > a {
     height: fit-content;
 }
 
-.container {
+.contain {
     padding: 2em 0;
 }
 </style>

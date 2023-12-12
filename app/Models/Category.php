@@ -11,7 +11,7 @@ class Category extends Model
 
     protected $fillable = ['name'];
 
-    /*
+    /**
     Retrieve every recipe that has certain category
     */
     public function recipes()

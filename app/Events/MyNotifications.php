@@ -3,6 +3,7 @@
 namespace App\Events;
 
 use App\Models\Notification;
+use App\Models\User;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
@@ -22,10 +23,11 @@ class MyNotifications implements ShouldBroadcast
      * Create a new event instance.
      */
     public $user;
+
     public function __construct($user)
     {
         $this->user = $user;
-        $this->data = ['notificationsOnLogin' => Notification::where('notifiable_id',$user)->where('read_at',null)->get()];
+        $this->data = ['notificationsOnLogin' => User::findOrFail($user)->unreadNotifications()->get()];
     }
 
     /**
@@ -34,7 +36,7 @@ class MyNotifications implements ShouldBroadcast
      */
     public function broadcastOn(): PrivateChannel
     {
-        return new PrivateChannel('notifications.'.$this->user);
+        return new PrivateChannel('notifications.' . $this->user);
     }
 
     public function broadcastAs(): string

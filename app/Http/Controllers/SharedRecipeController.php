@@ -6,6 +6,7 @@ use App\Http\Requests\StoreSharedRecipeRequest;
 use App\Http\Requests\UpdateSharedRecipeRequest;
 use App\Models\Recipe;
 use App\Models\SharedRecipe;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
@@ -23,9 +24,10 @@ class SharedRecipeController extends Controller
     /**
      * Retrieve the recipes shared with the authenticated user.
      */
-    public function sharedWithMe()
+    public function sharedWithMe(Request $request)
     {
-        $recipes = Auth::user()->sharedWithMe()->paginate(10);
+        $recipes = Auth::user()->sharedWithMe();
+        $recipes = $this->orderAndPaginate($recipes,$request);
         return Inertia::render('User/Shared_Recipes', [
             'recipes' => $recipes,
             'title' => "Recipes shared with me"
@@ -35,13 +37,10 @@ class SharedRecipeController extends Controller
     /**
      * Retrieves the recipes belonging to the authenticated user that he shared.
      */
-    public function myShared()
+    public function myShared(Request $request)
     {
-        $recipes = Recipe::where('user_id', Auth::user()->id)->whereExists(function ($query) {
-            $query->select(DB::raw(1))
-                ->from('shared_recipes')
-                ->whereRaw('shared_recipes.recipe_id = recipes.id');
-        })->paginate(10);
+        $recipes = Auth::user()->sharedRecipes();
+        $recipes = $this->orderAndPaginate($recipes,$request);
 
         return Inertia::render('User/Shared_Recipes', [
             'recipes' => $recipes,
