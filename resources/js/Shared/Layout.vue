@@ -47,7 +47,7 @@ export default {
             enabledTransports: ['ws', 'wss'],
         });
 
-        window.Echo.private('notifications.' + this.$page.props.auth.user.id).listen('.my-notifications', (data) => {
+        window.Echo.private('notifications.' + this.$page.props.auth?.user.id).listen('.my-notifications', (data) => {
             console.log(data);
             if(data.data?.notificationsOnLogin){
                 sessionStorage.setItem('notifications', JSON.stringify(data.data.notificationsOnLogin));

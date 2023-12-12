@@ -76,7 +76,7 @@ export default {
             <template v-slot:actions>
                 <v-card-actions class="actions">
                     <Link
-                        :href="'/recipe/' + recipe.id"
+                        :href="auth ? '/recipe/' + recipe.id : '/guest/recipe/' + recipe.id"
                         method="GET">
                         <img src="../../../public/show.svg" alt="edit">
                     </Link>

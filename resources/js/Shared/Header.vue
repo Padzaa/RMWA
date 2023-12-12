@@ -136,7 +136,7 @@
 
         <div v-if="!$page.props.auth" class="profile-section">
 
-            <Link class="btn btn-outline-light" href="/public">Public</Link>
+            <Link class="btn btn-outline-light" href="/guest/public">Public</Link>
             <Link class="btn btn-outline-light" href="/login">Login</Link>
             <Link class="btn btn-outline-light" href="/register">Register</Link>
 
@@ -242,7 +242,7 @@ export default {
                     section: "Public",
                     items: [
                         {
-                            link: "/public",
+                            link: "/guest/public",
                             title: "Public recipes",
                             icon: "mdi-earth"
                         }

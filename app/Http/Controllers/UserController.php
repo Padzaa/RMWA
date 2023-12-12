@@ -4,22 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
-use App\Jobs\SendSMS;
-use App\Mail\TestingMail;
-use App\Models\Recipe;
 use App\Models\User;
 use App\Notifications\UserFollowed;
-use App\Services\TwilioService;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\Notification as NotificationFacade;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\Rule;
 use Inertia\Inertia;
-use function Illuminate\Events\queueable;
+
 
 class UserController extends Controller
 {
@@ -52,48 +45,29 @@ class UserController extends Controller
      */
     public function show(User $user)
     {
-        try {
-            $this->authorize('view', $user);
-            if (Auth::user()->id === $user->id) {
-                return redirect()->route('user.edit', $user->id);
-            }
-            Auth::user()->follow()->where('followed_user_id', $user->id)->count() ? $is_following = true : $is_following = false;
-
-            return Inertia::render('User/User_Show', [
-                "user" => $user,
-                "is_following" => $is_following,
-            ]);
-        } catch (Exception $e) {
-            session()->flash("alert", [
-                "title" => "Error!",
-                "message" => $e->getMessage(),
-                "type" => "error"
-            ]);
-            return Inertia::location('/');
+        $this->authorize('view', $user);
+        if (Auth::user()->id === $user->id) {
+            return redirect()->route('user.edit', $user->id);
         }
+
+        return Inertia::render('User/User_Show', [
+            "user" => $user,
+            "is_following" => boolval(Auth::user()->followsUser($user)->count()),
+        ]);
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(User $user)
+    public function edit(User $user, Request $request)
     {
-        try {
-            $this->authorize('update', $user);
-            $recipes = $user->recipes()->paginate(10);
-            return Inertia::render('User/User_Edit', [
-                    "recipes" => $recipes,
-                ]
-            );
-        } catch (Exception $e) {
-            session()->flash("alert", [
-                "title" => "Error!",
-                "message" => $e->getMessage(),
-                "type" => "error"
-            ]);
-            return Inertia::location('/');
-        }
-
+        $this->authorize('update', $user);
+        $recipes = $user->recipes();
+        $recipes = $this->orderAndPaginate($recipes, $request);
+        return Inertia::render('User/User_Edit', [
+                "recipes" => $recipes,
+            ]
+        );
     }
 
     /**
@@ -101,37 +75,22 @@ class UserController extends Controller
      */
     public function update(UpdateUserRequest $request, User $user)
     {
-        try {
-            $this->authorize('update', $user);
-            if ($request->hasFile('file')) {
-                if ($user->picture) {
-                    Storage::disk("public")->delete(basename($user->picture));
-                }
-                $uploadedFile = $request->file('file');
-                $filename = time() . '_' . $uploadedFile->getClientOriginalName();
-                $path = $uploadedFile->storeAs('public', $filename);
-                $user->picture = "/storage/" . $filename;
+        $this->authorize('update', $user);
+        if ($request->hasFile('file')) {
+            if ($user->picture) {
+                Storage::disk("public")->delete(basename($user->picture));
             }
-
-            $user->firstname = $request->firstname;
-            $user->lastname = $request->lastname;
-            $user->email = $request->email;
-            $user->save();
-            session()->flash("alert", [
-                "title" => "Success!",
-                "message" => "Your profile has been updated!",
-                "type" => "success"
-            ]);
-            return Inertia::location('/');
-        } catch (Exception $e) {
-            session()->flash("alert", [
-                "title" => "Error!",
-                "message" => $e->getMessage(),
-                "type" => "error"
-            ]);
-            return Inertia::location('/');
+            $uploadedFile = $request->file('file');
+            $filename = time() . '_' . $uploadedFile->getClientOriginalName();
+            $uploadedFile->storeAs('public', $filename);
+            $user->picture = "/storage/" . $filename;
         }
-
+        $user->firstname = $request->firstname;
+        $user->lastname = $request->lastname;
+        $user->email = $request->email;
+        $user->save();
+        $this->flashSuccessMessage('User updated successfully.');
+        return Inertia::location('/');
     }
 
     /**
@@ -142,14 +101,15 @@ class UserController extends Controller
         //
     }
 
-//Follow/Unfollow a certain user
-    public function follow(Request $request, User $user)
+    /**
+     *Follows/Unfollows a user
+     */
+    public function follow(User $user)
     {
-        if(Auth::user()->follow()->where('followed_user_id', $user->id)->count()){
-            Auth::user()->follow()->detach($user->id);
-        }else{
-            Auth::user()->follow()->attach($user->id);
-            Notification::send(User::find($user->id), new UserFollowed(Auth::user()));
+        Auth::user()->followedByMe()->toggle($user->id);
+
+        if (Auth::user()->followsUser($user)->exists()) {
+            NotificationFacade::send($user, new UserFollowed(Auth::user()));
         }
         return redirect()->back();
     }

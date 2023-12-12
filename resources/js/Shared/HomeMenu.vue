@@ -112,7 +112,7 @@ export default {
             ],
             public: [
                 {
-                    link: "/public",
+                    link: "/guest/public",
                     title: "Public recipes",
                     icon: "mdi-earth"
                 }

@@ -199,16 +199,17 @@
                 </div>
                 <template v-for="review in reviews">
                     <div class="review alert alert-danger">
-                        <h6> {{ review.rating }}</h6>
                         <div class="text-center">
                             <v-rating
                                 v-model="review.rating"
                                 bg-color="orange-lighten-1"
-                                color="blue"
+                                color="black"
+                                disabled
                             ></v-rating>
                         </div>
+                        <p style="font-size: 14px;text-align: center"><Link href="'/user/' + review.user_id">{{review.user.firstname + " " + review.user.lastname}}</Link> this recipe with <b>{{ review.rating }}</b>
+                            stars</p>
 
-                        <h6>COMMENT :</h6>
                         <p class="comment"><q>{{ review.message }}</q></p>
                     </div>
                 </template>
@@ -496,7 +497,8 @@ h1 {
     padding: 0 12px !important;
 }
 
-.review .v-rating >>> * {
+.review .v-rating >>> *,
+.reviews .v-rating >>> *{
     cursor: unset;
 }
 

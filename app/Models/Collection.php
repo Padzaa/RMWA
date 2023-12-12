@@ -7,13 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class Collection extends Model
 {
-
-
     use HasFactory;
-
     protected $fillable = ['name', 'user_id'];
 
-    /*
+    /**
      Retrieve every recipe that has certain collection
      */
     public function recipes()
@@ -21,7 +18,7 @@ class Collection extends Model
         return $this->belongsToMany(Recipe::class, 'collection_recipes');
     }
 
-    /*
+    /**
      Retrieve the user that owns this collection
      */
     public function user()

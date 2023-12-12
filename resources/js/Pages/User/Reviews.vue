@@ -1,9 +1,10 @@
 +
 <script>
 import Header from "../../Shared/Header.vue";
+import Paginator from "../../Shared/Paginator.vue";
 
 export default {
-    components: {Header},
+    components: {Paginator, Header},
     props: {
         reviews: Object,
 
@@ -70,27 +71,7 @@ export default {
         </div>
 
     </div>
-    <div id="paginator">
-        <p>Recipes from {{ reviews.from ? reviews.from : 0 }} to {{ reviews.to ? reviews.to : 0 }} of total {{
-                reviews.total
-            }}</p>
-        Page:
-        <template v-for="(link,index) in reviews.links">
-
-            <Link v-if="index !== 0 && index !== (reviews.links.length - 1)"
-                  :style="{
-                'font-weight' : link.active ? 'bold' : 400,
-                'color' : link.active ? 'red' : 'inherit'
-                            }"
-                  :href="link.url"
-
-            >
-
-                {{ link.label }}
-            </Link>
-
-        </template>
-    </div>
+    <Paginator :recipes="reviews"></Paginator>
 </template>
 
 <style scoped>
