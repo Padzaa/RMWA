@@ -45,20 +45,15 @@ class UserController extends Controller
      */
     public function show(User $user)
     {
-        try {
-            $this->authorize('view', $user);
-            if (Auth::user()->id === $user->id) {
-                return redirect()->route('user.edit', $user->id);
-            }
-
-            return Inertia::render('User/User_Show', [
-                "user" => $user,
-                "is_following" => boolval(Auth::user()->followsUser($user)->count()),
-            ]);
-        } catch (Exception $e) {
-            $this->flashErrorMessage($e->getMessage());
-            return Inertia::location('/');
+        $this->authorize('view', $user);
+        if (Auth::user()->id === $user->id) {
+            return redirect()->route('user.edit', $user->id);
         }
+
+        return Inertia::render('User/User_Show', [
+            "user" => $user,
+            "is_following" => boolval(Auth::user()->followsUser($user)->count()),
+        ]);
     }
 
     /**
@@ -66,19 +61,13 @@ class UserController extends Controller
      */
     public function edit(User $user, Request $request)
     {
-        try {
-            $this->authorize('update', $user);
-            $recipes = $user->recipes();
-            $recipes = $this->orderAndPaginate($recipes, $request);
-            return Inertia::render('User/User_Edit', [
-                    "recipes" => $recipes,
-                ]
-            );
-        } catch (Exception $e) {
-            $this->flashErrorMessage($e->getMessage());
-            return Inertia::location('/');
-        }
-
+        $this->authorize('update', $user);
+        $recipes = $user->recipes();
+        $recipes = $this->orderAndPaginate($recipes, $request);
+        return Inertia::render('User/User_Edit', [
+                "recipes" => $recipes,
+            ]
+        );
     }
 
     /**
@@ -86,28 +75,22 @@ class UserController extends Controller
      */
     public function update(UpdateUserRequest $request, User $user)
     {
-        try {
-            $this->authorize('update', $user);
-            if ($request->hasFile('file')) {
-                if ($user->picture) {
-                    Storage::disk("public")->delete(basename($user->picture));
-                }
-                $uploadedFile = $request->file('file');
-                $filename = time() . '_' . $uploadedFile->getClientOriginalName();
-                $uploadedFile->storeAs('public', $filename);
-                $user->picture = "/storage/" . $filename;
+        $this->authorize('update', $user);
+        if ($request->hasFile('file')) {
+            if ($user->picture) {
+                Storage::disk("public")->delete(basename($user->picture));
             }
-            $user->firstname = $request->firstname;
-            $user->lastname = $request->lastname;
-            $user->email = $request->email;
-            $user->save();
-            $this->flashSuccessMessage('User updated successfully.');
-            return Inertia::location('/');
-        } catch (Exception $e) {
-            $this->flashErrorMessage($e->getMessage());
-            return Inertia::location('/');
+            $uploadedFile = $request->file('file');
+            $filename = time() . '_' . $uploadedFile->getClientOriginalName();
+            $uploadedFile->storeAs('public', $filename);
+            $user->picture = "/storage/" . $filename;
         }
-
+        $user->firstname = $request->firstname;
+        $user->lastname = $request->lastname;
+        $user->email = $request->email;
+        $user->save();
+        $this->flashSuccessMessage('User updated successfully.');
+        return Inertia::location('/');
     }
 
     /**
