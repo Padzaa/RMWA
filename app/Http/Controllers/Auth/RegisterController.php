@@ -8,6 +8,7 @@ use App\Models\User;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Inertia\Inertia;
 
 
 class RegisterController extends Controller
@@ -24,6 +25,14 @@ class RegisterController extends Controller
     */
 
     use RegistersUsers;
+
+    /**
+     * Returns registration form
+     */
+    public function showRegistrationForm()
+    {
+        return Inertia::render('User/User_Create');
+    }
 
     /**
      * Where to redirect users after registration.
@@ -45,39 +54,37 @@ class RegisterController extends Controller
     /**
      * Get a validator for an incoming registration request.
      *
-     * @param  array  $data
+     * @param array $data
      * @return \Illuminate\Contracts\Validation\Validator
      */
     protected function validator(array $data)
     {
-
         return Validator::make($data, [
             'firstname' => ['required', 'string', 'max:255'],
             'lastname' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
         ],
-        [
-            'firstname.required' => 'First name is required!',
-            'lastname.required' => 'Last name is required!',
-            'email.required' => 'Email is required!',
-            'email.unique' => 'Email already exists!',
-            'password' => [
-                'required' => 'Password is required!',
-                'min' => 'Password must be at least 8 characters!',
-                'confirmed' => 'Passwords do not match!',
-            ]
-        ]);
+            [
+                'firstname.required' => 'First name is required!',
+                'lastname.required' => 'Last name is required!',
+                'email.required' => 'Email is required!',
+                'email.unique' => 'Email already exists!',
+                'password' => [
+                    'required' => 'Password is required!',
+                    'min' => 'Password must be at least 8 characters!',
+                    'confirmed' => 'Passwords do not match!',
+                ]
+            ]);
     }
 
     /**
      * Create a new user instance after a valid registration.
      *
-     * @param  array  $data
+     * @param array $data
      */
     protected function create(array $data)
     {
-
         return User::create([
             'firstname' => $data['firstname'],
             'lastname' => $data['lastname'],
@@ -85,6 +92,5 @@ class RegisterController extends Controller
             'is_admin' => 0,
             'password' => Hash::make($data['password']),
         ]);
-
     }
 }

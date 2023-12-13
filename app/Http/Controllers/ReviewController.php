@@ -17,7 +17,7 @@ class ReviewController extends Controller
     public function index(Request $request)
     {
         $reviews = Auth::user()->reviews()->with('recipe');
-        $reviews = $this->OrderAndPaginate($reviews, $request);
+        $reviews = $this->orderAndPaginate($reviews, $request);
 
         return Inertia::render('User/Reviews', [
             "reviews" => $reviews

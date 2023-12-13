@@ -155,7 +155,7 @@ class User extends Authenticatable
     /**
      * Retrieve every like that a certain user has
      */
-    public function likes()
+    public function likedRecipes()
     {
         return $this->belongsToMany(Recipe::class, 'likes', 'user_id', 'recipe_id')->withTimestamps();
     }
@@ -163,7 +163,7 @@ class User extends Authenticatable
     /**
      * Retrieve statistics of new users for each month
      */
-    public static function monthlyUsers()
+    public static function usersPerMonth()
     {
         return self::selectRaw('MONTH(created_at) as Month, COUNT(id) as Count')
             ->whereYear('created_at', now()->year)
@@ -173,7 +173,7 @@ class User extends Authenticatable
     /**
      * Retrieve top 5 users who have written the recipes with the best ratings
      */
-    public static function top5Users()
+    public static function topUsers($number_of_users = 5)
     {
         return
             self::join('recipes', 'users.id', 'recipes.user_id')
@@ -181,7 +181,7 @@ class User extends Authenticatable
                 ->select('users.*', DB::raw('AVG(reviews.rating) as average_rating'))
                 ->groupBy('users.id')
                 ->orderBy('average_rating', 'desc')
-                ->take(5);
+                ->take($number_of_users);
     }
 
     /**

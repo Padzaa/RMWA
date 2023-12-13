@@ -19,8 +19,8 @@ class LikeController extends Controller
      */
     public function index(Request $request)
     {
-        $likedRecipes = Auth::user()->likes();
-        $likedRecipes = $this->OrderAndPaginate($likedRecipes, $request);
+        $likedRecipes = $this->orderAndPaginate(Auth::user()->likedRecipes(), $request);
+
         return Inertia::render('User/Likes', [
             'likes' => $likedRecipes,
         ]);

@@ -71,8 +71,7 @@ export default {
                         }
                     })));
                 }
-            )
-            ;
+            );
 
             this.users.forEach((user) => {
                 items.push({
@@ -96,8 +95,7 @@ export default {
         setActiveChat(chat) {
             this.activeChat = chat;
             this.activeChat.messages = JSON.parse(sessionStorage.getItem(chat.inbox_id)) ? JSON.parse(sessionStorage.getItem(chat.inbox_id)) : [];
-        }
-        ,
+        },
         /**
          * Send Message
          */
@@ -122,18 +120,19 @@ export default {
 
             }
 
-        }
-        ,
+        },
         /**
          * Submit form and send file
          */
         submit() {
             if (this.file) {
+                console.log(this.file);
                 let formData = new FormData();
                 formData.append("file", this.file);
                 formData.append("filename", this.fileName);
                 formData.append("receiver_id", this.activeChat.inbox_id);
                 formData.append("sender_id", this.$page.props.auth.user.id);
+
                 let cnt = this.fileUrl;
                 this.activeChat.messages.push({
                     sender_id: this.$page.props.auth.user.id,
@@ -149,15 +148,13 @@ export default {
                 });
 
             }
-        }
-        ,
+        },
         /**
          * Scroll to the bottom of the div
          */
         scrollToBottom() {
             this.$refs.msgs.scrollTop = this.$refs.msgs.scrollHeight
-        }
-        ,
+        },
         /**
          * Handle file inputs
          */
@@ -168,8 +165,7 @@ export default {
             this.fileUrl = URL.createObjectURL(file);
             this.submit();
 
-        }
-        ,
+        },
         /**
          * Open a form to pick a file
          */
@@ -179,25 +175,12 @@ export default {
     },
     mounted() {
         this.items = this.setMessagesAndInboxes(this.inboxes);
-        window.Pusher = Pusher;
-
-        window.Echo = new Echo({
-            broadcaster: 'pusher',
-            key: import.meta.env.VITE_PUSHER_APP_KEY,
-            wsHost: import.meta.env.VITE_PUSHER_HOST ?? `ws-${import.meta.env.VITE_PUSHER_APP_CLUSTER}.pusher.com`,
-            wsPort: import.meta.env.VITE_PUSHER_PORT ?? 80,
-            cluster: import.meta.env.VITE_PUSHER_APP_CLUSTER,
-            wssPort: import.meta.env.VITE_PUSHER_PORT ?? 443,
-            forceTLS: true ?? (import.meta.env.VITE_PUSHER_SCHEME ?? 'https') === 'https',
-            enabledTransports: ['ws', 'wss'],
-        });
 
         window.Echo.private('message.' + this.$page.props.auth?.user.id).listen('.my-message', (message) => {
             this.reconstructAndDistribute(message);
         });
 
-    }
-    ,
+    },
     watch: {
         'activeChat.messages.length':
 

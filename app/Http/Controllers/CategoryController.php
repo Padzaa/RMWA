@@ -31,15 +31,12 @@ class CategoryController extends Controller
      */
     public function store(StoreCategoryRequest $request)
     {
-        try {
-            $this->authorize('create', Category::class);
-            $category = Category::create([
-                'name' => $request->name
-            ]);
-            $this->flashSuccessMessage("Category {$category->name} created successfully");
-        } catch (\Exception $e) {
-            $this->flashErrorMessage($e->getMessage());
-        }
+        $this->authorize('create', Category::class);
+        $category = Category::create([
+            'name' => $request->name
+        ]);
+        $this->flashSuccessMessage("Category {$category->name} created successfully");
+
         return Inertia::location(URL::previous());
     }
 
@@ -64,15 +61,12 @@ class CategoryController extends Controller
      */
     public function update(UpdateCategoryRequest $request, Category $category)
     {
-        try {
-            $this->authorize('update', $category);
-            $category->update([
-                'name' => $request->name
-            ]);
-            $this->flashSuccessMessage("Category updated successfully");
-        } catch (\Exception $e) {
-            $this->flashErrorMessage($e->getMessage());
-        }
+        $this->authorize('update', $category);
+        $category->update([
+            'name' => $request->name
+        ]);
+        $this->flashSuccessMessage("Category updated successfully");
+
         return Inertia::location(URL::previous());
     }
 
@@ -81,13 +75,10 @@ class CategoryController extends Controller
      */
     public function destroy(Category $category)
     {
-        try {
-            $this->authorize('delete', $category);
-            $category->delete();
-            $this->flashSuccessMessage("Category deleted successfully");
-        } catch (\Exception $e) {
-            $this->flashErrorMessage($e->getMessage());
-        }
+        $this->authorize('delete', $category);
+        $category->delete();
+        $this->flashSuccessMessage("Category deleted successfully");
+
         return Inertia::location(URL::previous());
     }
 }

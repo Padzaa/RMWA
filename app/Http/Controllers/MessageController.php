@@ -45,15 +45,15 @@ class MessageController extends Controller
      */
     public function store(StoreMessageRequest $request)
     {
-
         try {
             $path = '';
             if ($request->hasFile('file')) {
                 $uploadedFile = $request->file('file');
-                $filename = time() . '_' . $uploadedFile->getClientOriginalName();
+                $filename = time() . '_' . str_replace(' ', '_', $uploadedFile->getClientOriginalName());
                 $uploadedFile->storeAs('public', $filename);
                 $path = "/storage/" . $filename;
             }
+
             $message = [
                 'sender_id' => Auth::user()->id,
                 'receiver_id' => $request->receiver_id,
@@ -63,8 +63,9 @@ class MessageController extends Controller
             Message::create($message);
             event(new SendMessage($message));
         } catch (\Exception $e) {
-            $this->flashErrorMessage($e->getMessage());
+            $this->flashErrorMessage('Message not sent. Image format cannot be read.');
         }
+
     }
 
     /**

@@ -26,18 +26,18 @@ class AdminController extends Controller
             'title' => 'Admin Dashboard',
             'users' => User::all(),
             'recipes' => $this->orderBy(Recipe::with('user'))->get(),
-            'public_recipes' => $this->orderBy(Recipe::Public()->with('user'))->get(),
+            'public_recipes' => $this->orderBy(Recipe::public()->with('user'))->get(),
             'collections' => Collection::with('user')->orderBy('name')->get(),
             'ingredients' => Ingredient::orderBy('name')->get(),
             'categories' => Category::orderBy('name')->get(),
-            'top_users' => User::top5Users()->get(),
+            'top_users' => User::topUsers()->get(),
             'activities' => Auth::user()->notifications()->get(),
             'last_user_logins' => UserLogin::lastUsersLogins()->get(),
             'users_comments' => Comment::all()->load('user'),
             'charts' => [
-                'monthlyUsers' => $this->reconstructDataForMonthlyCharts(User::monthlyUsers()->get()),
-                'monthlyRecipes' => $this->reconstructDataForMonthlyCharts(Recipe::monthlyRecipes()->get()),
-                'monthlyCollections' => $this->reconstructDataForMonthlyCharts(Collection::monthlyCollections()->get()),
+                'monthlyUsers' => $this->reconstructDataForMonthlyCharts(User::usersPerMonth()->get()),
+                'monthlyRecipes' => $this->reconstructDataForMonthlyCharts(Recipe::recipesPerMonth()->get()),
+                'monthlyCollections' => $this->reconstructDataForMonthlyCharts(Collection::collectionsPerMonth()->get()),
             ]
         ]);
     }

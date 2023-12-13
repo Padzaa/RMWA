@@ -10,6 +10,7 @@ import {Inertia} from "@inertiajs/inertia";
 import Filter from "./Shared/Filter.vue";
 import Filtering from "./Shared/Filtering.vue";
 import Alert from "./Shared/Alert.vue";
+import './bootstrap.js';
 import * as utils from "./utils.js";
 
 const vuetify = createVuetify({

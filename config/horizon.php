@@ -206,8 +206,7 @@ return [
 
         'local' => [
             'supervisor-1' => [
-                'connection' => 'database',
-                'table' => 'jobs',
+                'connection' => 'redis',
                 'queue' => ['default'],
                 'retry_after' => 90,
                 'after_commit' => false,

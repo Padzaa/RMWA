@@ -31,15 +31,12 @@ class IngredientController extends Controller
      */
     public function store(StoreIngridientRequest $request)
     {
-        try {
-            $this->authorize('create', Ingredient::class);
-            $ingredient = Ingredient::create([
-                'name' => $request->name
-            ]);
-            $this->flashSuccessMessage("Ingredient {$ingredient->name} created successfully");
-        } catch (\Exception $e) {
-            $this->flashErrorMessage($e->getMessage());
-        }
+        $this->authorize('create', Ingredient::class);
+        $ingredient = Ingredient::create([
+            'name' => $request->name
+        ]);
+        $this->flashSuccessMessage("Ingredient {$ingredient->name} created successfully");
+
         return Inertia::location(URL::previous());
     }
 
@@ -64,15 +61,12 @@ class IngredientController extends Controller
      */
     public function update(UpdateIngridientRequest $request, Ingredient $ingredient)
     {
-        try {
-            $this->authorize('update', $ingredient);
-            $ingredient->update([
-                'name' => $request->name
-            ]);
-            $this->flashSuccessMessage("Ingredient updated successfully");
-        } catch (\Exception $e) {
-            $this->flashErrorMessage($e->getMessage());
-        }
+        $this->authorize('update', $ingredient);
+        $ingredient->update([
+            'name' => $request->name
+        ]);
+        $this->flashSuccessMessage("Ingredient updated successfully");
+
         return Inertia::location(URL::previous());
     }
 
@@ -81,14 +75,10 @@ class IngredientController extends Controller
      */
     public function destroy(Ingredient $ingredient)
     {
+        $this->authorize('delete', $ingredient);
+        $ingredient->delete();
+        $this->flashSuccessMessage("Ingredient deleted successfully");
 
-        try {
-            $this->authorize('delete', $ingredient);
-            $ingredient->delete();
-            $this->flashSuccessMessage("Ingredient deleted successfully");
-        } catch (\Exception $e) {
-            $this->flashErrorMessage($e->getMessage());
-        }
         return Inertia::location(URL::previous());
     }
 }

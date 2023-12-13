@@ -63,14 +63,10 @@ class CommentController extends Controller
      */
     public function destroy(Comment $comment)
     {
-        try {
-            $this->authorize('delete', $comment);
-            $comment->delete();
-            $this->flashSuccessMessage("Comment deleted successfully");
-            return Inertia::location(URL::previous());
-        } catch (\Exception $e) {
-            $this->flashErrorMessage($e->getMessage());
-            return Inertia::location(URL::previous());
-        }
+        $this->authorize('delete', $comment);
+        $comment->delete();
+        $this->flashSuccessMessage("Comment deleted successfully");
+
+        return Inertia::location(URL::previous());
     }
 }

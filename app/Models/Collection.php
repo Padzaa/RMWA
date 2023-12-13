@@ -30,7 +30,7 @@ class Collection extends Model
     /**
      * Retrieve statistics of new collections for each month
      */
-    public static function monthlyCollections()
+    public static function collectionsPerMonth()
     {
         return self::selectRaw('MONTH(created_at) as Month, COUNT(id) as Count')
             ->whereYear('created_at', now()->year)

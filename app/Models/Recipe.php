@@ -85,11 +85,17 @@ class Recipe extends Model
     }
 
     /**
+     * Check if the recipe liked by given user
+     */
+    public function isLikedByUser($user)
+    {
+        return $this->likes()->where('user_id',$user->id)->exists();
+    }
+    /**
      * Retrieve every recipe that a certain user can access(His own Recipes and Recipes shared with him)
      */
-    public function scopeForUser($query)
+    public function scopeForUser($query,$user)
     {
-        $user = Auth::user();
         return $query->whereHas('user', function ($query) use ($user) {
             $query->where('id', $user->id);
         })->orWhereHas('shared', function ($query) use ($user) {
@@ -100,23 +106,23 @@ class Recipe extends Model
     /**
      * Filtering through recipes
      */
-    public function scopeFilterRecipes($query, $request)
+    public function scopeFilterRecipes($query, $params)
     {
         $query
-            ->Search($request)
-            ->FilterIngredients($request)
-            ->FilterCollections($request)
-            ->FilterCategories($request)
-            ->FilterByRating($request)
-            ->FilterFavorites($request);
+            ->search($params['search'])
+            ->filterIngredients($params['ingredients'])
+            ->filterCollections($params['collections'])
+            ->filterCategories($params['categories'])
+            ->filterByRating($params['r_from'],$params['r_to'])
+            ->filterFavorites($params['favorites']);
     }
 
     /**
      * Filter recipes by search
      */
-    public function scopeSearch($query, $request)
+    public function scopeSearch($query, $requested_search)
     {
-        $query->when($request->search, function ($query, $search) {
+        $query->when($requested_search, function ($query, $search) {
             $query->where(function ($query) use ($search) {
                 $query->orWhere('description', 'like', '%' . $search . '%')
                     ->orWhere('title', 'like', '%' . $search . '%')
@@ -128,9 +134,9 @@ class Recipe extends Model
     /**
      * Filter recipes by categories
      */
-    public function scopeFilterCategories($query, $request)
+    public function scopeFilterCategories($query, $requested_categories)
     {
-        $query->when($request->categories, function ($query, $categories) {
+        $query->when($requested_categories, function ($query, $categories) {
             $query->whereHas('categories', function ($query) use ($categories) {
                 $query->whereIn('category_id', $categories);
             });
@@ -140,9 +146,9 @@ class Recipe extends Model
     /**
      * Filter recipes by ingredients
      */
-    public function scopeFilterIngredients($query, $request)
+    public function scopeFilterIngredients($query, $requested_ingredients)
     {
-        $query->when($request->ingredients, function ($query, $ingredients) {
+        $query->when($requested_ingredients, function ($query, $ingredients) {
             $query->whereHas('ingredients', function ($query) use ($ingredients) {
                 $query->whereIn('ingredient_id', $ingredients);
             });
@@ -152,10 +158,10 @@ class Recipe extends Model
     /**
      * Filter recipes by collections
      */
-    public function scopeFilterCollections($query, $request)
+    public function scopeFilterCollections($query, $requested_collections)
     {
         if (Auth::user()) {
-            $query->when($request->collections, function ($query, $collections) {
+            $query->when($requested_collections, function ($query, $collections) {
                 $query->whereHas('collections', function ($query) use ($collections) {
                     $query->whereIn('collection_id', $collections);
                 });
@@ -166,13 +172,13 @@ class Recipe extends Model
     /**
      * Filter recipes by rating
      */
-    public function scopeFilterByRating($query, $request)
+    public function scopeFilterByRating($query, $rating_from,$rating_to)
     {
         $query->select('recipes.*', \DB::raw('COALESCE(ROUND(AVG(reviews.rating),2),0) as average_rating'), \DB::raw('COUNT(reviews.id) as review_count'))
             ->leftJoin('reviews', 'reviews.recipe_id', '=', 'recipes.id')
             ->groupBy('recipes.id');
-        $from = ($request->r_from > 0) && ($request->r_from <= 5) ? $request->r_from : "0.00";
-        $to = ($request->r_to <= 5) && ($request->r_to > 0) ? $request->r_to : "5.00";
+        $from = ($rating_from > 0) && ($rating_from <= 5) ? $rating_from : "0.00";
+        $to = ($rating_to <= 5) && ($rating_to > 0) ? $rating_to : "5.00";
         $query->havingBetween("average_rating", [$from, $to]);
     }
 
@@ -187,9 +193,9 @@ class Recipe extends Model
     /**
      * Filter recipes if they are favorite to a user
      */
-    public function scopeFilterFavorites($query, $request)
+    public function scopeFilterFavorites($query, $is_favorite)
     {
-        if (Auth::user() && $request->favorites == "true") {
+        if (Auth::user() && $is_favorite == "true") {
             $query->where("recipes.is_favorite", 1)->where('recipes.user_id', Auth::user()->id);
         }
     }
@@ -197,7 +203,7 @@ class Recipe extends Model
     /**
      * Retrieve statistics of new recipes for each month
      */
-    public static function monthlyRecipes()
+    public static function recipesPerMonth()
     {
         return self::selectRaw('MONTH(created_at) as Month, COUNT(id) as Count')
             ->whereYear('created_at', now()->year)

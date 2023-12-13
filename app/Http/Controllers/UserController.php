@@ -9,11 +9,11 @@ use App\Notifications\UserFollowed;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
 use Inertia\Inertia;
-
+use App\Models\Notification;
+use Illuminate\Support\Facades\Notification as NotificationFacade;
 
 class UserController extends Controller
 {
@@ -46,20 +46,16 @@ class UserController extends Controller
      */
     public function show(User $user)
     {
-        try {
-            $this->authorize('view', $user);
-            if (Auth::user()->id === $user->id) {
-                return redirect()->route('user.edit', $user->id);
-            }
-
-            return Inertia::render('User/User_Show', [
-                "user" => $user,
-                "is_following" => Auth::user()->followsUser($user)->exists(),
-            ]);
-        } catch (Exception $e) {
-            $this->flashErrorMessage($e->getMessage());
-            return Inertia::location('/');
+        $this->authorize('view', $user);
+        if (Auth::user()->id === $user->id) {
+            return redirect()->route('user.edit', $user->id);
         }
+
+        return Inertia::render('User/User_Show', [
+            "user" => $user,
+            "is_following" => Auth::user()->followsUser($user)->exists(),
+        ]);
+
     }
 
     /**
@@ -67,20 +63,15 @@ class UserController extends Controller
      */
     public function edit(User $user, Request $request)
     {
-        try {
-            $this->authorize('update', $user);
-            $recipes = $user->recipes();
-            $recipes = $this->OrderAndPaginate($recipes, $request);
-            return Inertia::render('User/User_Edit', [
-                    "recipes" => $recipes,
-                    "user" => $user,
-                ]
-            );
-        } catch (Exception $e) {
-            $this->flashErrorMessage($e->getMessage());
-            return Inertia::location('/');
-        }
+        $this->authorize('update', $user);
+        $recipes = $user->recipes();
+        $recipes = $this->orderAndPaginate($recipes, $request);
 
+        return Inertia::render('User/User_Edit', [
+                "recipes" => $recipes,
+                "user" => $user,
+            ]
+        );
     }
 
     /**
@@ -88,28 +79,25 @@ class UserController extends Controller
      */
     public function update(UpdateUserRequest $request, User $user)
     {
-        try {
-            $this->authorize('update', $user);
-            if ($request->hasFile('file')) {
-                if ($user->picture) {
-                    Storage::disk("public")->delete(basename($user->picture));
-                }
-                $uploadedFile = $request->file('file');
-                $filename = time() . '_' . $uploadedFile->getClientOriginalName();
-                $uploadedFile->storeAs('public', $filename);
-                $user->picture = "/storage/" . $filename;
+        $this->authorize('update', $user);
+
+        if ($request->hasFile('file')) {
+            if ($user->picture) {
+                Storage::disk("public")->delete(basename($user->picture));
             }
-            $user->firstname = $request->firstname;
-            $user->lastname = $request->lastname;
-            $user->email = $request->email;
-            $user->save();
-            $this->flashSuccessMessage('User updated successfully.');
-            return Inertia::location('/');
-        } catch (Exception $e) {
-            $this->flashErrorMessage($e->getMessage());
-            return Inertia::location('/');
+            $uploadedFile = $request->file('file');
+            $filename = time() . '_' . $uploadedFile->getClientOriginalName();
+            $uploadedFile->storeAs('public', $filename);
+            $user->picture = "/storage/" . $filename;
         }
 
+        $user->firstname = $request->firstname;
+        $user->lastname = $request->lastname;
+        $user->email = $request->email;
+        $user->save();
+        $this->flashSuccessMessage('User updated successfully.');
+
+        return Inertia::location('/');
     }
 
     /**
@@ -117,18 +105,11 @@ class UserController extends Controller
      */
     public function destroy(User $user)
     {
-        try {
-            $this->authorize('delete', $user);
-            $this->flashSuccessMessage("User deleted successfully.");
-            $user->delete();
-            return Inertia::location(URL::previous());
+        $this->authorize('delete', $user);
+        $this->flashSuccessMessage("User deleted successfully.");
+        $user->delete();
 
-        } catch (Exception $e) {
-            $this->flashErrorMessage($e->getMessage());
-            return redirect()->back();
-        }
-
-
+        return Inertia::location(URL::previous());
     }
 
     /**
@@ -139,9 +120,22 @@ class UserController extends Controller
         Auth::user()->followedByMe()->toggle($user->id);
 
         if (Auth::user()->followsUser($user)->exists()) {
-            Notification::send(User::find($user->id), new UserFollowed(Auth::user()));
+            NotificationFacade::send(User::find($user->id), new UserFollowed(Auth::user()));
         }
         return redirect()->back();
+    }
+
+    /**
+     * Updates the read_at field of the notifications for the authenticated user.
+     */
+    public function notifications($id = null)
+    {
+        if ($id) {
+            Notification::where('id', $id)->update(['read_at' => now()]);
+            return redirect()->back();
+        }
+        Notification::where('notifiable_id', Auth::user()->id)->where('read_at', null)->update(['read_at' => now()]);
+        return Inertia::location(URL::previous());
     }
 
 }

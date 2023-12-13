@@ -27,7 +27,7 @@ class SharedRecipeController extends Controller
     public function sharedWithMe(Request $request)
     {
         $recipes = Auth::user()->sharedWithMe();
-        $recipes = $this->OrderAndPaginate($recipes,$request);
+        $recipes = $this->orderAndPaginate($recipes,$request);
         return Inertia::render('User/Shared_Recipes', [
             'recipes' => $recipes,
             'title' => "Recipes shared with me"
@@ -40,7 +40,7 @@ class SharedRecipeController extends Controller
     public function myShared(Request $request)
     {
         $recipes = Auth::user()->sharedRecipes();
-        $recipes = $this->OrderAndPaginate($recipes,$request);
+        $recipes = $this->orderAndPaginate($recipes,$request);
 
         return Inertia::render('User/Shared_Recipes', [
             'recipes' => $recipes,

@@ -35,14 +35,14 @@ class Controller extends BasController
      */
     protected function paginate($query, $request = null)
     {
-        $per_page = isset($request->per_page) ?? 10;
+        $per_page = isset($request->per_page) ? $request->per_page : 10;
         return $query->paginate($per_page);
     }
 
     /**
      * Order and paginate the query result.
      */
-    protected function OrderAndPaginate($query, $request)
+    protected function orderAndPaginate($query, $request)
     {
         $query = $this->orderBy($query, $request);
         return $this->paginate($query, $request);
@@ -88,10 +88,8 @@ class Controller extends BasController
                 $inf->Count = 0;
                 $data->push($inf);
             }
-
         }
         return $data->sortBy('Month')->pluck('Count');
-
     }
 
     /**

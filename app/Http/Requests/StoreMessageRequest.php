@@ -11,6 +11,7 @@ class StoreMessageRequest extends FormRequest
      */
     public function authorize(): bool
     {
+
         return true;
     }
 
@@ -21,8 +22,8 @@ class StoreMessageRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
-            //
-        ];
+       return [
+           //
+       ];
     }
 }

@@ -48,9 +48,9 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('/follow', FollowController::class);
     Route::resource('/like', LikeController::class);
     Route::resource('/shared', SharedRecipeController::class);
-    Route::resource('/ingredient', IngredientController::class)->except('show','index','edit','create');
-    Route::resource('/category', CategoryController::class)->except('show','index','edit','create');
-    Route::resource('/message',MessageController::class)->except('show','edit','create');
+    Route::resource('/ingredient', IngredientController::class)->except('show', 'index', 'edit', 'create');
+    Route::resource('/category', CategoryController::class)->except('show', 'index', 'edit', 'create');
+    Route::resource('/message', MessageController::class)->except('show', 'edit', 'create');
 
 
     Route::middleware('admin')->group(function () {
@@ -64,7 +64,6 @@ Route::middleware(['auth'])->group(function () {
         Route::put('/recipe/{recipe}/like', [RecipeController::class, 'like'])->name('like');//Like a recipe
         Route::put('/recipe/{recipe}/rate', [RecipeController::class, 'rate'])->name('rate');//Rate a recipe
         Route::put('/recipe/{recipe}/share', [RecipeController::class, 'share'])->name('share');//Share a recipe
-        Route::put('/notifications/{id?}', [RecipeController::class, 'notifications'])->name('notifications');//Mark notification as read
         Route::get('/favorites', [RecipeController::class, 'favorites'])->name('favorites');//Show favorite recipes
     });
     //SHARED-RECIPES ROUTES
@@ -72,9 +71,11 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/myshared', [SharedRecipeController::class, 'myShared'])->name('my-shared');//Show shared recipes
         Route::get('/sharedwithme', [SharedRecipeController::class, 'sharedWithMe'])->name('shared-with-me');//Show shared with me recipes
     });
-    //USER ROUTES
-    Route::put('/user/{user}/follow', [UserController::class, 'follow'])->name('follow');//Follow a user
-
+    //USER ROUTESđ
+    Route::group([], function () {
+        Route::put('/user/{user}/follow', [UserController::class, 'follow'])->name('follow');//Follow a user
+        Route::put('/notifications/{id?}', [UserController::class, 'notifications'])->name('notifications');//Mark notification as read
+    });
     //COMMENT ROUTES
     Route::group([], function () {
         Route::delete('/comment/{comment}', [CommentController::class, 'destroy'])->name('delete-comment');//Like a comment
