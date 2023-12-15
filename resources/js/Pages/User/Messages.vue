@@ -87,7 +87,7 @@ export default {
                     inbox_id: user.id,
                     title: user.firstname,
                     prependAvatar: user.picture ? user.picture : "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_640.png",
-                    subtitle: `<span class = "text-primary" > Inbox </span> &mdash; No messages yet`,
+                    subtitle: `<span class = "text-primary" >No messages yet </span>`,
                     messages: null,
                 });
                 items.push({
