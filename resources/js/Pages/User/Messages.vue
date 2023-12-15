@@ -1,10 +1,11 @@
 <script>
 import {Inertia} from "@inertiajs/inertia";
-import Pusher from "pusher-js";
-import Echo from "laravel-echo";
 import {capitalize} from "vue";
+import Alert from "../../Shared/Alert.vue";
+import Inboxes from "../../Shared/Inboxes.vue"
 
 export default {
+    components: {Inboxes, Alert},
     props: {
         title: {
             type: String,
@@ -23,7 +24,14 @@ export default {
         fileName: '',
         file: null,
         url: '',
-        _method: "put"
+        _method: "put",
+        shouldShow: false,
+        errorMsg: {
+            'title': 'Error',
+            'message': 'File size too big',
+            'type': 'error'
+        },
+        tooltip: true
     }),
     methods: {
         capitalize,
@@ -61,7 +69,8 @@ export default {
                     items.push({
                         type: 'divider',
                     });
-                    sessionStorage.getItem(user.id) ? sessionStorage.removeItem(user.id) : null;
+                    sessionStorage.getItem(user.id) && sessionStorage.removeItem(user.id);
+
                     sessionStorage.setItem(user.id, JSON.stringify(user.messages.map(message => {
                         return {
                             sender_id: message.sender_id,
@@ -100,21 +109,25 @@ export default {
          * Send Message
          */
         sendMessage() {
-
             if (this.msgContent) {
-
                 let text = this.msgContent;
                 this.msgContent = '';
-                this.activeChat.messages.push({
-                    sender_id: this.$page.props.auth.user.id,
-                    content: text,
-                    receiver_id: this.activeChat.inbox_id,
-                    created_at: new Date()
-                });
-
+                let inertia = this;
                 Inertia.post('/message', {
                     msg_content: text,
                     receiver_id: this.activeChat.inbox_id
+                }, {
+                    preserveState: true,
+                    onSuccess() {
+                        inertia.activeChat.messages.push({
+                            sender_id: inertia.$page.props.auth.user.id,
+                            content: text,
+                            receiver_id: inertia.activeChat.inbox_id,
+                            created_at: new Date()
+                        });
+                        sessionStorage.setItem(inertia.activeChat.inbox_id, JSON.stringify(inertia.activeChat.messages));
+                        inertia.updateInboxes();
+                    }
                 });
 
 
@@ -124,31 +137,36 @@ export default {
         /**
          * Submit form and send file
          */
-        submit() {
+        submit(chat) {
             if (this.file) {
-                console.log(this.file);
                 let formData = new FormData();
                 formData.append("file", this.file);
                 formData.append("filename", this.fileName);
                 formData.append("receiver_id", this.activeChat.inbox_id);
                 formData.append("sender_id", this.$page.props.auth.user.id);
-
+                let item = chat;
                 let cnt = this.fileUrl;
-                this.activeChat.messages.push({
-                    sender_id: this.$page.props.auth.user.id,
-                    content: cnt,
-                    receiver_id: this.activeChat.inbox_id,
-                    created_at: new Date()
-                });
-
+                let inertia = this;
                 Inertia.post('/message', formData, {
+                    preserveState: true,
                     headers: {
-                        'Content-Type': 'multipart/form-data', // Important: Set the content type
+                        'Content-Type': 'multipart/form-data',
+                    },
+                    onSuccess() {
+                        inertia.setActiveChat(item);
+                        inertia.activeChat.messages.push({
+                            sender_id: inertia.$page.props.auth.user.id,
+                            content: cnt,
+                            receiver_id: inertia.activeChat.inbox_id,
+                            created_at: new Date()
+                        });
+                        sessionStorage.setItem(inertia.activeChat.inbox_id, JSON.stringify(inertia.activeChat.messages));
+                        inertia.updateInboxes();
                     }
                 });
-
             }
         },
+        // TODO Implement typing
         /**
          * Scroll to the bottom of the div
          */
@@ -156,31 +174,63 @@ export default {
             this.$refs.msgs.scrollTop = this.$refs.msgs.scrollHeight
         },
         /**
+         * Update inboxes
+         */
+        updateInboxes() {
+            let inertia = this;
+            Inertia.reload({
+                only: ['inboxes', 'users'],
+                onSuccess() {
+                    inertia.items = inertia.setMessagesAndInboxes(inertia.inboxes);
+                }
+            });
+
+
+        },
+        /**
          * Handle file inputs
          */
-        handleInput(e) {
-            const file = e.target.files[0];
-            this.fileName = file.name;
-
-            this.fileUrl = URL.createObjectURL(file);
-            this.submit();
-
+        handleInput(item) {
+            let file = event.target.files[0];
+            if (file.size / 1000000 < 10) {
+                this.fileName = file.name;
+                this.fileUrl = URL.createObjectURL(file);
+                this.submit(item);
+            } else {
+                this.shouldShow = true;
+            }
+            this.$refs.fileInput.value = null;
         },
         /**
          * Open a form to pick a file
          */
         selectFile() {
             this.$refs.fileInput.click();
-        }
-    },
+        },
+        /**
+         * Check for upload big size error and refresh
+         */
+        checkForUploadError() {
+            if (new URLSearchParams(window.location.search).get('error')) {
+                this.shouldShow = true;
+                setTimeout(() => {
+                    Inertia.visit('/message');
+                }, 1200);
+            }
+        },
+    }
+    ,
     mounted() {
+        this.checkForUploadError();
         this.items = this.setMessagesAndInboxes(this.inboxes);
 
         window.Echo.private('message.' + this.$page.props.auth?.user.id).listen('.my-message', (message) => {
             this.reconstructAndDistribute(message);
+            this.updateInboxes();
         });
-
-    },
+        // TODO Implement typing
+    }
+    ,
     watch: {
         'activeChat.messages.length':
 
@@ -198,29 +248,8 @@ export default {
         <title>{{title}}</title>
     </Head>
     <div class="inbox">
-        <v-card
-            class="mx-auto"
-            max-width="400"
-            width="400"
-            title="Inbox"
-        >
-            <v-list :items="items"
-                    item-props
-            >
-                <template v-for="item in items">
-                    <v-list-item :ref="item.inbox_id" :key="item.inbox_id" v-if="item.title"
-                                 :prepend-avatar="item.prependAvatar"
-                                 :title="item.title"
-                                 @click="setActiveChat(item)">
-                        <v-list-item-content>
-                            <div v-html="item.subtitle" class="msg-content"></div>
-                        </v-list-item-content>
-                    </v-list-item>
-                    <v-divider v-if="item.type"></v-divider>
-                </template>
-            </v-list>
-
-        </v-card>
+        <Alert ref="alertBox" v-if="this.shouldShow" :alert-flash="errorMsg"/>
+        <Inboxes :key="items" :items="items" :set-active-chat="this.setActiveChat"/>
         <div class="active-chat" v-if="activeChat">
             <div class="chat-header">
                 <h3 style="margin: 0; text-align:center;">{{ activeChat.title }}</h3>
@@ -251,16 +280,17 @@ export default {
             </div>
             <div class="input-message">
                 <v-text-field label="Message"
+                              id="messageInput"
                               variant="outlined"
                               prepend-inner-icon="mdi-paperclip"
                               append-inner-icon="mdi-send"
-                              hide-details="auto"
+                              messages="Max upload file size is 10MB"
                               v-model="msgContent"
                               @click:append-inner="sendMessage()"
                               @click:prepend-inner="selectFile()"
                 ></v-text-field>
                 <form enctype="multipart/form-data" @submit.prevent="submit">
-                    <input ref="fileInput" style="display: none;" type="file" @change="handleInput"
+                    <input ref="fileInput" style="display: none;" type="file" @change="handleInput(this.activeChat)"
                            @input="this.file = $event.target.files[0]"
                            accept="image/jpg, image/jpeg, image/png"
                            class="file-input"/>
@@ -284,31 +314,6 @@ export default {
     overflow-y: auto;
 }
 
-.msg-content {
-    white-space: pre-wrap;
-    word-break: break-word;
-    text-overflow: ellipsis !important;
-}
-
-*:deep(.v-divider) {
-    margin: 0 !important;
-}
-
-.v-list {
-    padding: 0px;
-}
-
-.v-list:deep(.v-list-item__content) {
-    max-height: 50px;
-    white-space: pre-wrap;
-    word-break: break-word;
-    text-overflow: ellipsis !important;
-}
-
-.v-list .v-list-item {
-    padding: 1em 0;
-    max-height: 100px;
-}
 
 .file-input:deep(.v-input__control) {
     display: none;
@@ -369,7 +374,7 @@ export default {
     display: grid;
     grid-auto-flow: column;
     column-gap: 1em;
-    max-width: 45%;
+    max-width: 50%;
 }
 
 .received {
@@ -377,7 +382,7 @@ export default {
     display: grid;
     grid-auto-flow: column;
     column-gap: 1em;
-    max-width: 45%;
+    max-width: 50%;
 }
 
 .text-message {
@@ -389,5 +394,9 @@ export default {
     border-radius: 7px;
     color: black;
     font-size: 1.1rem;
+}
+.v-text-field:deep(.v-input__details){
+    color:red;
+    font-weight: bold;
 }
 </style>

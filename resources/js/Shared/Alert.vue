@@ -8,6 +8,7 @@ export default {
     data() {
         return {
             snackbar: true,
+            tempData: this.alertFlash
         }
     },
 }
@@ -32,7 +33,7 @@ export default {
             <v-btn
                 color="white"
                 append-icon="mdi-close"
-                @click="snackbar = false"
+                @click="snackbar = false,this.$parent.$data.shouldShow = false"
             >
                 Close
             </v-btn>

@@ -48,11 +48,8 @@ class HandleInertiaRequests extends Middleware
                     "picture" => Auth::user()->picture ? asset(Auth::user()->picture) : null,
                     "is_admin" => Auth::user()->is_admin
                 ]
-
             ] : null,
-
             'alertFlash' => $request->session()->get('alert'),
-
         ]);
     }
 }

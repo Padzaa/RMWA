@@ -9,6 +9,7 @@ use App\Models\Message;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Facades\Validator;
 use Inertia\Inertia;
 
 class MessageController extends Controller
@@ -45,27 +46,21 @@ class MessageController extends Controller
      */
     public function store(StoreMessageRequest $request)
     {
-        try {
-            $path = '';
-            if ($request->hasFile('file')) {
-                $uploadedFile = $request->file('file');
-                $filename = time() . '_' . str_replace(' ', '_', $uploadedFile->getClientOriginalName());
-                $uploadedFile->storeAs('public', $filename);
-                $path = "/storage/" . $filename;
-            }
-
-            $message = [
-                'sender_id' => Auth::user()->id,
-                'receiver_id' => $request->receiver_id,
-                'content' => $path != '' ? $path : $request->msg_content,
-                'created_at' => now(),
-            ];
-            Message::create($message);
-            event(new SendMessage($message));
-        } catch (\Exception $e) {
-            $this->flashErrorMessage('Message not sent. Image format cannot be read.');
+        $path = '';
+        if ($request->hasFile('file')) {
+            $uploadedFile = $request->file('file');
+            $filename = time() . '_' . str_replace(' ', '_', $uploadedFile->getClientOriginalName());
+            $uploadedFile->storeAs('public', $filename);
+            $path = "/storage/" . $filename;
         }
-
+        $message = [
+            'sender_id' => Auth::user()->id,
+            'receiver_id' => $request->receiver_id,
+            'content' => $path != '' ? $path : $request->msg_content,
+            'created_at' => now(),
+        ];
+        Message::create($message);
+        event(new SendMessage($message));
     }
 
     /**
