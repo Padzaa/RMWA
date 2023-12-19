@@ -163,11 +163,11 @@ class User extends Authenticatable
     /**
      * Retrieve statistics of new users for each month
      */
-    public static function usersPerMonth()
+    public static function usersPerMonthForYear($year)
     {
-        return self::selectRaw('MONTH(created_at) as Month, COUNT(id) as Count')
-            ->whereYear('created_at', now()->year)
-            ->groupBy('Month');
+        return self::selectRaw('MONTH(created_at) as label, COUNT(id) as Count')
+            ->whereYear('created_at', $year)
+            ->groupBy('label');
     }
 
     /**

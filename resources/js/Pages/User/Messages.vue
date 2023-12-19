@@ -31,7 +31,10 @@ export default {
             'message': 'File size too big',
             'type': 'error'
         },
-        tooltip: true
+        tooltip: true,
+        isTyping: false,
+        typingMessage: '',
+        typingAvatar: null,
     }),
     methods: {
         capitalize,
@@ -127,6 +130,7 @@ export default {
                         });
                         sessionStorage.setItem(inertia.activeChat.inbox_id, JSON.stringify(inertia.activeChat.messages));
                         inertia.updateInboxes();
+                        inertia.startTyping();
                     }
                 });
 
@@ -218,6 +222,27 @@ export default {
                 }, 1200);
             }
         },
+        /**
+         * If started typing send event isTyping
+         */
+        startTyping() {
+            if (this.msgContent) {
+                window.Echo.private('is_typing.' + this.activeChat.inbox_id).whisper('messageTyping', {
+                    sender_picture: this.$page.props.auth.user.picture ? this.$page.props.auth.user.picture : "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_640.png",
+                    sender_id: this.$page.props.auth.user.id,
+                    message: this.$page.props.auth.user.firstname + ' is typing...'
+                });
+            } else {
+                window.Echo.private('is_typing.' + this.activeChat.inbox_id).whisper('stoppedTyping', {});
+            }
+        },
+        /**
+         * Reset typing data
+         */
+        resetTypingData() {
+            this.isTyping = false;
+            this.typingMessage = '';
+        },
     }
     ,
     mounted() {
@@ -229,6 +254,7 @@ export default {
             this.updateInboxes();
         });
         // TODO Implement typing
+
     }
     ,
     watch: {
@@ -238,7 +264,21 @@ export default {
                 this.$nextTick(() => {
                     this.scrollToBottom();
                 })
+            },
+        'activeChat.inbox_id':
+            function () {
+                this.resetTypingData();
+                this.startTyping();
+                window.Echo.private('is_typing.' + this.$page.props.auth?.user.id).listenForWhisper('messageTyping', (e) => {
+                    this.typingAvatar = e.sender_picture;
+                    this.typingMessage = e.message;
+                    this.isTyping = true;
+                });
+                window.Echo.private('is_typing.' + this.$page.props.auth?.user.id).listenForWhisper('stoppedTyping', () => {
+                    this.resetTypingData();
+                });
             }
+
     }
 }
 </script>
@@ -277,8 +317,18 @@ export default {
                                   :image="this.$page.props.auth.user.picture"></v-avatar>
                     </div>
                 </div>
+                <div class="message" v-if="typingMessage && isTyping">
+                    <div class="received">
+                        <v-avatar
+                            :image="this.typingAvatar"
+
+                        ></v-avatar>
+                        <p style="justify-self: start" class="text-message pulse">{{ typingMessage }}</p>
+                    </div>
+                </div>
             </div>
-            <div class="input-message">
+            <div class="input-message" style="position: relative">
+
                 <v-text-field label="Message"
                               id="messageInput"
                               variant="outlined"
@@ -286,6 +336,7 @@ export default {
                               append-inner-icon="mdi-send"
                               messages="Max upload file size is 10MB"
                               v-model="msgContent"
+                              @keyup="startTyping"
                               @click:append-inner="sendMessage()"
                               @click:prepend-inner="selectFile()"
                 ></v-text-field>
@@ -395,8 +446,38 @@ export default {
     color: black;
     font-size: 1.1rem;
 }
-.v-text-field:deep(.v-input__details){
-    color:red;
+@keyframes pulse {
+    0% {
+        opacity: 0.3;
+    }
+    30% {
+        opacity: 0.4;
+    }
+    50% {
+        opacity: 0.6;
+    }
+    80% {
+        opacity: 0.8;
+    }
+    100% {
+        opacity: 0.3;
+    }
+}
+.pulse{
+    animation-name: pulse;
+    animation: pulse 1.5s infinite;
+}
+
+.v-text-field:deep(.v-input__details) {
+    color: red;
     font-weight: bold;
+}
+
+.typing {
+    bottom: 100%;
+    left: 8px;
+    background-color: rgba(16, 229, 197, 0.53);
+    padding: 7px 10px;
+    border-radius: 5px;
 }
 </style>

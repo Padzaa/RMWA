@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\BaseModel;
+use Carbon\Carbon;
 use http\Client\Curl\User;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Routing\Controller as BaseController;
@@ -77,19 +79,33 @@ class Controller extends BaseController
      * @param $data
      * @return mixed
      */
-    protected function reconstructDataForMonthlyCharts($data): mixed
+    protected function reconstructDataForMonthlyCharts($data, $year): mixed
     {
+
+        $reconstructedData = [];
         for ($i = 1; $i <= 12; $i++) {
-            $inf = $data->firstWhere('Month', $i);
-            if (!$inf) {
-                // If the user for the current month doesn't exist, create a new one.
-                $inf = new BaseModel();
-                $inf->Month = $i;
-                $inf->Count = 0;
-                $data->push($inf);
+            if (empty($data->where('label', $i)->first())) {
+                $m = new BaseModel();
+                $m->label = Carbon::createFromDate($year, $i, 1)->format('m/Y');
+                $m->Count = 0;
+            } else {
+                $m = $data->where('label', $i)->first();
+                $m->label = Carbon::createFromDate($year, $i, 1)->format('m/Y');
             }
+            $reconstructedData[] = $m;
         }
-        return $data->sortBy('Month')->pluck('Count');
+//        for ($i = 1; $i <= 12; $i++) {
+//            $inf = $data->firstWhere('Month', $i);
+//            if (!$inf) {
+//                // If the user for the current month doesn't exist, create a new one.
+//                $inf = new BaseModel();
+//                $inf->label = $i . "/" . $year;
+//                $inf->count = 0;
+//                $data->push($inf);
+//            }
+//        }
+
+        return collect($reconstructedData)->sortBy('label');
     }
 
     /**

@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Broadcast;
 
 /*
@@ -20,4 +21,8 @@ Broadcast::channel('notifications.{id}', function ($user, $id) {
 
 Broadcast::channel('message.{id}', function ($user, $id) {
     return $user->id === +$id;
+});
+
+Broadcast::channel('is_typing.{id}', function () {
+    return Auth::check();
 });

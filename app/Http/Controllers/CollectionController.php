@@ -8,6 +8,7 @@ use App\Models\Collection;
 use App\Models\Recipe;
 use Exception;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 
@@ -55,7 +56,7 @@ class CollectionController extends Controller
     public function show(Collection $collection)
     {
         $this->authorize('view', $collection);
-        
+
         return Inertia::render('Collection/Collection_Show', [
             "collection" => $collection->load('recipes')
         ]);
@@ -69,9 +70,9 @@ class CollectionController extends Controller
         $this->authorize('update', $collection);
 
         return Inertia::render('Collection/Collection_Edit', [
-            "recipes" => Auth::user()->recipes,
+            "recipes" => Auth::user()->recipes()->get(),
             "collection" => $collection,
-            "active" => $collection->recipes->pluck("id"),
+            "active" => $collection->recipes()->get()->pluck("id"),
         ]);
     }
 
@@ -97,5 +98,6 @@ class CollectionController extends Controller
     {
         $this->authorize('delete', $collection);
         $collection->delete();
+        return Inertia::location(URL::previous());
     }
 }

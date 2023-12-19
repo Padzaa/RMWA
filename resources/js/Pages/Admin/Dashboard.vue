@@ -15,6 +15,7 @@ import {
     Legend
 } from 'chart.js'
 import dialog from "../../Shared/Dialog.vue";
+import {Inertia} from "@inertiajs/inertia";
 
 
 ChartJS.register(
@@ -68,6 +69,10 @@ export default {
         users_comments: {
             type: [Array, Object],
         },
+        available_years: {
+            type: [Array, Object],
+        },
+        chosen_year: Number,
     },
     components: {
         ADCards,
@@ -158,8 +163,9 @@ export default {
             dialogFields:
                 [],
             cardType: null,
+            requestedChartYear: this.chosen_year ?? 2023,
             chartData: {
-                labels: ['01/2023', '02/2023', '03/2023', '04/2023', '05/2023', '06/2023', '07/2023', '08/2023', '09/2023', '10/2023', '11/2023', '12/2023'],
+                labels: [],
                 datasets: [
                     {
                         data: []
@@ -263,10 +269,21 @@ export default {
          * Change the data that should be displayed in the chart.
          */
         changeChart(data, title) {
+            console.log(data);
             data = Object.values(data);
-            this.chartData.datasets = [{data: data}];
+            this.chartData.labels = data.map(item => item.label);
+            this.chartData.datasets = [{data: data.map(item => item.Count)}];
             this.chartOptions.plugins.title.text = title;
-            this.chartOptions.scales.y.suggestedMax = Math.max(...data) + 10;
+            this.chartOptions.scales.y.suggestedMax = Math.max(...data.map(item => item.Count)) + 10;
+        },
+        /**
+         * Reset chart data
+         */
+        resetChart() {
+            this.chartData.labels = [];
+            this.chartData.datasets = [];
+            this.chartOptions.plugins.title.text = "";
+            this.chartOptions.scales.y.suggestedMax = 100;
         },
         /**
          * Pass data to dialog and opens it
@@ -277,6 +294,20 @@ export default {
             this.dialogData = data;
             this.dialogFields = fields;
         },
+        /**
+         *
+         */
+        requestChartYear() {
+
+            Inertia.reload({
+                only: ['charts', 'chosen_year'],
+                data: {
+                    year: this.requestedChartYear
+                },
+            });
+            this.resetChart();
+        }
+        ,
     },
     beforeMount() {
         this.setBarChartValues();
@@ -298,17 +329,17 @@ export default {
         <Dialog ref="childDialog" :dialogData="dialogData" :dialogTitle="dialogTitle" :dialogFields="dialogFields"
                 :cardType="cardType"/>
         <div class="additional-buttons">
-            <v-btn variant="outlined"
+            <v-btn class="ch-btn" variant="outlined"
                    @click="openDialogAndPassData('User activities',activities,this.activitiesFields)">New User
                 Activities
             </v-btn>
 
-            <v-btn variant="outlined"
+            <v-btn class="ch-btn"  variant="outlined"
                    @click="openDialogAndPassData('Users last logins',last_user_logins,this.usersLoginsFields)">Users
                 Last Logins
             </v-btn>
 
-            <v-btn variant="outlined"
+            <v-btn class="ch-btn" variant="outlined"
                    @click="openDialogAndPassData('Users comments',users_comments,this.usersCommentsFields)">Users
                 Comments
             </v-btn>
@@ -328,16 +359,27 @@ export default {
                       :key="this.chartOptions.plugins.title.text"
                 />
                 <div class="changeChartButtons">
-                    <v-btn variant="outlined" @click="changeChart(this.charts.monthlyUsers, 'Monthly Users')"
+                    <v-btn class="ch-btn" variant="outlined"
+                           @click="changeChart(this.charts.monthlyUsers, 'Monthly Users')"
                            :disabled="this.chartOptions.plugins.title.text === 'Monthly Users'">Users
                     </v-btn>
-                    <v-btn variant="outlined" @click="changeChart(this.charts.monthlyRecipes, 'Monthly Recipes')"
+                    <v-btn class="ch-btn" variant="outlined"
+                           @click="changeChart(this.charts.monthlyRecipes, 'Monthly Recipes')"
                            :disabled="this.chartOptions.plugins.title.text === 'Monthly Recipes'">Recipes
                     </v-btn>
-                    <v-btn variant="outlined"
+                    <v-btn class="ch-btn" variant="outlined"
                            @click="changeChart(this.charts.monthlyCollections, 'Monthly Collections')"
                            :disabled="this.chartOptions.plugins.title.text === 'Monthly Collections'">Collections
                     </v-btn>
+                    <v-select variant="outlined"
+                              label="Select year"
+                              name="requestedChartYear"
+                              :items="this.available_years"
+                              v-model="requestedChartYear"
+                              @update:modelValue="requestChartYear()"
+                    >
+                    </v-select>
+
                 </div>
 
             </div>
@@ -353,6 +395,10 @@ export default {
     row-gap: 1.2em;
 }
 
+.ch-btn {
+    height: max-content !important;
+    padding: 1.3em 1em;
+}
 
 .charts {
     display: grid;
@@ -362,7 +408,6 @@ export default {
 
 .top-users {
     display: grid;
-
     box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
     padding: 0 1em;
 }
@@ -372,8 +417,6 @@ export default {
     box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
     padding: 0 1em;
 }
-
-
 .changeChartButtons {
     padding: 1em 2em;
     display: grid;
