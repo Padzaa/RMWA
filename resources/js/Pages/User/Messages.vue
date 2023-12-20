@@ -253,8 +253,6 @@ export default {
             this.reconstructAndDistribute(message);
             this.updateInboxes();
         });
-        // TODO Implement typing
-
     }
     ,
     watch: {
@@ -270,9 +268,11 @@ export default {
                 this.resetTypingData();
                 this.startTyping();
                 window.Echo.private('is_typing.' + this.$page.props.auth?.user.id).listenForWhisper('messageTyping', (e) => {
-                    this.typingAvatar = e.sender_picture;
-                    this.typingMessage = e.message;
-                    this.isTyping = true;
+                    if (this.activeChat.inbox_id == e.sender_id) {
+                        this.typingAvatar = e.sender_picture;
+                        this.typingMessage = e.message;
+                        this.isTyping = true;
+                    }
                 });
                 window.Echo.private('is_typing.' + this.$page.props.auth?.user.id).listenForWhisper('stoppedTyping', () => {
                     this.resetTypingData();
@@ -328,7 +328,7 @@ export default {
                 </div>
             </div>
             <div class="input-message" style="position: relative">
-
+                <form @submit.prevent="sendMessage">
                 <v-text-field label="Message"
                               id="messageInput"
                               variant="outlined"
@@ -340,6 +340,7 @@ export default {
                               @click:append-inner="sendMessage()"
                               @click:prepend-inner="selectFile()"
                 ></v-text-field>
+                </form>
                 <form enctype="multipart/form-data" @submit.prevent="submit">
                     <input ref="fileInput" style="display: none;" type="file" @change="handleInput(this.activeChat)"
                            @input="this.file = $event.target.files[0]"
@@ -446,6 +447,7 @@ export default {
     color: black;
     font-size: 1.1rem;
 }
+
 @keyframes pulse {
     0% {
         opacity: 0.3;
@@ -463,7 +465,8 @@ export default {
         opacity: 0.3;
     }
 }
-.pulse{
+
+.pulse {
     animation-name: pulse;
     animation: pulse 1.5s infinite;
 }

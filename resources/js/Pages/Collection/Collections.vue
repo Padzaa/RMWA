@@ -43,17 +43,17 @@ export default {
                         <Link
                             :href="'/collection/' + collection.id"
                             method="GET">
-                            <img src="../../../../public/show.svg" alt="show">
+                            <v-icon class="icon-of-rcard">mdi-eye-outline</v-icon>
                         </Link>
                         <Link v-if="this.$attrs.auth ? this.$attrs.auth.user.id === collection.user_id : false"
                               :href="'/collection/' + collection.id + '/edit'"
                               method="GET">
-                            <img src="../../../../public/edit.svg" alt="edit">
+                            <v-icon class="icon-of-rcard">mdi-pencil-outline</v-icon>
                         </Link>
                         <Link as="button" method="DELETE"
                               v-if="this.$attrs.auth ? this.$attrs.auth.user.id === collection.user_id : false"
                               :href="'/collection/' + collection.id">
-                            <img src="../../../../public/delete.svg" alt="delete">
+                            <v-icon class="icon-of-rcard">mdi-delete-outline</v-icon>
                         </Link>
 
                     </div>
@@ -128,7 +128,10 @@ div.actions > a {
     background-color: #0080ff;
 
 }
-
+.icon-of-rcard {
+    font-size: 39px;
+    color: #d91432;
+}
 h2 {
     overflow: hidden;
     text-overflow: ellipsis !important;

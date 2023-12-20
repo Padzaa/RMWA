@@ -33,11 +33,11 @@ export default {
                     <Link
                         :href="'/collection/' + collection.id + '/edit'"
                         method="GET">
-                        <img src="../../../../public/edit.svg" alt="edit">
+                        <v-icon class="icon-of-rcard">mdi-pencil-outline</v-icon>
                     </Link>
                     <Link as="button" method="DELETE"
                           :href="'/collection/' + collection.id">
-                        <img src="../../../../public/delete.svg" alt="delete">
+                        <v-icon class="icon-of-rcard" color="red">mdi-delete-outline</v-icon>
                     </Link>
                 </div>
             </div>
@@ -70,7 +70,10 @@ export default {
     font-style: italic;
     text-transform: capitalize;
 }
+.icon-of-rcard {
+    font-size: 39px;
 
+}
 h5 {
     margin: 1em 0;
 }
