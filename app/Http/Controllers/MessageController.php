@@ -59,6 +59,7 @@ class MessageController extends Controller
             'content' => $path != '' ? $path : $request->msg_content,
             'created_at' => now(),
         ];
+
         Message::create($message);
         event(new SendMessage($message));
     }

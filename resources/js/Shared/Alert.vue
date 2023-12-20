@@ -11,6 +11,7 @@ export default {
             tempData: this.alertFlash
         }
     },
+
 }
 </script>
 
@@ -22,7 +23,7 @@ export default {
         top="20"
         right="20"
         vertical
-        :color="alertFlash.type === 'error' ? 'error' : 'success'"
+        :color="alertFlash.type === 'error' ? 'error' : 'success' "
     >
 
         <div class="fs-4 pb-2">{{ alertFlash.title }}</div>

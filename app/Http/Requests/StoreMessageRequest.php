@@ -21,9 +21,8 @@ class StoreMessageRequest extends FormRequest
      */
     public function rules(): array
     {
-       return [
-           //
-       ];
-
+        return [
+            'file' => 'mimes:jpeg,jpg,png,gif',
+        ];
     }
 }

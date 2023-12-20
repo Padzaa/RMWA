@@ -66,7 +66,11 @@ export default {
 <template>
     <Header :pageUrl="this.$page.url" :notifications="this.notifications" :key="not_key_len"/>
     <slot></slot>
-    <Alert ref="alertBox" v-if="this.$attrs.alertFlash" :alertFlash="this.$attrs.alertFlash"/>
+    <Alert ref="alertBox" v-if="this.$attrs.alertFlash || this.$attrs.errors.file" :alertFlash="this.$attrs.alertFlash || {
+        message:this.$attrs.errors.file,
+        type:'error',
+        title:'Error',
+    }"/>
     <!--    <v-btn class="previous-page" icon="mdi-reply" @click="$inertia.get('/back')"></v-btn>-->
 </template>
 
