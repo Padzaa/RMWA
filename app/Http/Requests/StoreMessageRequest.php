@@ -23,6 +23,7 @@ class StoreMessageRequest extends FormRequest
     {
         return [
             'file' => 'mimes:jpeg,jpg,png,gif',
+            'content' => 'required',
         ];
     }
 }
