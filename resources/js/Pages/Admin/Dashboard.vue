@@ -165,7 +165,7 @@ export default {
                 [],
             cardType: null,
             requestedChartYear: this.chosen_year ?? 2023,
-            available_number_of_users: [2, 4, 5, 10, 15],
+            available_number_of_users: [1,2,3,4,5,6,7,8,9,10],
             requestedTopUsers: this.chosen_number_of_users ?? 5,
             chartData: {
                 labels: [],
@@ -224,6 +224,7 @@ export default {
                 scales: {
                     y: {
                         ticks: {
+                            stepSize: 1,
                             font: {
                                 size: 15
                             }
@@ -358,8 +359,10 @@ export default {
                     id="my-chart-id2"
                     :options="barOptions"
                     :data="barData"
+
                 />
                 <v-select variant="outlined"
+                          class="selectNOU"
                           label="Select number of users"
                           :items="this.available_number_of_users"
                           v-model="requestedTopUsers"

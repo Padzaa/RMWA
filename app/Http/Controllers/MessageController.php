@@ -54,6 +54,7 @@ class MessageController extends Controller
             $uploadedFile->storeAs('public', $filename);
             $path = "/storage/" . $filename;
         }
+
         $message = [
             'sender_id' => Auth::user()->id,
             'receiver_id' => $request->receiver_id,

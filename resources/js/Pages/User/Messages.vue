@@ -347,7 +347,6 @@ export default {
                            name="file"
                            accept="image/jpg, image/jpeg, image/png"
                            class="file-input"/>
-
                 </form>
             </div>
         </div>
