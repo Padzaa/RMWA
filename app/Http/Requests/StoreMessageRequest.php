@@ -22,8 +22,8 @@ class StoreMessageRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'file' => 'mimes:jpeg,jpg,png,gif',
-            'content' => 'required',
+            'file' => 'required_without:msg_content|mimes:jpeg,jpg,png,gif',
+            'msg_content' => 'required_without:file',
         ];
     }
 }

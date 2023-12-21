@@ -3,6 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Traits\Chart;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -13,7 +14,7 @@ use Illuminate\Support\Facades\Auth;
 class User extends Authenticatable
 {
 
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable, Chart;
 
     /**
      * The attributes that are mass assignable.
@@ -161,27 +162,16 @@ class User extends Authenticatable
     }
 
     /**
-     * Retrieve statistics of new users for each month
-     */
-    public static function usersPerMonthForYear($year)
-    {
-        return self::selectRaw('MONTH(created_at) as label, COUNT(id) as Count')
-            ->whereYear('created_at', $year)
-            ->groupBy('label');
-    }
-
-    /**
      * Retrieve top 5 users who have written the recipes with the best ratings
      */
     public static function topUsers($number_of_users = 5)
     {
-        return
-            self::join('recipes', 'users.id', 'recipes.user_id')
-                ->join('reviews', 'recipes.id', 'reviews.recipe_id')
-                ->select('users.*', DB::raw('AVG(reviews.rating) as average_rating'))
-                ->groupBy('users.id')
-                ->orderBy('average_rating', 'desc')
-                ->take($number_of_users);
+        return self::join('recipes', 'users.id', 'recipes.user_id')
+            ->join('reviews', 'recipes.id', 'reviews.recipe_id')
+            ->select('users.*', DB::raw('AVG(reviews.rating) as average_rating'))
+            ->groupBy('users.id')
+            ->orderBy('average_rating', 'desc')
+            ->take($number_of_users);
     }
 
     /**

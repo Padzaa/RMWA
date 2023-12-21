@@ -8,7 +8,8 @@ export default {
     data() {
         return {
             snackbar: true,
-            tempData: this.alertFlash
+            tempData: this.alertFlash,
+            key: 0
         }
     },
 
@@ -20,6 +21,7 @@ export default {
         location="top right"
         timeout="5000"
         v-model="snackbar"
+        :key="key"
         top="20"
         right="20"
         vertical

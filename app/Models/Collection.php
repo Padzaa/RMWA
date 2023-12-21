@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
+use App\Traits\Chart;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Collection extends Model
 {
-    use HasFactory;
+    use HasFactory,Chart;
 
     protected $fillable = ['name', 'user_id'];
 
@@ -27,13 +28,4 @@ class Collection extends Model
         return $this->belongsTo(User::class);
     }
 
-    /**
-     * Retrieve statistics of new collections for each month
-     */
-    public static function collectionsPerMonthForYear($year)
-    {
-        return self::selectRaw('MONTH(created_at) as label, COUNT(id) as Count')
-            ->whereYear('created_at', $year)
-            ->groupBy('label');
-    }
 }

@@ -73,6 +73,7 @@ export default {
             type: [Array, Object],
         },
         chosen_year: Number,
+        chosen_number_of_users: Number
     },
     components: {
         ADCards,
@@ -164,6 +165,8 @@ export default {
                 [],
             cardType: null,
             requestedChartYear: this.chosen_year ?? 2023,
+            available_number_of_users: [2, 4, 5, 10, 15],
+            requestedTopUsers: this.chosen_number_of_users ?? 5,
             chartData: {
                 labels: [],
                 datasets: [
@@ -260,16 +263,17 @@ export default {
          */
         setBarChartValues() {
             let file = this;
+            console.log("UPDATING");
             this.top_users.forEach(function (user) {
                 file.barData.labels.push(user.firstname);
                 file.barData.datasets[0].data.push(user.average_rating);
             });
+
         },
         /**
          * Change the data that should be displayed in the chart.
          */
         changeChart(data, title) {
-            console.log(data);
             data = Object.values(data);
             this.chartData.labels = data.map(item => item.label);
             this.chartData.datasets = [{data: data.map(item => item.Count)}];
@@ -295,10 +299,9 @@ export default {
             this.dialogFields = fields;
         },
         /**
-         *
+         * Request chart data
          */
         requestChartYear() {
-
             Inertia.reload({
                 only: ['charts', 'chosen_year'],
                 data: {
@@ -308,17 +311,22 @@ export default {
             this.resetChart();
         }
         ,
+        /**
+         * Request chart data
+         */
+        requestTopUsersCharts() {
+            Inertia.visit(this.$page.url, {
+                only: ['top_users', 'chosen_number_of_users'],
+                data: {
+                    users: this.requestedTopUsers
+                },
+            });
+        },
+
     },
     beforeMount() {
         this.setBarChartValues();
     },
-    watch: {
-        dialogData: {
-            handler(dialogData) {
-                //
-            }
-        }
-    }
 }
 </script>
 
@@ -334,7 +342,7 @@ export default {
                 Activities
             </v-btn>
 
-            <v-btn class="ch-btn"  variant="outlined"
+            <v-btn class="ch-btn" variant="outlined"
                    @click="openDialogAndPassData('Users last logins',last_user_logins,this.usersLoginsFields)">Users
                 Last Logins
             </v-btn>
@@ -351,6 +359,13 @@ export default {
                     :options="barOptions"
                     :data="barData"
                 />
+                <v-select variant="outlined"
+                          label="Select number of users"
+                          :items="this.available_number_of_users"
+                          v-model="requestedTopUsers"
+                          @update:modelValue="requestTopUsersCharts"
+                >
+                </v-select>
             </div>
             <div class="monthly">
                 <Line id="my-chart-id"
@@ -417,6 +432,7 @@ export default {
     box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
     padding: 0 1em;
 }
+
 .changeChartButtons {
     padding: 1em 2em;
     display: grid;

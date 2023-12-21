@@ -139,7 +139,6 @@ class RecipeController extends Controller
         if ($recipe->is_public) {
             NotificationFacade::send(User::all()->except(Auth::user()->id), new RecipeCreated($recipe->title, Auth::user(), "Public"));
         } else {
-
             NotificationFacade::send(User::getAdmins()->get(), new RecipeCreated($recipe->title, Auth::user()));
         }
 

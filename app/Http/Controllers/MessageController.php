@@ -46,6 +46,7 @@ class MessageController extends Controller
      */
     public function store(StoreMessageRequest $request)
     {
+
         $path = '';
         if ($request->hasFile('file')) {
             $uploadedFile = $request->file('file');

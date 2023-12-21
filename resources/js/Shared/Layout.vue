@@ -25,7 +25,6 @@ export default {
     },
     methods: {},
     mounted() {
-
         window.Echo.private('notifications.' + this.$page.props.auth?.user.id).listen('.my-notifications', (data) => {
             if (data.data?.notificationsOnLogin) {
                 sessionStorage.setItem('notifications', JSON.stringify(data.data.notificationsOnLogin));
@@ -66,7 +65,8 @@ export default {
 <template>
     <Header :pageUrl="this.$page.url" :notifications="this.notifications" :key="not_key_len"/>
     <slot></slot>
-    <Alert ref="alertBox" v-if="this.$attrs.alertFlash || this.$attrs.errors.file" :alertFlash="this.$attrs.alertFlash || {
+    <Alert ref="alertBox" v-if="this.$attrs.alertFlash || this.$attrs.errors.file"
+           :alertFlash="this.$attrs.alertFlash || {
         message:this.$attrs.errors.file,
         type:'error',
         title:'Error',

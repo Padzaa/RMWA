@@ -25,6 +25,7 @@ class AdminController extends Controller
     {
 
         $requestedChartsYear = $request->query('year') ?? date('Y');
+        $requestedUsers = $request->query('users') ?? 5;
 
         return Inertia::render('Admin/Dashboard', [
             'title' => 'Admin Dashboard',
@@ -34,16 +35,17 @@ class AdminController extends Controller
             'collections' => Collection::with('user')->orderBy('name')->get(),
             'ingredients' => Ingredient::orderBy('name')->get(),
             'categories' => Category::orderBy('name')->get(),
-            'top_users' => User::topUsers()->get(),
+            'top_users' => User::topUsers($requestedUsers)->get(),
             'activities' => Auth::user()->notifications()->get(),
             'last_user_logins' => UserLogin::lastUsersLogins()->get(),
             'users_comments' => Comment::all()->load('user'),
             'charts' => [
-                'monthlyUsers' => $this->reconstructDataForMonthlyCharts(User::usersPerMonthForYear($requestedChartsYear)->get(), $requestedChartsYear),
-                'monthlyRecipes' => $this->reconstructDataForMonthlyCharts(Recipe::recipesPerMonthForYear($requestedChartsYear)->get(), $requestedChartsYear),
-                'monthlyCollections' => $this->reconstructDataForMonthlyCharts(Collection::collectionsPerMonthForYear($requestedChartsYear)->get(), $requestedChartsYear),
+                'monthlyUsers' => $this->reconstructDataForMonthlyCharts(User::statisticsPerMonthForYear($requestedChartsYear)->get(), $requestedChartsYear),
+                'monthlyRecipes' => $this->reconstructDataForMonthlyCharts(Recipe::statisticsPerMonthForYear($requestedChartsYear)->get(), $requestedChartsYear),
+                'monthlyCollections' => $this->reconstructDataForMonthlyCharts(Collection::statisticsPerMonthForYear($requestedChartsYear)->get(), $requestedChartsYear),
             ],
-            'chosen_year' => $requestedChartsYear,
+            'chosen_number_of_users' => +$requestedUsers,
+            'chosen_year' => +$requestedChartsYear,
             'available_years' => range(date('Y'), 2000),
         ]);
     }

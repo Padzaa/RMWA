@@ -170,7 +170,6 @@ export default {
                 });
             }
         },
-        // TODO Implement typing
         /**
          * Scroll to the bottom of the div
          */
@@ -188,17 +187,17 @@ export default {
                     inertia.items = inertia.setMessagesAndInboxes(inertia.inboxes);
                 }
             });
-
-
         },
         /**
          * Handle file inputs
          */
         handleInput(item) {
             let file = event.target.files[0];
+
             if (file.size / 1000000 < 10) {
                 this.fileName = file.name;
                 this.fileUrl = URL.createObjectURL(file);
+                console.log(this.fileName, this.fileUrl);
                 this.submit(item);
             } else {
                 this.shouldShow = true;
@@ -277,7 +276,7 @@ export default {
                 window.Echo.private('is_typing.' + this.$page.props.auth?.user.id).listenForWhisper('stoppedTyping', () => {
                     this.resetTypingData();
                 });
-            }
+            },
 
     }
 }
@@ -329,21 +328,23 @@ export default {
             </div>
             <div class="input-message" style="position: relative">
                 <form @submit.prevent="sendMessage">
-                <v-text-field label="Message"
-                              id="messageInput"
-                              variant="outlined"
-                              prepend-inner-icon="mdi-paperclip"
-                              append-inner-icon="mdi-send"
-                              messages="Max upload file size is 10MB"
-                              v-model="msgContent"
-                              @keyup="startTyping"
-                              @click:append-inner="sendMessage()"
-                              @click:prepend-inner="selectFile()"
-                ></v-text-field>
+                    <v-text-field label="Message"
+                                  id="messageInput"
+                                  variant="outlined"
+                                  name="content"
+                                  prepend-inner-icon="mdi-paperclip"
+                                  append-inner-icon="mdi-send"
+                                  messages="Max upload file size is 10MB"
+                                  v-model="msgContent"
+                                  @keyup="startTyping"
+                                  @click:append-inner="sendMessage()"
+                                  @click:prepend-inner="selectFile()"
+                    ></v-text-field>
                 </form>
                 <form enctype="multipart/form-data" @submit.prevent="submit">
                     <input ref="fileInput" style="display: none;" type="file" @change="handleInput(this.activeChat)"
                            @input="this.file = $event.target.files[0]"
+                           name="file"
                            accept="image/jpg, image/jpeg, image/png"
                            class="file-input"/>
 
