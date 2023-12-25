@@ -16,6 +16,7 @@ use App\Notifications\RecipeRated;
 use App\Notifications\RecipeShared;
 use Exception;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\URL;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
@@ -90,7 +91,6 @@ class RecipeController extends Controller
     {
         $this->authorize("view", $recipe);
         $recipe->load('user');
-
         return Inertia::render('Recipe/Show',
             [
                 "recipe" => $recipe,
@@ -278,5 +278,58 @@ class RecipeController extends Controller
             "recipes" => $recipes,
         ]);
     }
+
+    /**
+     * Goes to cooking page(page where you get recipe ideas from ingredients you have)
+     */
+    public function cooking(Request $request)
+    {
+        $limit = $request->limit ?? 5;
+        $recipes = $this->getRecipesByIngredients($request->requestedIngredients, $limit);
+        $recipes = $this->getInformationBulk($recipes);
+        return Inertia::render('Recipe/Cooking', [
+            'title' => 'Cooking',
+            'ingredients' => Ingredient::orderBy('name')->get(),
+            'recipes' => $recipes,
+            'currentLimit' => +$limit,
+            'selectedIngredients' => collect($request->requestedIngredients)->pluck('id')->filter()->map(function ($id) {
+                return [
+                    'id' => +$id,
+                ];
+            })->values(),
+        ]);
+    }
+
+    /**
+     * Makes an API call to Spooncular ang returns recipes based on ingredients
+     * @param $ingredients
+     * @param $limit
+     * @return array|mixed
+     */
+    public function getRecipesByIngredients($ingredients, $limit)
+    {
+        /*Returns every name of the ingredient, joined by comma, Filter(remove null values) is used because request
+        that was sending and object separated properties into different arrays*/
+        $ingredients = collect($ingredients)->pluck('name')->filter()->join(',');
+        $apiKey = env('SPOONACULAR_API_KEY');
+        $baseUrl = "https://api.spoonacular.com/recipes/findByIngredients?ingredients=$ingredients&number=$limit&apiKey=$apiKey";
+        $response = Http::get($baseUrl);
+        return $response->json();
+    }
+
+    /**
+     * Get all possible information about recipes (information bulk)
+     */
+    public function getInformationBulk($recipes)
+    {
+        /*Returns every id of the returned recipes, joined by comma, Filter(remove null values if exist)*/
+        $ids = collect($recipes)->pluck('id')->filter()->join(',');
+
+        $apiKey = env('SPOONACULAR_API_KEY');
+        $baseUrl = "https://api.spoonacular.com/recipes/informationBulk?ids=$ids&apiKey=$apiKey";
+        $response = Http::get($baseUrl);
+        return $response->json();
+    }
+
 
 }

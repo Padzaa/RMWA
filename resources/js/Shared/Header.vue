@@ -86,7 +86,8 @@
                                        :class=
                                            "[
                                            (item.link.includes('/create') || item.link.includes('/edit')) && this.$page.url.includes(item.link) ? 'active' :  '' ,
-                                           this.$page.url.includes(item.link) && !(this.$page.url.includes('/create') || this.$page.url.includes('/edit')) ? 'active' : '' ,
+                                           this.$page.url.includes(item.link) && !(this.$page.url.includes('/create') || this.$page.url.includes('/edit') || this.$page.url.includes('/recipes')) ? 'active' : '',
+                                           this.$page.url == item.link ? 'active' : '',
                                             ]"
                                        class="text-white"
                                        :prepend-icon="item.icon" :href="item.link">{{ item.title }}
@@ -190,6 +191,11 @@ export default {
                             link: "/recipe/create",
                             title: "Create new recipe",
                             icon: "mdi-plus-box"
+                        },
+                        {
+                            link: "/recipes/cooking",
+                            title: "Cook now",
+                            icon: "mdi-clock"
                         },
                         {
                             link: "/recipe",

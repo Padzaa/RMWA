@@ -44,8 +44,6 @@
         </div>
 
         <!--        <Link href="/sendmail" method="POST">SEND MAIL</Link>-->
-
-
     </div>
 </template>
 
@@ -68,6 +66,11 @@ export default {
                     link: "/recipe/create",
                     title: "Create new recipe",
                     icon: "mdi-plus-box"
+                },
+                {
+                    link: "/recipes/cooking",
+                    title: "Cook now",
+                    icon: "mdi-clock"
                 },
                 {
                     link: "/recipe",

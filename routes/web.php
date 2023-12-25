@@ -64,6 +64,8 @@ Route::middleware(['auth'])->group(function () {
         Route::put('/recipe/{recipe}/like', [RecipeController::class, 'like'])->name('like');//Like a recipe
         Route::put('/recipe/{recipe}/rate', [RecipeController::class, 'rate'])->name('rate');//Rate a recipe
         Route::put('/recipe/{recipe}/share', [RecipeController::class, 'share'])->name('share');//Share a recipe
+        Route::get('/recipes/cooking', [RecipeController::class, 'cooking'])->name('cooking');//Go to cooking page
+
         Route::get('/favorites', [RecipeController::class, 'favorites'])->name('favorites');//Show favorite recipes
     });
     //SHARED-RECIPES ROUTES
@@ -80,7 +82,6 @@ Route::middleware(['auth'])->group(function () {
     Route::group([], function () {
         Route::delete('/comment/{comment}', [CommentController::class, 'destroy'])->name('delete-comment');//Like a comment
     });
-
 });
 /*---------------------------------------------------------------------------------------*/
 /*------------------END OF (ONLY ACCESSABLE WHEN USER LOGGED IN) ROUTES------------------*/
@@ -91,5 +92,3 @@ Route::prefix('guest')->group(function () {
     Route::get('/recipe/{recipe}', [GuestController::class, 'show'])->name('guest-recipe-show');//Show public recipe;
     Route::get("/public", [GuestController::class, "public"])->name("public");//All public recipes
 });
-
-
