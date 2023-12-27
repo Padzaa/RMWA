@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\BaseModel;
 use http\Client\Curl\User;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Validation\ValidatesRequests;
@@ -25,9 +24,9 @@ class Controller extends BaseController
         if (isset($request->order)) {
             $order = explode("-", $request->order);
         }
-        $orderColumn = $order[0] ?? self::DEFAULT_ORDER_COLUMN;
-        $orderDirection = $order[1] ?? self::DEFAULT_ORDER_DIRECTION;
-        return $query->orderBy($orderColumn, $orderDirection);
+        $order_column = $order[0] ?? self::DEFAULT_ORDER_COLUMN;
+        $order_direction = $order[1] ?? self::DEFAULT_ORDER_DIRECTION;
+        return $query->orderBy($order_column, $order_direction);
     }
 
     /**
@@ -70,38 +69,6 @@ class Controller extends BaseController
             'message' => $message,
             'type' => 'error'
         ]);
-    }
-
-    /**
-     * Reconstructing the data to be adapted for displaying charts
-     * @param $data
-     * @return mixed
-     */
-    protected function reconstructDataForMonthlyCharts($data): mixed
-    {
-        for ($i = 1; $i <= 12; $i++) {
-            $inf = $data->firstWhere('Month', $i);
-            if (!$inf) {
-                // If the user for the current month doesn't exist, create a new one.
-                $inf = new BaseModel();
-                $inf->Month = $i;
-                $inf->Count = 0;
-                $data->push($inf);
-            }
-        }
-        return $data->sortBy('Month')->pluck('Count');
-    }
-
-    /**
-     * Make recipients for notifications
-     */
-    protected function finalRecipients($users_id)
-    {
-        $users_id = gettype($users_id) == "array" ? $users_id : [$users_id];
-        $admins = \App\Models\User::getAdmins()->get();
-        $users = \App\Models\User::whereIn("id", $users_id)->get();
-
-        return collect()->merge($users)->merge($admins)->unique();
     }
 
 }

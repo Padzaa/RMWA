@@ -27,7 +27,7 @@ class MyNotifications implements ShouldBroadcast
     public function __construct($user)
     {
         $this->user = $user;
-        $this->data = ['notificationsOnLogin' => User::findOrFail($user)->unreadNotifications()->get()];
+        $this->data = ['notificationsOnLogin' => $user->unreadNotifications()->get()];
     }
 
     /**
@@ -36,7 +36,7 @@ class MyNotifications implements ShouldBroadcast
      */
     public function broadcastOn(): PrivateChannel
     {
-        return new PrivateChannel('notifications.' . $this->user);
+        return new PrivateChannel('notifications.' . $this->user->id);
     }
 
     public function broadcastAs(): string

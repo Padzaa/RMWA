@@ -211,7 +211,7 @@
                             <Link href="'/user/' + review.user_id">
                                 {{ review.user.firstname + " " + review.user.lastname }}
                             </Link>
-                            this recipe with <b>{{ review.rating }}</b>
+                            rated this recipe with <b>{{ review.rating }}</b>
                             stars
                         </p>
 

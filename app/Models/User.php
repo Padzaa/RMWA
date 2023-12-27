@@ -3,6 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Traits\Chart;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -13,7 +14,7 @@ use Illuminate\Support\Facades\Auth;
 class User extends Authenticatable
 {
 
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable, Chart;
 
     /**
      * The attributes that are mass assignable.
@@ -158,16 +159,6 @@ class User extends Authenticatable
     public function likedRecipes()
     {
         return $this->belongsToMany(Recipe::class, 'likes', 'user_id', 'recipe_id')->withTimestamps();
-    }
-
-    /**
-     * Retrieve statistics of new users for each month
-     */
-    public static function usersPerMonth()
-    {
-        return self::selectRaw('MONTH(created_at) as Month, COUNT(id) as Count')
-            ->whereYear('created_at', now()->year)
-            ->groupBy('Month');
     }
 
     /**

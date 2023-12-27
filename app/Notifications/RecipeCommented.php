@@ -2,6 +2,7 @@
 
 namespace App\Notifications;
 
+use App\Models\User;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -13,19 +14,19 @@ class RecipeCommented extends Notification implements ShouldQueue
     use Queueable;
 
     public string $message;
-    public string $recipeTitle;
-    public $user;
+    public string $recipe_title;
     public $notifiable;
+    public $user;
 
     /**
      * Create a new notification instance.
      */
-    public function __construct($recipeTitle, $user)
+    public function __construct($recipe_title, $user)
     {
         $this->user = $user;
 
-        $this->recipeTitle = $recipeTitle;
-        $this->message = "User \"{$this->user->firstname} {$this->user->lastname}\" commented on recipe \"{$this->recipeTitle}\".";
+        $this->recipe_title = $recipe_title;
+        $this->message = "User \"{$this->user->firstname} {$this->user->lastname}\" commented on recipe \"{$this->recipe_title}\".";
     }
 
     /**
@@ -82,6 +83,6 @@ class RecipeCommented extends Notification implements ShouldQueue
     {
         $notification = \App\Models\Notification::find($this->id)->toArray();
         $notification['id'] = $this->id;
-       return ['recipeCommented' => $notification];
+        return ['recipeCommented' => $notification];
     }
 }

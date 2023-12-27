@@ -139,7 +139,6 @@ class RecipeController extends Controller
         if ($recipe->is_public) {
             NotificationFacade::send(User::all()->except(Auth::user()->id), new RecipeCreated($recipe->title, Auth::user(), "Public"));
         } else {
-
             NotificationFacade::send(User::getAdmins()->get(), new RecipeCreated($recipe->title, Auth::user()));
         }
 
@@ -205,7 +204,7 @@ class RecipeController extends Controller
             'rating' => $request->rating,
             'message' => $request->msg,
         ]);
-        $recipients = $this->finalRecipients($recipe->user_id);
+        $recipients = Notification::finalRecipientsForNotifications($recipe->user_id);
         NotificationFacade::send($recipients, new RecipeRated($recipe->title, $rating->rating, Auth::user()));
         $this->flashSuccessMessage('Review added successfully.');
 
@@ -222,7 +221,7 @@ class RecipeController extends Controller
         $recipe->shared()->sync($request->users);
         $this->flashSuccessMessage('Recipe shared successfully.');
 
-        $recipients = $this->finalRecipients($request->users);
+        $recipients = Notification::finalRecipientsForNotifications($request->users);
         NotificationFacade::send($recipients, new RecipeShared(Auth::user(), $recipe->title));
 
         return Inertia::location('/recipe/' . $recipe->id);
@@ -243,10 +242,10 @@ class RecipeController extends Controller
             "comment" => $request->comment,
             "user_id" => Auth::user()->id,
         ]);
-
+        
         $this->flashSuccessMessage('Comment added successfully.');
 
-        $recipients = $this->finalRecipients($recipe->user_id);
+        $recipients = Notification::finalRecipientsForNotifications($recipe->user_id);
         NotificationFacade::send($recipients, new RecipeCommented($recipe->title, Auth::user()));
 
         return redirect()->back();
@@ -263,7 +262,7 @@ class RecipeController extends Controller
             $recipe->likes()->detach(Auth::user()->id);
         } else {
             $recipe->likes()->attach(Auth::user()->id);
-            $recipients = $this->finalRecipients($recipe->user_id);
+            $recipients = Notification::finalRecipientsForNotifications($recipe->user_id);
             NotificationFacade::send($recipients, new RecipeLiked(Auth::user(), $recipe->title));
         }
         return redirect()->back();
