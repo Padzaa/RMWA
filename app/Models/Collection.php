@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Collection extends Model
 {
-    use HasFactory,Chart;
+    use HasFactory, Chart;
 
     protected $fillable = ['name', 'user_id'];
 

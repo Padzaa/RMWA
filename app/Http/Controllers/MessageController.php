@@ -16,16 +16,10 @@ class MessageController extends Controller
 {
     /**
      * Display a listing of the resource.
-     * Inbox = User (Users I communicated with)
      */
     public function index()
     {
-
-        $inboxes = User::whereIn('id', Message::inboxes())->get()->each(function ($inbox) {
-            $inbox->last_message = Message::forUser($inbox)->with('sender', 'receiver')->latest()->first();
-            $inbox->messages = Message::forUser($inbox)->with('sender', 'receiver')->get();
-        })->sortByDesc('last_message.created_at')->values();
-
+        $inboxes = Message::existingChatsForUser(Auth::user());
         return Inertia::render('User/Messages', [
             'title' => 'Messages',
             'inboxes' => $inboxes,

@@ -12,21 +12,22 @@ use Illuminate\Support\Facades\Auth;
 class RecipeRated extends Notification implements ShouldQueue
 {
     use Queueable;
+
     public string $message;
-    public string $recipeTitle;
+    public string $recipe_title;
     public int $rating;
-    public $user;
     public $notifiable;
+    public $user;
 
     /**
      * Create a new notification instance.
      */
-    public function __construct ($recipeTitle,$rating,$user)
+    public function __construct($recipe_title, $rating, $user)
     {
         $this->user = $user;
         $this->rating = $rating;
-        $this->recipeTitle = $recipeTitle;
-        $this->message = "Recipe \"{$this->recipeTitle}\" is rated by {$this->user->firstname} {$this->user->lastname} with {$this->rating} ★.";
+        $this->recipe_title = $recipe_title;
+        $this->message = "Recipe \"{$this->recipe_title}\" is rated by {$this->user->firstname} {$this->user->lastname} with {$this->rating} ★.";
     }
 
     /**
@@ -39,6 +40,7 @@ class RecipeRated extends Notification implements ShouldQueue
         $this->notifiable = $notifiable->id;
         return ['database', 'broadcast'];
     }
+
     /**
      * Returns the channel names the event should broadcast on.
      *
@@ -46,8 +48,9 @@ class RecipeRated extends Notification implements ShouldQueue
      */
     public function broadcastOn()
     {
-        return new PrivateChannel('notifications.'.$this->notifiable);
+        return new PrivateChannel('notifications.' . $this->notifiable);
     }
+
     /**
      * Retrieves the name of the event that should be broadcasted.
      *
@@ -57,6 +60,7 @@ class RecipeRated extends Notification implements ShouldQueue
     {
         return 'my-notifications';
     }
+
     /**
      * Get the mail representation of the notification.
      */

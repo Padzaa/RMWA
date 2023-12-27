@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class Message extends Model
 {
@@ -33,25 +34,39 @@ class Message extends Model
     }
 
     /**
-     * All records of messages that are associated with user(either sent or received)
+     * Get all users who communicated with $user
      */
-    public function scopeDifferentiateInboxes($query)
+    public static function existingChatsForUser($user)
     {
-        return $query->where('sender_id', Auth::user()->id)
-            ->orWhere('receiver_id', Auth::user()->id)
-            ->select('sender_id', 'receiver_id')
-            ->distinct();
+        return User::whereIn('id', self::getSenderAndReceiverIdsAssociatedWithUser($user))->get()->each(function ($chat) {
+            static::configureChat($chat);
+        })->sortByDesc('last_message.created_at')->values();
     }
 
     /**
-     * Returns all users ids that I communicated with(sent or received message)
-     * @return array
+     * Returns all sender and receiver ids associated with $user
      */
-    public static function inboxes()
+    public static function getSenderAndReceiverIdsAssociatedWithUser($user)
     {
-        return array_merge(self::differentiateInboxes()->where('sender_id', '!=', Auth::user()->id)->pluck('sender_id')->toArray(),
-            self::differentiateInboxes()->get()->where('receiver_id', '!=', Auth::user()->id)->pluck('receiver_id')->toArray());
+        return self::where('sender_id', $user->id)
+            ->select('receiver_id as id')
+            ->distinct()
+            ->union(
+                self::where('receiver_id', $user->id)
+                    ->select('sender_id as id')
+                    ->distinct()
+            )->get()->pluck('id');
+    }
 
+    /**
+     * Takes chat as a parameter and sets last_message and messages
+     * @param $chat
+     * @return void
+     */
+    public static function configureChat($chat)
+    {
+        $chat->last_message = Message::messagesWithUser($chat)->with('sender', 'receiver')->latest()->first();
+        $chat->messages = Message::messagesWithUser($chat)->with('sender', 'receiver')->get();
     }
 
     /**
@@ -60,7 +75,7 @@ class Message extends Model
      * @param $user
      * @return mixed
      */
-    public function scopeForUser($query, $user)
+    public function scopeMessagesWithUser($query, $user)
     {
         return $query->where(function ($query) use ($user) {
             $query->where('sender_id', $user->id)

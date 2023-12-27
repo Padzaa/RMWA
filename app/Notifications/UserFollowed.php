@@ -12,9 +12,9 @@ class UserFollowed extends Notification implements ShouldQueue
 {
     use Queueable;
 
-    public $user;
     public string $message;
     public $notifiable;
+    public $user;
 
     /**
      * Create a new notification instance.

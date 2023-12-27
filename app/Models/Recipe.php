@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Auth;
 
 class Recipe extends Model
 {
-    use HasFactory,Chart;
+    use HasFactory, Chart;
 
     protected $fillable = ['title', 'description', 'instructions', 'user_id', 'is_favorite', 'is_public'];
 
@@ -90,13 +90,12 @@ class Recipe extends Model
      */
     public function isLikedByUser($user)
     {
-        return $this->likes()->where('user_id', $user->id)->exists();
+        return $this->likes()->where('user_id',$user->id)->exists();
     }
-
     /**
      * Retrieve every recipe that a certain user can access(His own Recipes and Recipes shared with him)
      */
-    public function scopeForUser($query, $user)
+    public function scopeForUser($query,$user)
     {
         return $query->whereHas('user', function ($query) use ($user) {
             $query->where('id', $user->id);
@@ -115,7 +114,7 @@ class Recipe extends Model
             ->filterIngredients($params['ingredients'])
             ->filterCollections($params['collections'])
             ->filterCategories($params['categories'])
-            ->filterByRating($params['r_from'], $params['r_to'])
+            ->filterByRating($params['r_from'],$params['r_to'])
             ->filterFavorites($params['favorites']);
     }
 
@@ -174,7 +173,7 @@ class Recipe extends Model
     /**
      * Filter recipes by rating
      */
-    public function scopeFilterByRating($query, $rating_from, $rating_to)
+    public function scopeFilterByRating($query, $rating_from,$rating_to)
     {
         $query->select('recipes.*', \DB::raw('COALESCE(ROUND(AVG(reviews.rating),2),0) as average_rating'), \DB::raw('COUNT(reviews.id) as review_count'))
             ->leftJoin('reviews', 'reviews.recipe_id', '=', 'recipes.id')

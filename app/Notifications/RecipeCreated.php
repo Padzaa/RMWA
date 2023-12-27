@@ -15,21 +15,21 @@ class RecipeCreated extends Notification implements ShouldQueue
 {
     use Queueable;
 
-    public string $recipeTitle;
-    public $user;
+    public string $recipe_title;
     public string $message;
     public string $type;
     public $notifiable;
+    public $user;
 
     /**
      * Create a new notification instance.
      */
-    public function __construct($recipeTitle, $user, $type = "")
+    public function __construct($recipe_title, $user, $type = "")
     {
-        $this->recipeTitle = $recipeTitle;
+        $this->recipe_title = $recipe_title;
         $this->user = $user;
         $this->type = $type;
-        $this->message = trim("$this->type Recipe \"{$this->recipeTitle}\" has been created by {$user->firstname} {$user->lastname}.");
+        $this->message = trim("$this->type Recipe \"{$this->recipe_title}\" has been created by {$user->firstname} {$user->lastname}.");
 
     }
 

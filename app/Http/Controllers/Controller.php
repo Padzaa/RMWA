@@ -2,10 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\BaseModel;
-use Carbon\Carbon;
 use http\Client\Curl\User;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Routing\Controller as BaseController;
@@ -27,9 +24,9 @@ class Controller extends BaseController
         if (isset($request->order)) {
             $order = explode("-", $request->order);
         }
-        $orderColumn = $order[0] ?? self::DEFAULT_ORDER_COLUMN;
-        $orderDirection = $order[1] ?? self::DEFAULT_ORDER_DIRECTION;
-        return $query->orderBy($orderColumn, $orderDirection);
+        $order_column = $order[0] ?? self::DEFAULT_ORDER_COLUMN;
+        $order_direction = $order[1] ?? self::DEFAULT_ORDER_DIRECTION;
+        return $query->orderBy($order_column, $order_direction);
     }
 
     /**
@@ -72,52 +69,6 @@ class Controller extends BaseController
             'message' => $message,
             'type' => 'error'
         ]);
-    }
-
-    /**
-     * Reconstructing the data to be adapted for displaying charts
-     * @param $data
-     * @return mixed
-     */
-    protected function reconstructDataForMonthlyCharts($data, $year): mixed
-    {
-
-        $reconstructedData = [];
-        for ($i = 1; $i <= 12; $i++) {
-            if (empty($data->where('label', $i)->first())) {
-                $m = new BaseModel();
-                $m->label = Carbon::createFromDate($year, $i, 1)->format('m/Y');
-                $m->Count = 0;
-            } else {
-                $m = $data->where('label', $i)->first();
-                $m->label = Carbon::createFromDate($year, $i, 1)->format('m/Y');
-            }
-            $reconstructedData[] = $m;
-        }
-//        for ($i = 1; $i <= 12; $i++) {
-//            $inf = $data->firstWhere('Month', $i);
-//            if (!$inf) {
-//                // If the user for the current month doesn't exist, create a new one.
-//                $inf = new BaseModel();
-//                $inf->label = $i . "/" . $year;
-//                $inf->count = 0;
-//                $data->push($inf);
-//            }
-//        }
-
-        return collect($reconstructedData)->sortBy('label');
-    }
-
-    /**
-     * Make recipients for notifications
-     */
-    protected function finalRecipients($users_id)
-    {
-        $users_id = gettype($users_id) == "array" ? $users_id : [$users_id];
-        $admins = \App\Models\User::getAdmins()->get();
-        $users = \App\Models\User::whereIn("id", $users_id)->get();
-
-        return collect()->merge($users)->merge($admins)->unique();
     }
 
 }
