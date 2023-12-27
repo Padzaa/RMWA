@@ -1,7 +1,9 @@
 <script>
 export default {
     props: {
-        user: Object,
+        user: {
+            type: [Object, Array],
+        },
         is_following: Boolean
     }
 }
@@ -73,6 +75,9 @@ export default {
                       :class="is_following ? 'btn-danger' : 'btn-primary'" class="btn">
                     {{ is_following ? 'Unfollow' : 'Follow' }}
                 </Link>
+                <Link href="/message" class="btn btn-primary">
+                    Send Message
+                </Link>
             </div>
         </div>
 
@@ -91,6 +96,8 @@ export default {
 div.follow {
     display: grid;
     justify-content: center;
+    grid-auto-flow: column;
+    gap: 1em;
 }
 
 div.follow > a {

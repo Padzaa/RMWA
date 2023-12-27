@@ -12,19 +12,20 @@ class RecipeLiked extends Notification implements ShouldQueue
 {
     use Queueable;
 
-    public $user;
+
     public string $message;
-    public string $recipeTitle;
+    public string $recipe_title;
     public $notifiable;
+    public $user;
 
     /**
      * Create a new notification instance.
      */
-    public function __construct($user, $recipeTitle)
+    public function __construct($user, $recipe_title)
     {
         $this->user = $user;
-        $this->recipeTitle = $recipeTitle;
-        $this->message = "Recipe \"{$this->recipeTitle}\" liked by {$user->firstname} {$user->lastname}";
+        $this->recipe_title = $recipe_title;
+        $this->message = "Recipe \"{$this->recipe_title}\" liked by {$user->firstname} {$user->lastname}.";
     }
 
     /**
@@ -37,6 +38,7 @@ class RecipeLiked extends Notification implements ShouldQueue
         $this->notifiable = $notifiable->id;
         return ['database', 'broadcast'];
     }
+
     /**
      * Returns the channel names the event should broadcast on.
      *
@@ -44,8 +46,9 @@ class RecipeLiked extends Notification implements ShouldQueue
      */
     public function broadcastOn()
     {
-        return new PrivateChannel('notifications.'.$this->notifiable);
+        return new PrivateChannel('notifications.' . $this->notifiable);
     }
+
     /**
      * Retrieves the name of the event that should be broadcasted.
      *
@@ -55,6 +58,7 @@ class RecipeLiked extends Notification implements ShouldQueue
     {
         return 'my-notifications';
     }
+
     /**
      * Get the mail representation of the notification.
      */
@@ -76,6 +80,8 @@ class RecipeLiked extends Notification implements ShouldQueue
 
     public function toArray(): array
     {
-        return ['recipeLiked' => \App\Models\Notification::where('notifiable_id', $this->notifiable)->where('type', 'App\Notifications\RecipeLiked')->where('read_at', null)->latest()->first()->toArray()];
+        $notification = \App\Models\Notification::find($this->id)->toArray();
+        $notification['id'] = $this->id;
+        return ['recipeLiked' => $notification];
     }
 }

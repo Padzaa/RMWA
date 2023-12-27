@@ -9,6 +9,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Auth\Events\Authenticated;
 use Illuminate\Support\Facades\Auth;
+use Inertia\Inertia;
 
 class SuccessfulLogin
 {
@@ -28,7 +29,8 @@ class SuccessfulLogin
         UserLogin::create([
             'user_id' => $event->user->id,
         ]);
-        event(new MyNotifications($event->user->id));
+        event(new MyNotifications(Auth::user()));
+
 
     }
 }

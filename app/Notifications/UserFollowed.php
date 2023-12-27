@@ -12,9 +12,9 @@ class UserFollowed extends Notification implements ShouldQueue
 {
     use Queueable;
 
-    public $user;
     public string $message;
     public $notifiable;
+    public $user;
 
     /**
      * Create a new notification instance.
@@ -35,6 +35,7 @@ class UserFollowed extends Notification implements ShouldQueue
         $this->notifiable = $notifiable->id;
         return ['database', 'broadcast'];
     }
+
     /**
      * Returns the channel names the event should broadcast on.
      *
@@ -42,8 +43,9 @@ class UserFollowed extends Notification implements ShouldQueue
      */
     public function broadcastOn()
     {
-        return new PrivateChannel('notifications.'.$this->notifiable);
+        return new PrivateChannel('notifications.' . $this->notifiable);
     }
+
     /**
      * Retrieves the name of the event that should be broadcasted.
      *
@@ -53,6 +55,7 @@ class UserFollowed extends Notification implements ShouldQueue
     {
         return 'my-notifications';
     }
+
     /**
      * Get the mail representation of the notification.
      */
@@ -74,6 +77,8 @@ class UserFollowed extends Notification implements ShouldQueue
 
     public function toArray(): array
     {
-        return ['userFollowed' => \App\Models\Notification::where('notifiable_id', $this->notifiable)->where('type', 'App\Notifications\UserFollowed')->where('read_at', null)->latest()->first()->toArray()];
+        $notification = \App\Models\Notification::find($this->id)->toArray();
+        $notification['id'] = $this->id;
+        return ['userFollowed' => $notification];
     }
 }

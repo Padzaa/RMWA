@@ -11,22 +11,25 @@ use Illuminate\Notifications\Messages\BroadcastMessage;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class PublicRecipeCreated extends Notification implements ShouldQueue
+class RecipeCreated extends Notification implements ShouldQueue
 {
     use Queueable;
 
-    public string $recipeTitle;
-    public $user;
+    public string $recipe_title;
     public string $message;
+    public string $type;
     public $notifiable;
+    public $user;
+
     /**
      * Create a new notification instance.
      */
-    public function __construct($recipeTitle,$user)
+    public function __construct($recipe_title, $user, $type = "")
     {
-        $this->recipeTitle = $recipeTitle;
+        $this->recipe_title = $recipe_title;
         $this->user = $user;
-        $this->message = "Recipe \"{$this->recipeTitle}\" has been created by {$user->firstname} {$user->lastname}";
+        $this->type = $type;
+        $this->message = trim("$this->type Recipe \"{$this->recipe_title}\" has been created by {$user->firstname} {$user->lastname}.");
 
     }
 
@@ -38,9 +41,9 @@ class PublicRecipeCreated extends Notification implements ShouldQueue
     public function via(object $notifiable): array
     {
         $this->notifiable = $notifiable->id;
-
         return ['database', 'broadcast'];
     }
+
     /**
      * Returns the channel names the event should broadcast on.
      *
@@ -48,8 +51,9 @@ class PublicRecipeCreated extends Notification implements ShouldQueue
      */
     public function broadcastOn()
     {
-        return new PrivateChannel('notifications.'.$this->notifiable);
+        return new PrivateChannel('notifications.' . $this->notifiable);
     }
+
     /**
      * Retrieves the name of the event that should be broadcasted.
      *
@@ -59,16 +63,18 @@ class PublicRecipeCreated extends Notification implements ShouldQueue
     {
         return 'my-notifications';
     }
+
     /**
      * Get the mail representation of the notification.
      */
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-                    ->line('The introduction to the notification.')
-                    ->action('Notification Action', url('/'))
-                    ->line('Thank you for using our application!');
+            ->line('The introduction to the notification.')
+            ->action('Notification Action', url('/'))
+            ->line('Thank you for using our application!');
     }
+
     /**
      * Converts the given object to an array representation suitable for database storage.
      *
@@ -88,7 +94,10 @@ class PublicRecipeCreated extends Notification implements ShouldQueue
      *
      * @return array The resulting array.
      */
-    public function toArray(): array{
-        return ['publicRecipeCreated' =>\App\Models\Notification::where('notifiable_id',$this->notifiable)->where('type','App\Notifications\PublicRecipeCreated')->where('read_at',null)->latest()->first()->toArray()];
+    public function toArray(): array
+    {
+        $notification = \App\Models\Notification::find($this->id);
+        $notification->id = $this->id;
+        return ['publicRecipeCreated' => $notification];
     }
 }

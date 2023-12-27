@@ -4,7 +4,9 @@ import GridNet from "../Shared/GridNet.vue";
 export default {
     components: {GridNet},
     props: {
-        recipes: Object
+        recipes: {
+            type: [Object, Array],
+        },
     },
 }
 </script>

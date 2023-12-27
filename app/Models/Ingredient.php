@@ -12,7 +12,7 @@ class Ingredient extends Model
 
     protected $fillable = ["name"];
 
-    /*
+    /**
      Retrieve every recipe that has certain ingredient
      */
     public function recipes()

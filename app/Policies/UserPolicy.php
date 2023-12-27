@@ -21,20 +21,19 @@ class UserPolicy
      */
     public function view(User $user, User $model): bool
     {
-        //IF USER 1 SHARED A RECIPE TO A USER 2 THEN USER 2 CAN VIEW THE USER'S 1 PROFILE
-        $shared = $model->recipes()->whereHas('shared', function ($query) use ($user) {
-            $query->where('user_shared_to', $user->id);
-        })->get();
-        //IF USER 1 FOLLOWS A USER 2 THEN USER 2 CAN VIEW THE USER'S 1 PROFILE
-        $follow = $user->follow()->where('followed_user_id', $model->id)->get();
-        //IF USER 1 HAS A PUBLIC RECIPE THEN USER 2 CAN VIEW THE USER'S 1 PROFILE
-        $has_public = $model->recipes()->where('is_public', 1)->get();
-
-        if ($follow->count() || $user->id === $model->id || $shared->count() || $has_public->count()) {
-            return true;
-        } else {
-            return false;
+        if ($user->is_admin != "1") {
+            $shared = $model->recipes()->whereHas('shared', function ($query) use ($user) {
+                $query->where('user_shared_to', $user->id);
+            })->exists();//IF USER 2 SHARED A RECIPE TO ME THEN I CAN VIEW THE USER'S 2 PROFILE
+            $follow = $user->followsUser($model)->exists();//IF I FOLLOW A USER 2 THEN USER 2 CAN VIEW MY PROFILE
+            $has_public = $model->recipes()->public()->exists();//IF USER 2 HAS A PUBLIC RECIPE THEN I CAN VIEW THE USER'S 2 PROFILE
+            if ($follow || $user->id === $model->id || $shared || $has_public) {
+                return true;
+            } else {
+                return false;
+            }
         }
+        return true;
     }
 
     /**
@@ -50,8 +49,10 @@ class UserPolicy
      */
     public function update(User $user, User $model): bool
     {
-
-        return $user->id === $model->id;
+        if ($user->is_admin != "1") {
+            return $user->id === $model->id;
+        }
+        return true;
     }
 
     /**
@@ -59,7 +60,7 @@ class UserPolicy
      */
     public function delete(User $user, User $model): bool
     {
-        //
+        return $user->is_admin === "1" && $model->is_admin === "0" && $user->id != $model->id;
     }
 
     /**

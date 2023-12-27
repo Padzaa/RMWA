@@ -1,7 +1,9 @@
 <script>
 export default {
     props: {
-        collection: Object
+        collection: {
+            type: [Object, Array],
+        },
     }
 }
 </script>

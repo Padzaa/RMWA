@@ -2,6 +2,7 @@
 
 namespace App\Notifications;
 
+use App\Models\User;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -11,21 +12,22 @@ use Illuminate\Notifications\Notification;
 class RecipeCommented extends Notification implements ShouldQueue
 {
     use Queueable;
+
     public string $message;
-    public string $recipeTitle;
-    public $user;
+    public string $recipe_title;
     public $notifiable;
+    public $user;
 
     /**
      * Create a new notification instance.
      */
-    public function __construct ($recipeTitle,$user)
-{
-    $this->user = $user;
+    public function __construct($recipe_title, $user)
+    {
+        $this->user = $user;
 
-    $this->recipeTitle = $recipeTitle;
-    $this->message = "User \"{$this->user->firstname} {$this->user->lastname}\" commented on recipe \"{$this->recipeTitle}\".";
-}
+        $this->recipe_title = $recipe_title;
+        $this->message = "User \"{$this->user->firstname} {$this->user->lastname}\" commented on recipe \"{$this->recipe_title}\".";
+    }
 
     /**
      * Get the notification's delivery channels.
@@ -33,10 +35,10 @@ class RecipeCommented extends Notification implements ShouldQueue
      * @return array<int, string>
      */
     public function via(object $notifiable): array
-{
-    $this->notifiable = $notifiable->id;
-    return ['database', 'broadcast'];
-}
+    {
+        $this->notifiable = $notifiable->id;
+        return ['database', 'broadcast'];
+    }
 
     /**
      * Returns the channel names the event should broadcast on.
@@ -45,8 +47,9 @@ class RecipeCommented extends Notification implements ShouldQueue
      */
     public function broadcastOn()
     {
-        return new PrivateChannel('notifications.'.$this->notifiable);
+        return new PrivateChannel('notifications.' . $this->notifiable);
     }
+
     /**
      * Retrieves the name of the event that should be broadcasted.
      *
@@ -56,27 +59,30 @@ class RecipeCommented extends Notification implements ShouldQueue
     {
         return 'my-notifications';
     }
+
     /**
      * Get the mail representation of the notification.
      */
     public function toMail(object $notifiable): MailMessage
-{
-    return (new MailMessage)
-        ->line('The introduction to the notification.')
-        ->action('Notification Action', url('/'))
-        ->line('Thank you for using our application!');
-}
+    {
+        return (new MailMessage)
+            ->line('The introduction to the notification.')
+            ->action('Notification Action', url('/'))
+            ->line('Thank you for using our application!');
+    }
 
     public function toDatabase(object $notifiable): array
-{
-    return [
-        'message' => $this->message,
-        'user_id' => $this->user->id,
-    ];
-}
+    {
+        return [
+            'message' => $this->message,
+            'user_id' => $this->user->id,
+        ];
+    }
 
     public function toArray(): array
-{
-    return ['recipeCommented' => \App\Models\Notification::where('notifiable_id', $this->notifiable)->where('type', 'App\Notifications\RecipeCommented')->where('read_at', null)->latest()->first()->toArray()];
-}
+    {
+        $notification = \App\Models\Notification::find($this->id)->toArray();
+        $notification['id'] = $this->id;
+        return ['recipeCommented' => $notification];
+    }
 }

@@ -12,72 +12,50 @@ export default {
     watch: {
         "$page.url": function (newUrl, oldUrl) {
             this.$page.url = newUrl;
+        },
+        not_key_len: function () {
+            this.notifications = this.$utils.getNotifications();
         }
     },
     data() {
         return {
-            notifications: this.getNotifications(),
+            notifications: this.$utils.getNotifications(),
+            not_key_len: 1000,
         }
     },
-    methods: {
-        /**
-         * Retrieves the notifications from local storage and sort them by date.
-         */
-        getNotifications() {
-            if(sessionStorage.getItem('notifications')){
-                let notifications = JSON.parse(sessionStorage.getItem('notifications'));
-                return notifications.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-            }else{
-                return [];
-            }
-
-        }
-    },
+    methods: {},
     mounted() {
-        window.Pusher = Pusher;
 
-        window.Echo = new Echo({
-            broadcaster: 'pusher',
-            key: import.meta.env.VITE_PUSHER_APP_KEY,
-            wsHost: import.meta.env.VITE_PUSHER_HOST ?? `ws-${import.meta.env.VITE_PUSHER_APP_CLUSTER}.pusher.com`,
-            wsPort: import.meta.env.VITE_PUSHER_PORT ?? 80,
-            cluster: import.meta.env.VITE_PUSHER_APP_CLUSTER,
-            wssPort: import.meta.env.VITE_PUSHER_PORT ?? 443,
-            forceTLS: true ?? (import.meta.env.VITE_PUSHER_SCHEME ?? 'https') === 'https',
-            enabledTransports: ['ws', 'wss'],
-        });
-
-        window.Echo.private('notifications.' + this.$page.props.auth.user.id).listen('.my-notifications', (data) => {
-            console.log(data);
-            if(data.data?.notificationsOnLogin){
+        window.Echo.private('notifications.' + this.$page.props.auth?.user.id).listen('.my-notifications', (data) => {
+            if (data.data?.notificationsOnLogin) {
                 sessionStorage.setItem('notifications', JSON.stringify(data.data.notificationsOnLogin));
-                this.notifications = this.getNotifications();
+                this.notifications = this.$utils.getNotifications();
             }
-            if(data.recipeCommented) {
+            if (data.recipeCommented) {
                 this.notifications.push(data.recipeCommented);
                 sessionStorage.setItem('notifications', JSON.stringify(this.notifications));
             }
-            if(data.recipeRated) {
+            if (data.recipeRated) {
                 this.notifications.push(data.recipeRated);
                 sessionStorage.setItem('notifications', JSON.stringify(this.notifications));
             }
-            if(data.userFollowed) {
+            if (data.userFollowed) {
                 this.notifications.push(data.userFollowed);
                 sessionStorage.setItem('notifications', JSON.stringify(this.notifications));
             }
-            if(data.recipeShared) {
+            if (data.recipeShared) {
                 this.notifications.push(data.recipeShared);
                 sessionStorage.setItem('notifications', JSON.stringify(this.notifications));
             }
-            if(data.publicRecipeCreated){
+            if (data.publicRecipeCreated) {
                 this.notifications.push(data.publicRecipeCreated);
                 sessionStorage.setItem('notifications', JSON.stringify(this.notifications));
             }
-            if(data.recipeLiked){
+            if (data.recipeLiked) {
                 this.notifications.push(data.recipeLiked);
                 sessionStorage.setItem('notifications', JSON.stringify(this.notifications));
             }
-            this.notifications = this.getNotifications();
+            this.notifications = this.$utils.getNotifications();
         });
 
     },
@@ -86,12 +64,22 @@ export default {
 </script>
 
 <template>
-    <Header :pageUrl="this.$page.url" :notifications="this.notifications"/>
+    <Header :pageUrl="this.$page.url" :notifications="this.notifications" :key="not_key_len"/>
     <slot></slot>
-    <Alert v-if="this.$attrs.alertFlash" :alertFlash="this.$attrs.alertFlash"/>
+    <Alert ref="alertBox" v-if="this.$attrs.alertFlash" :alertFlash="this.$attrs.alertFlash"/>
+    <!--    <v-btn class="previous-page" icon="mdi-reply" @click="$inertia.get('/back')"></v-btn>-->
 </template>
 
 
 <style scoped>
-
+/*
+.previous-page {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    font-size: 1.7em;
+    height: 55px;
+    width: 55px;
+    background: orangered;
+}*/
 </style>
