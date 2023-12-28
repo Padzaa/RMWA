@@ -80,7 +80,7 @@ class RecipeLiked extends Notification implements ShouldQueue
 
     public function toArray(): array
     {
-        $notification = \App\Models\Notification::find($this->id)->toArray();
+        $notification = \App\Models\Notification::find($this->id);
         $notification['id'] = $this->id;
         return ['recipeLiked' => $notification];
     }

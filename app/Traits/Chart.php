@@ -16,8 +16,7 @@ trait Chart
             ->whereYear('created_at', $year)
             ->groupBy('label');
     }
-
-
+    
     /**
      * Reconstructing the data to be adapted for displaying charts
      * @param $data
@@ -35,7 +34,7 @@ trait Chart
                 $data->where('label', $i)->first()->label = Carbon::createFromDate($year, $i, 1)->format('m/Y');
             }
         }
-        return $data->sortBy('label')->pluck('Count');
+        return $data->sortBy('label')->values();
     }
 
 }

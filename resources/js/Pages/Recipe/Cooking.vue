@@ -28,23 +28,13 @@ export default {
                     name: ingredient.name
                 }
             });
-
             Inertia.get('/recipes/cooking', {
                 requestedIngredients: this.selected,
                 limit: this.selectedLimit
             }, {
                 preserveScroll: true,
                 only: ['recipes', 'currentLimit', 'selectedIngredients'],
-                onSuccess: () => {
-                    console.log(this.recipes);
-                    if (this.recipes.hasOwnProperty('code')) {
-                        this.recipes = [];
-                    }
-
-                },
             });
-
-
         },
         toggleCard(index) {
             this.show = this.show === index ? null : index;
@@ -58,7 +48,6 @@ export default {
             show: null
         }
     },
-
 }
 </script>
 
@@ -84,7 +73,6 @@ gap: 1em;">
                             chips
                             closable-chips
                             clearable
-                            required
                         ></v-select>
                     </v-col>
                 </v-row>
@@ -98,9 +86,13 @@ gap: 1em;">
             </v-select>
             <v-btn type="submit" class="btn btn-primary">Cook</v-btn>
         </form>
-        <p ref="limitReachedMessage" v-if="this.recipes.length == []"
+        <p ref="limitReachedMessage"
+           style="font-size: 15px;color: blue;font-style: italic;">
+            You can get random recipes by not selecting any ingredients.
+        </p>
+        <p ref="limitReachedMessage" v-if="recipes.hasOwnProperty('code')"
            style="font-size: 14px;color: red;font-style: italic;">
-            You have reached maximum number of your daily requests. Please try again tomorrow.
+            You have reached the limit.
         </p>
         <p ref="emptyRecipesMessage" v-if="recipes.hasOwnProperty('code') || recipes.length === 0"
            style="font-size: 24px;color: #8a8a8a;font-style: italic;text-align: center">
@@ -108,7 +100,7 @@ gap: 1em;">
         <div class="cards">
 
             <v-card
-                v-for="(recipe,index) in recipes"
+                v-for="(recipe,index) in recipes.hasOwnProperty('code') ? [] : recipes.recipes ? recipes.recipes : recipes"
                 class="mx-auto"
                 :key="index"
                 max-width="344"
@@ -122,7 +114,7 @@ gap: 1em;">
                 ></v-img>
 
                 <v-card-title>
-                    {{ capitalize(recipe.title) }}
+                    {{ capitalize(recipe?.title) }}
                 </v-card-title>
 
                 <v-card-subtitle v-html="recipe.summary">

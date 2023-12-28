@@ -26,8 +26,9 @@ class AdminController extends Controller
     {
 
         $requestedChartsYear = $request->query('year') ?? date('Y');
-        $requestedUsers = $request->query('users') ?? 5;
 
+        $requestedUsers = $request->query('users') ?? 5;
+       
         return Inertia::render('Admin/Dashboard', [
             'title' => 'Admin Dashboard',
             'users' => User::all(),
@@ -36,7 +37,7 @@ class AdminController extends Controller
             'collections' => Collection::with('user')->orderBy('name')->get(),
             'ingredients' => Ingredient::orderBy('name')->get(),
             'categories' => Category::orderBy('name')->get(),
-            'top_users' => User::topUsers()->get(),
+            'top_users' => User::topUsers($requestedUsers)->get(),
             'activities' => Auth::user()->notifications()->get(),
             'last_user_logins' => UserLogin::lastUsersLogins()->get(),
             'users_comments' => Comment::all()->load('user'),

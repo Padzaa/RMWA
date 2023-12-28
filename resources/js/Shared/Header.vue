@@ -59,12 +59,19 @@
                               class="text-white home-btn"
                         >Home
                         </Link>
+                        <Link as="button" href="/guest/public"
+                              style="background-color: #494949;font-size:1.25rem;border-radius: 0;height: 70px;width:100%;font-weight: 550;text-align: start;padding: 16px 24px;"
+                              @click="opener = !opener"
+                              :class="this.$page.url.includes('/public') ? 'active' : ''"
+                              class="text-white home-btn"
+                        >Public
+                        </Link>
                         <Link as="button" href="/message"
                               style="background-color: #494949;font-size:1.25rem;border-radius: 0;height: 70px;width:100%;font-weight: 550;text-align: start;padding: 16px 24px;"
                               @click="opener = !opener"
                               :class="this.$page.url == '/message' ? 'active' : ''"
                               class="text-white home-btn"
-                        >Messages
+                        >Chat
                         </Link>
                         <Link v-if="this.$page.props.auth.user.is_admin == 1" as="button" href="/dashboard"
                               style="background-color: #494949;font-size:1.25rem;border-radius: 0;height: 70px;width:100%;font-weight: 550;text-align: start;padding: 16px 24px;"
@@ -265,17 +272,6 @@ export default {
                     ],
                     value: 2,
                 },
-                {
-                    section: "Public",
-                    items: [
-                        {
-                            link: "/guest/public",
-                            title: "Public recipes",
-                            icon: "mdi-earth"
-                        }
-                    ],
-                    value: 3,
-                }
             ],
             active: null,
 
