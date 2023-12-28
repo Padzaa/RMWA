@@ -242,7 +242,7 @@ class RecipeController extends Controller
             "comment" => $request->comment,
             "user_id" => Auth::user()->id,
         ]);
-        
+
         $this->flashSuccessMessage('Comment added successfully.');
 
         $recipients = Notification::finalRecipientsForNotifications($recipe->user_id);
@@ -284,6 +284,7 @@ class RecipeController extends Controller
      */
     public function cooking(Request $request)
     {
+
         $limit = $request->limit ?? 5;
         $recipes = $this->getRecipesByIngredients($request->requestedIngredients, $limit);
         $recipes = $this->getInformationBulk($recipes);
@@ -295,6 +296,7 @@ class RecipeController extends Controller
             'selectedIngredients' => collect($request->requestedIngredients)->pluck('id')->filter()->map(function ($id) {
                 return [
                     'id' => +$id,
+                    'name' => Ingredient::find($id)->name
                 ];
             })->values(),
         ]);
@@ -308,6 +310,7 @@ class RecipeController extends Controller
      */
     public function getRecipesByIngredients($ingredients, $limit)
     {
+
         /*Returns every name of the ingredient, joined by comma, Filter(remove null values) is used because request
         that was sending and object separated properties into different arrays*/
         $ingredients = collect($ingredients)->pluck('name')->filter()->join(',');

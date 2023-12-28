@@ -2,11 +2,8 @@
 
 namespace App\Traits;
 
-<<<<<<< HEAD
 use Carbon\Carbon;
 
-=======
->>>>>>> a309665 (Fixed validating file and msg content issue,refactoring functions)
 trait Chart
 {
 
@@ -20,7 +17,7 @@ trait Chart
             ->groupBy('label');
     }
 
-<<<<<<< HEAD
+
     /**
      * Reconstructing the data to be adapted for displaying charts
      * @param $data
@@ -40,6 +37,5 @@ trait Chart
         }
         return $data->sortBy('label')->pluck('Count');
     }
-=======
->>>>>>> a309665 (Fixed validating file and msg content issue,refactoring functions)
+
 }

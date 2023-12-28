@@ -446,6 +446,7 @@ export default {
     border-radius: 7px;
     color: black;
     font-size: 1.1rem;
+    word-break: break-all;
 }
 
 @keyframes pulse {

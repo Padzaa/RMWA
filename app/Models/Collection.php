@@ -8,11 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Collection extends Model
 {
-<<<<<<< HEAD
     use HasFactory, Chart;
-=======
-    use HasFactory,Chart;
->>>>>>> a309665 (Fixed validating file and msg content issue,refactoring functions)
 
     protected $fillable = ['name', 'user_id'];
 

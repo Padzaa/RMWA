@@ -36,10 +36,11 @@ export default {
                 preserveScroll: true,
                 only: ['recipes', 'currentLimit', 'selectedIngredients'],
                 onSuccess: () => {
-
+                    console.log(this.recipes);
                     if (this.recipes.hasOwnProperty('code')) {
                         this.recipes = [];
                     }
+
                 },
             });
 
@@ -74,7 +75,7 @@ gap: 1em;">
                             id="ingredients"
                             v-model="selected"
                             :items="ingredients"
-                            return-object="true"
+                            return-object
                             item-title="name"
                             item-value="id"
                             name="ingredients"
@@ -97,7 +98,8 @@ gap: 1em;">
             </v-select>
             <v-btn type="submit" class="btn btn-primary">Cook</v-btn>
         </form>
-        <p ref="limitReachedMessage" style="font-size: 14px;color: red;font-style: italic;">
+        <p ref="limitReachedMessage" v-if="this.recipes.length == []"
+           style="font-size: 14px;color: red;font-style: italic;">
             You have reached maximum number of your daily requests. Please try again tomorrow.
         </p>
         <p ref="emptyRecipesMessage" v-if="recipes.hasOwnProperty('code') || recipes.length === 0"
@@ -106,7 +108,7 @@ gap: 1em;">
         <div class="cards">
 
             <v-card
-                v-for="(recipe,index) in []"
+                v-for="(recipe,index) in recipes"
                 class="mx-auto"
                 :key="index"
                 max-width="344"
