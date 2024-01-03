@@ -284,20 +284,14 @@ class RecipeController extends Controller
     public function cooking(Request $request, SpoonacularService $spoonacular)
     {
         $limit = $request->limit ?? 5;
-        $recipes = $spoonacular->getRecipes($request->requestedIngredients, $limit);
-
+        $ingredients = collect(json_decode($request->requestedIngredients));
+        $recipes = $spoonacular->getRecipes($ingredients, $limit);
         return Inertia::render('Recipe/Cooking', [
             'title' => 'Cooking',
-            'message' => "",
             'ingredients' => Ingredient::orderBy('name')->get(),
             'recipes' => $recipes,
             'currentLimit' => +$limit,
-            'selectedIngredients' => collect($request->requestedIngredients)->pluck('id')->filter()->map(function ($id) {
-                return [
-                    'id' => +$id,
-                    'name' => Ingredient::find($id)->name
-                ];
-            })->values(),
+            'selectedIngredients' => $ingredients
         ]);
     }
 

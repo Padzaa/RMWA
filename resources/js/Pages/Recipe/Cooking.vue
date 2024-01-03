@@ -13,7 +13,7 @@ export default {
         title: String,
         currentLimit: Number,
         selectedIngredients: {
-            type: [Object, Array],
+            type: [Object, Array,],
         },
     },
     methods: {
@@ -29,7 +29,7 @@ export default {
                 }
             });
             Inertia.get('/recipes/cooking', {
-                requestedIngredients: this.selected,
+                requestedIngredients: JSON.stringify(this.selected),
                 limit: this.selectedLimit
             }, {
                 preserveScroll: true,
