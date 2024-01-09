@@ -40,10 +40,9 @@ class SpoonacularService
     public function getRecipesByIngredients($ingredients, $limit)
     {
         $ingredients = $ingredients->pluck('name')->join(',');
-        $apiKey = $this->getSpoonacularApiKey();
         $url = "https://api.spoonacular.com/recipes/findByIngredients?ingredients=$ingredients&number=$limit";
         $response = Http::withHeaders([
-            'x-api-key' => $apiKey
+            'x-api-key' => $this->getSpoonacularApiKey()
         ])->get($url);
         return $response->json();
     }
@@ -54,10 +53,9 @@ class SpoonacularService
     public function getFullInformationForRecipes($recipes)
     {
         $recipesIds = $recipes->pluck('id')->join(',');
-        $apiKey = $this->getSpoonacularApiKey();
         $url = "https://api.spoonacular.com/recipes/informationBulk?ids=$recipesIds";
         $response = Http::withHeaders([
-            'x-api-key' => $apiKey
+            'x-api-key' => $this->getSpoonacularApiKey()
         ])->get($url);
         return $response->json();
     }
@@ -69,10 +67,9 @@ class SpoonacularService
      */
     public function getRandomRecipes($limit)
     {
-        $apiKey = $this->getSpoonacularApiKey();
         $url = "https://api.spoonacular.com/recipes/random?number=$limit";
         $response = Http::withHeaders([
-            'x-api-key' => $apiKey
+            'x-api-key' => $this->getSpoonacularApiKey()
         ])->get($url);
         return $response->json();
     }
