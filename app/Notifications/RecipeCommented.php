@@ -14,19 +14,19 @@ class RecipeCommented extends Notification implements ShouldQueue
     use Queueable;
 
     public string $message;
-    public string $recipe_title;
+    public string $recipeTitle;
+    public User $user;
     public $notifiable;
-    public $user;
 
     /**
      * Create a new notification instance.
      */
-    public function __construct($recipe_title, $user)
+    public function __construct($recipeTitle, $user)
     {
         $this->user = $user;
 
-        $this->recipe_title = $recipe_title;
-        $this->message = "User \"{$this->user->firstname} {$this->user->lastname}\" commented on recipe \"{$this->recipe_title}\".";
+        $this->recipeTitle = $recipeTitle;
+        $this->message = "User \"{$this->user->firstname} {$this->user->lastname}\" commented on recipe \"{$this->recipeTitle}\".";
     }
 
     /**

@@ -12,13 +12,13 @@ class Notification extends Model
     protected $table = 'notifications';
 
     /**
-     * Make recipients for notifications, merging users that should get notification, admins and removes duplicates
+     * Make recipients for notifications, merging users that should get notification and admins, but also removes duplicates
      */
     public static function finalRecipientsForNotifications($user_ids)
     {
         $user_ids = gettype($user_ids) == "array" ? $user_ids : [$user_ids];
-        $admins = \App\Models\User::getAdmins()->get();
-        $users = \App\Models\User::whereIn("id", $user_ids)->get();
+        $admins = User::getAdmins()->get();
+        $users = User::whereIn("id", $user_ids)->get();
 
         return collect()->merge($users)->merge($admins)->unique();
     }

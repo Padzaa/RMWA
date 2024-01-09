@@ -12,23 +12,23 @@ trait Chart
      */
     public static function statisticsPerMonthForYear($year)
     {
-        return self::selectRaw('MONTH(created_at) as label, COUNT(id) as Count')
+        $statistics = self::selectRaw('MONTH(created_at) as label, COUNT(id) as count')
             ->whereYear('created_at', $year)
-            ->groupBy('label');
+            ->groupBy('label')
+            ->get();
+        return self::reconstructDataForMonthlyCharts($statistics, $year);
     }
-    
+
     /**
      * Reconstructing the data to be adapted for displaying charts
-     * @param $data
-     * @return mixed
      */
-    protected function reconstructDataForMonthlyCharts($data, $year): mixed
+    protected static function reconstructDataForMonthlyCharts($data, $year): mixed
     {
         for ($i = 1; $i <= 12; $i++) {
             if (empty($data->where('label', $i)->first())) {
                 $data[] = [
                     'label' => Carbon::createFromDate($year, $i, 1)->format('m/Y'),
-                    'Count' => 0
+                    'count' => 0
                 ];
             } else {
                 $data->where('label', $i)->first()->label = Carbon::createFromDate($year, $i, 1)->format('m/Y');

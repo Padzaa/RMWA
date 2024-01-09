@@ -241,14 +241,12 @@ class RecipeController extends Controller
             "comment" => $request->comment,
             "user_id" => Auth::user()->id,
         ]);
-
         $this->flashSuccessMessage('Comment added successfully.');
 
         $recipients = Notification::finalRecipientsForNotifications($recipe->user_id);
         NotificationFacade::send($recipients, new RecipeCommented($recipe->title, Auth::user()));
 
         return redirect()->back();
-
     }
 
     /**

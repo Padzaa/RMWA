@@ -3,6 +3,7 @@
 namespace App\Notifications;
 
 use App\Events\MyNotifications;
+use App\Models\User;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Bus\Queueable;
@@ -15,21 +16,21 @@ class RecipeCreated extends Notification implements ShouldQueue
 {
     use Queueable;
 
-    public string $recipe_title;
+    public string $recipeTitle;
     public string $message;
     public string $type;
+    public User $user;
     public $notifiable;
-    public $user;
 
     /**
      * Create a new notification instance.
      */
-    public function __construct($recipe_title, $user, $type = "")
+    public function __construct($recipeTitle, $user, $type = "")
     {
-        $this->recipe_title = $recipe_title;
+        $this->recipeTitle = $recipeTitle;
         $this->user = $user;
         $this->type = $type;
-        $this->message = trim("$this->type Recipe \"{$this->recipe_title}\" has been created by {$user->firstname} {$user->lastname}.");
+        $this->message = trim("$this->type Recipe \"{$this->recipeTitle}\" has been created by {$user->firstname} {$user->lastname}.");
 
     }
 

@@ -6,6 +6,20 @@ use Illuminate\Support\Facades\Http;
 
 class SpoonacularService
 {
+    /**
+     * Returns API key for Spoonacular
+     */
+    private function getSpoonacularApiKey()
+    {
+        return env('SPOONACULAR_API_KEY');
+    }
+
+    /**
+     * Returns recipes(with information) based on ingredients or random recipes based on parsed ingredients parameter
+     * @param $requestedIngredients
+     * @param $limit
+     * @return array|mixed
+     */
     public function getRecipes($requestedIngredients, $limit)
     {
         if ($requestedIngredients->isNotEmpty()) {
@@ -26,9 +40,11 @@ class SpoonacularService
     public function getRecipesByIngredients($ingredients, $limit)
     {
         $ingredients = $ingredients->pluck('name')->join(',');
-        $apiKey = env('SPOONACULAR_API_KEY');
-        $baseUrl = "https://api.spoonacular.com/recipes/findByIngredients?ingredients=$ingredients&number=$limit&apiKey=$apiKey";
-        $response = Http::get($baseUrl);
+        $apiKey = $this->getSpoonacularApiKey();
+        $url = "https://api.spoonacular.com/recipes/findByIngredients?ingredients=$ingredients&number=$limit";
+        $response = Http::withHeaders([
+            'x-api-key' => $apiKey
+        ])->get($url);
         return $response->json();
     }
 
@@ -37,10 +53,12 @@ class SpoonacularService
      */
     public function getFullInformationForRecipes($recipes)
     {
-        $ids = $recipes->pluck('id')->join(',');
-        $apiKey = env('SPOONACULAR_API_KEY');
-        $baseUrl = "https://api.spoonacular.com/recipes/informationBulk?ids=$ids&apiKey=$apiKey";
-        $response = Http::get($baseUrl);
+        $recipesIds = $recipes->pluck('id')->join(',');
+        $apiKey = $this->getSpoonacularApiKey();
+        $url = "https://api.spoonacular.com/recipes/informationBulk?ids=$recipesIds";
+        $response = Http::withHeaders([
+            'x-api-key' => $apiKey
+        ])->get($url);
         return $response->json();
     }
 
@@ -51,9 +69,11 @@ class SpoonacularService
      */
     public function getRandomRecipes($limit)
     {
-        $apiKey = env('SPOONACULAR_API_KEY');
-        $baseUrl = "https://api.spoonacular.com/recipes/random?number=$limit&apiKey=$apiKey";
-        $response = Http::get($baseUrl);
+        $apiKey = $this->getSpoonacularApiKey();
+        $url = "https://api.spoonacular.com/recipes/random?number=$limit";
+        $response = Http::withHeaders([
+            'x-api-key' => $apiKey
+        ])->get($url);
         return $response->json();
     }
 

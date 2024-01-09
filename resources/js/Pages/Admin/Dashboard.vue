@@ -165,7 +165,7 @@ export default {
                 [],
             cardType: null,
             requestedChartYear: this.chosen_year ?? 2023,
-            available_number_of_users: [1,2,3,4,5,6,7,8,9,10],
+            available_number_of_users: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
             requestedTopUsers: this.chosen_number_of_users ?? 5,
             chartData: {
                 labels: [],
@@ -277,9 +277,9 @@ export default {
         changeChart(data, title) {
             data = Object.values(data);
             this.chartData.labels = data.map(item => item.label);
-            this.chartData.datasets = [{data: data.map(item => item.Count)}];
+            this.chartData.datasets = [{data: data.map(item => item.count)}];
             this.chartOptions.plugins.title.text = title;
-            this.chartOptions.scales.y.suggestedMax = Math.max(...data.map(item => item.Count)) + 10;
+            this.chartOptions.scales.y.suggestedMax = Math.max(...data.map(item => item.count)) + 10;
         },
         /**
          * Reset chart data

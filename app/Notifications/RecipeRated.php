@@ -2,6 +2,7 @@
 
 namespace App\Notifications;
 
+use App\Models\User;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -14,20 +15,20 @@ class RecipeRated extends Notification implements ShouldQueue
     use Queueable;
 
     public string $message;
-    public string $recipe_title;
+    public string $recipeTitle;
     public int $rating;
+    public User $user;
     public $notifiable;
-    public $user;
 
     /**
      * Create a new notification instance.
      */
-    public function __construct($recipe_title, $rating, $user)
+    public function __construct($recipeTitle, $rating, $user)
     {
         $this->user = $user;
         $this->rating = $rating;
-        $this->recipe_title = $recipe_title;
-        $this->message = "Recipe \"{$this->recipe_title}\" is rated by {$this->user->firstname} {$this->user->lastname} with {$this->rating} ★.";
+        $this->recipeTitle = $recipeTitle;
+        $this->message = "Recipe \"{$this->recipeTitle}\" is rated by {$this->user->firstname} {$this->user->lastname} with {$this->rating} ★.";
     }
 
     /**

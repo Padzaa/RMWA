@@ -24,11 +24,9 @@ class AdminController extends Controller
      */
     public function dashboard(Request $request)
     {
-
         $requestedChartsYear = $request->query('year') ?? date('Y');
-
         $requestedUsers = $request->query('users') ?? 5;
-       
+
         return Inertia::render('Admin/Dashboard', [
             'title' => 'Admin Dashboard',
             'users' => User::all(),
@@ -42,9 +40,9 @@ class AdminController extends Controller
             'last_user_logins' => UserLogin::lastUsersLogins()->get(),
             'users_comments' => Comment::all()->load('user'),
             'charts' => [
-                'monthlyUsers' => $this->reconstructDataForMonthlyCharts(User::statisticsPerMonthForYear($requestedChartsYear)->get(), $requestedChartsYear),
-                'monthlyRecipes' => $this->reconstructDataForMonthlyCharts(Recipe::statisticsPerMonthForYear($requestedChartsYear)->get(), $requestedChartsYear),
-                'monthlyCollections' => $this->reconstructDataForMonthlyCharts(Collection::statisticsPerMonthForYear($requestedChartsYear)->get(), $requestedChartsYear),
+                'monthlyUsers' => User::statisticsPerMonthForYear($requestedChartsYear),
+                'monthlyRecipes' => Recipe::statisticsPerMonthForYear($requestedChartsYear),
+                'monthlyCollections' => Collection::statisticsPerMonthForYear($requestedChartsYear),
             ],
             'chosen_number_of_users' => +$requestedUsers,
             'chosen_year' => +$requestedChartsYear,

@@ -69,7 +69,7 @@ export default {
                 },
                 {
                     link: "/recipes/cooking",
-                    title: "Cook now",
+                    title: "Get cooking ideas",
                     icon: "mdi-clock"
                 },
                 {

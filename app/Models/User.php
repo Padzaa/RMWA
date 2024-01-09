@@ -164,14 +164,14 @@ class User extends Authenticatable
     /**
      * Retrieve top 5 users who have written the recipes with the best ratings
      */
-    public static function topUsers($number_of_users = 5)
+    public static function topUsers($numberOfUsers = 5)
     {
         return self::join('recipes', 'users.id', 'recipes.user_id')
             ->join('reviews', 'recipes.id', 'reviews.recipe_id')
             ->select('users.*', DB::raw('AVG(reviews.rating) as average_rating'))
             ->groupBy('users.id')
             ->orderBy('average_rating', 'desc')
-            ->take($number_of_users);
+            ->take($numberOfUsers);
     }
 
     /**

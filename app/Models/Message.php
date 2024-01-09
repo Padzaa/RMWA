@@ -38,15 +38,15 @@ class Message extends Model
      */
     public static function existingChatsForUser($user)
     {
-        return User::whereIn('id', self::getSenderAndReceiverIdsAssociatedWithUser($user))->get()->each(function ($chat) {
+        return User::whereIn('id', self::getSendersAndReceiversIdsAssociatedWithUser($user))->get()->each(function ($chat) {
             static::configureChat($chat);
         })->sortByDesc('last_message.created_at')->values();
     }
 
     /**
-     * Returns all sender and receiver ids associated with $user
+     * Returns all senders and receivers ids associated with $user
      */
-    public static function getSenderAndReceiverIdsAssociatedWithUser($user)
+    public static function getSendersAndReceiversIdsAssociatedWithUser($user)
     {
         return self::where('sender_id', $user->id)
             ->select('receiver_id as id')

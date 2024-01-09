@@ -2,6 +2,7 @@
 
 namespace App\Notifications;
 
+use App\Models\User;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -13,8 +14,8 @@ class UserFollowed extends Notification implements ShouldQueue
     use Queueable;
 
     public string $message;
+    public User $user;
     public $notifiable;
-    public $user;
 
     /**
      * Create a new notification instance.

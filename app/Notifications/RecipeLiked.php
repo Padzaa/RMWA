@@ -2,6 +2,7 @@
 
 namespace App\Notifications;
 
+use App\Models\User;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -14,18 +15,18 @@ class RecipeLiked extends Notification implements ShouldQueue
 
 
     public string $message;
-    public string $recipe_title;
+    public string $recipeTitle;
+    public User $user;
     public $notifiable;
-    public $user;
 
     /**
      * Create a new notification instance.
      */
-    public function __construct($user, $recipe_title)
+    public function __construct($recipeTitle, $user)
     {
         $this->user = $user;
-        $this->recipe_title = $recipe_title;
-        $this->message = "Recipe \"{$this->recipe_title}\" liked by {$user->firstname} {$user->lastname}.";
+        $this->recipeTitle = $recipeTitle;
+        $this->message = "Recipe \"{$this->recipeTitle}\" liked by {$user->firstname} {$user->lastname}.";
     }
 
     /**

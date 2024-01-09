@@ -20,13 +20,12 @@ class GuestController extends Controller
      */
     public function show(Recipe $recipe)
     {
-        $recipe->load('user');
-        $average_rating = round($recipe->reviews()->avg("rating"), 2);
+        $averageRating = round($recipe->reviews()->avg("rating"), 2);
 
         return Inertia::render('Recipe/Show', [
-            "recipe" => $recipe,
+            "recipe" => $recipe->load('user'),
             "ingredients" => $recipe->ingredients()->get(),
-            "average" => $average_rating ?: "No Ratings Yet",
+            "average" => $averageRating ?: "No Ratings Yet",
             "comments" => $recipe->comments()->with('user')->orderBy('created_at', 'desc')->get(),
         ]);
     }
@@ -39,11 +38,10 @@ class GuestController extends Controller
         $recipes = Recipe
             ::public()
             ->filterRecipes($request);
-        $recipes = $this->orderAndPaginate($recipes, $request);
 
         return Inertia::render('Recipe/All', [
             "title" => "Public Recipes",
-            "recipes" => $recipes,
+            "recipes" => $this->orderAndPaginate($recipes, $request),
             'categories' => Category::all(),
             'ingredients' => Ingredient::orderBy('name')->get(),
             'filtersData' => $request->query->all(),

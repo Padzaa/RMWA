@@ -120,7 +120,7 @@ class UserController extends Controller
         Auth::user()->followedByMe()->toggle($user->id);
 
         if (Auth::user()->followsUser($user)->exists()) {
-            NotificationFacade::send(User::find($user->id), new UserFollowed(Auth::user()));
+            NotificationFacade::send($user, new UserFollowed(Auth::user()));
         }
         return redirect()->back();
     }

@@ -22,8 +22,8 @@ class RecipePolicy
     public function view(User $user, Recipe $recipe): bool
     {
         if ($user->is_admin != "1") {
-            $exist = $recipe->shared()->where("user_shared_to", $user->id)->get();
-            return ($user->id === $recipe->user_id) || ($exist->count() > 0) || ($recipe->is_public === 1);
+            $exist = $recipe->shared()->where("user_shared_to", $user->id)->exists();
+            return ($user->id === $recipe->user_id) || $exist || ($recipe->is_public === 1);
         }
         return true;
     }

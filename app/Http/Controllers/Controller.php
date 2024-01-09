@@ -24,9 +24,9 @@ class Controller extends BaseController
         if (isset($request->order)) {
             $order = explode("-", $request->order);
         }
-        $order_column = $order[0] ?? self::DEFAULT_ORDER_COLUMN;
-        $order_direction = $order[1] ?? self::DEFAULT_ORDER_DIRECTION;
-        return $query->orderBy($order_column, $order_direction);
+        $orderColumn = $order[0] ?? self::DEFAULT_ORDER_COLUMN;
+        $orderDirection = $order[1] ?? self::DEFAULT_ORDER_DIRECTION;
+        return $query->orderBy($orderColumn, $orderDirection);
     }
 
     /**
@@ -34,8 +34,8 @@ class Controller extends BaseController
      */
     protected function paginate($query, $request = null)
     {
-        $per_page = isset($request->per_page) ? $request->per_page : 10;
-        return $query->paginate($per_page);
+        $perPage = $request->per_page ?? 10;
+        return $query->paginate($perPage);
     }
 
     /**

@@ -18,12 +18,12 @@ class MyNotifications implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
+    public User $user;
     public $data;
+
     /**
      * Create a new event instance.
      */
-    public $user;
-
     public function __construct($user)
     {
         $this->user = $user;

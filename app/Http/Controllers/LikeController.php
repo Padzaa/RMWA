@@ -2,12 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Events\MyNotifications;
-use App\Events\MyRecipeLiked;
 use App\Http\Requests\StoreLikeRequest;
 use App\Http\Requests\UpdateLikeRequest;
 use App\Models\Like;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;

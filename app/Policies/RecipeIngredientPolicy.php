@@ -19,7 +19,7 @@ class RecipeIngredientPolicy
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, RecipeIngredient $recipeIngridient): bool
+    public function view(User $user, RecipeIngredient $recipeIngredient): bool
     {
         //
     }
@@ -35,7 +35,7 @@ class RecipeIngredientPolicy
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, RecipeIngredient $recipeIngridient): bool
+    public function update(User $user, RecipeIngredient $recipeIngredient): bool
     {
         //
     }
@@ -43,7 +43,7 @@ class RecipeIngredientPolicy
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, RecipeIngredient $recipeIngridient): bool
+    public function delete(User $user, RecipeIngredient $recipeIngredient): bool
     {
         //
     }
@@ -51,7 +51,7 @@ class RecipeIngredientPolicy
     /**
      * Determine whether the user can restore the model.
      */
-    public function restore(User $user, RecipeIngredient $recipeIngridient): bool
+    public function restore(User $user, RecipeIngredient $recipeIngredient): bool
     {
         //
     }
@@ -59,7 +59,7 @@ class RecipeIngredientPolicy
     /**
      * Determine whether the user can permanently delete the model.
      */
-    public function forceDelete(User $user, RecipeIngredient $recipeIngridient): bool
+    public function forceDelete(User $user, RecipeIngredient $recipeIngredient): bool
     {
         //
     }
