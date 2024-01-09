@@ -36,7 +36,7 @@ class GuestController extends Controller
     public function public(Request $request)
     {
         $recipes = Recipe
-            ::public()
+            ::publicRecipes()
             ->filterRecipes($request);
 
         return Inertia::render('Recipe/All', [

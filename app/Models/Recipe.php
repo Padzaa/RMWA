@@ -111,18 +111,18 @@ class Recipe extends Model
     public function scopeFilterRecipes($query, $params)
     {
         $query
-            ->search($params['search'])
-            ->filterIngredients($params['ingredients'])
-            ->filterCollections($params['collections'])
-            ->filterCategories($params['categories'])
+            ->bySearch($params['search'])
+            ->filterByIngredients($params['ingredients'])
+            ->filterByCollections($params['collections'])
+            ->filterByCategories($params['categories'])
             ->filterByRating($params['r_from'], $params['r_to'])
-            ->filterFavorites($params['favorites']);
+            ->filterByFavorites($params['favorites']);
     }
 
     /**
      * Filter recipes by search
      */
-    public function scopeSearch($query, $requestedSearch)
+    public function scopeBySearch($query, $requestedSearch)
     {
         $query->when($requestedSearch, function ($query, $search) {
             $query->where(function ($query) use ($search) {
@@ -136,7 +136,7 @@ class Recipe extends Model
     /**
      * Filter recipes by categories
      */
-    public function scopeFilterCategories($query, $requestedCategories)
+    public function scopeFilterByCategories($query, $requestedCategories)
     {
         $query->when($requestedCategories, function ($query, $categories) {
             $query->whereHas('categories', function ($query) use ($categories) {
@@ -148,7 +148,7 @@ class Recipe extends Model
     /**
      * Filter recipes by ingredients
      */
-    public function scopeFilterIngredients($query, $requestedIngredients)
+    public function scopeFilterByIngredients($query, $requestedIngredients)
     {
         $query->when($requestedIngredients, function ($query, $ingredients) {
             $query->whereHas('ingredients', function ($query) use ($ingredients) {
@@ -160,7 +160,7 @@ class Recipe extends Model
     /**
      * Filter recipes by collections
      */
-    public function scopeFilterCollections($query, $requestedCollections)
+    public function scopeFilterByCollections($query, $requestedCollections)
     {
         if (Auth::user()) {
             $query->when($requestedCollections, function ($query, $collections) {
@@ -173,6 +173,7 @@ class Recipe extends Model
 
     /**
      * Filter recipes by rating
+     * COALESCE used to return values that are not null
      */
     public function scopeFilterByRating($query, $ratingFrom, $ratingTo)
     {
@@ -187,7 +188,7 @@ class Recipe extends Model
     /**
      * Check if a recipe is public
      */
-    public function scopePublic($query)
+    public function scopePublicRecipes($query)
     {
         $query->where("is_public", 1);
     }
@@ -195,7 +196,7 @@ class Recipe extends Model
     /**
      * Filter recipes if they are favorite to a user
      */
-    public function scopeFilterFavorites($query, $isFavorite)
+    public function scopeFilterByFavorites($query, $isFavorite)
     {
         if (Auth::user() && $isFavorite == "true") {
             $query->where("recipes.is_favorite", 1)->where('recipes.user_id', Auth::user()->id);

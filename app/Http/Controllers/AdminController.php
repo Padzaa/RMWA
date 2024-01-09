@@ -25,17 +25,17 @@ class AdminController extends Controller
     public function dashboard(Request $request)
     {
         $requestedChartsYear = $request->query('year') ?? date('Y');
-        $requestedUsers = $request->query('users') ?? 5;
+        $requestedNumberOfUsers = $request->query('users') ?? 5;
 
         return Inertia::render('Admin/Dashboard', [
             'title' => 'Admin Dashboard',
             'users' => User::all(),
             'recipes' => Recipe::with('user')->orderBy('created_at')->get(),
-            'public_recipes' => Recipe::public()->with('user')->orderBy('created_at')->get(),
+            'public_recipes' => Recipe::publicRecipes()->with('user')->orderBy('created_at')->get(),
             'collections' => Collection::with('user')->orderBy('name')->get(),
             'ingredients' => Ingredient::orderBy('name')->get(),
             'categories' => Category::orderBy('name')->get(),
-            'top_users' => User::topUsers($requestedUsers)->get(),
+            'top_users' => User::topUsers($requestedNumberOfUsers)->get(),
             'activities' => Auth::user()->notifications()->get(),
             'last_user_logins' => UserLogin::lastUsersLogins()->get(),
             'users_comments' => Comment::all()->load('user'),
@@ -44,7 +44,7 @@ class AdminController extends Controller
                 'monthlyRecipes' => Recipe::statisticsPerMonthForYear($requestedChartsYear),
                 'monthlyCollections' => Collection::statisticsPerMonthForYear($requestedChartsYear),
             ],
-            'chosen_number_of_users' => +$requestedUsers,
+            'chosen_number_of_users' => +$requestedNumberOfUsers,
             'chosen_year' => +$requestedChartsYear,
             'available_years' => range(date('Y'), 2000),
         ]);
