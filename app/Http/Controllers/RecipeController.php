@@ -221,7 +221,7 @@ class RecipeController extends Controller
         $this->flashSuccessMessage('Recipe shared successfully.');
 
         $recipients = Notification::finalRecipientsForNotifications($request->users);
-        NotificationFacade::send($recipients, new RecipeShared(Auth::user(), $recipe->title));
+        NotificationFacade::send($recipients, new RecipeShared($recipe->title, Auth::user()));
 
         return Inertia::location('/recipe/' . $recipe->id);
     }
@@ -260,7 +260,7 @@ class RecipeController extends Controller
         } else {
             $recipe->likes()->attach(Auth::user()->id);
             $recipients = Notification::finalRecipientsForNotifications($recipe->user_id);
-            NotificationFacade::send($recipients, new RecipeLiked(Auth::user(), $recipe->title));
+            NotificationFacade::send($recipients, new RecipeLiked($recipe->title, Auth::user()));
         }
         return redirect()->back();
     }
