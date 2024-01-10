@@ -2,11 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use http\Client\Curl\User;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Routing\Controller as BaseController;
-use Illuminate\Support\Facades\Log;
 
 class Controller extends BaseController
 {
@@ -26,6 +24,7 @@ class Controller extends BaseController
         }
         $orderColumn = $order[0] ?? self::DEFAULT_ORDER_COLUMN;
         $orderDirection = $order[1] ?? self::DEFAULT_ORDER_DIRECTION;
+
         return $query->orderBy($orderColumn, $orderDirection);
     }
 
@@ -35,6 +34,7 @@ class Controller extends BaseController
     protected function paginate($query, $request = null)
     {
         $perPage = $request->per_page ?? 10;
+
         return $query->paginate($perPage);
     }
 
@@ -44,6 +44,7 @@ class Controller extends BaseController
     protected function orderAndPaginate($query, $request)
     {
         $query = $this->orderBy($query, $request);
+
         return $this->paginate($query, $request);
     }
 

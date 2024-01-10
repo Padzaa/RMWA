@@ -62,9 +62,9 @@ class User extends Authenticatable
     /**
      * Retrieve recipes that are favorite to a user/paginating them
      */
-    public function favorites()
+    public function favoriteRecipes()
     {
-        return Recipe::where('is_favorite', true)->where('user_id', Auth::user()->id);
+        return Auth::user()->recipes()->where('is_favorite', 1);
     }
 
     /**
@@ -177,7 +177,7 @@ class User extends Authenticatable
     /**
      * Retrieve admins
      */
-    public static function getAdmins()
+    public static function admins()
     {
         return self::where('is_admin', 1);
     }

@@ -76,7 +76,7 @@ class RecipeController extends Controller
         if ($recipe->is_public) {
             NotificationFacade::send(User::all(), new RecipeCreated($recipe->title, Auth::user(), "Public"));
         } else {
-            NotificationFacade::send(User::getAdmins()->get(), new RecipeCreated($recipe->title, Auth::user()));
+            NotificationFacade::send(User::admins()->get(), new RecipeCreated($recipe->title, Auth::user()));
         }
         $this->flashSuccessMessage('Recipe created successfully.');
 
@@ -89,10 +89,10 @@ class RecipeController extends Controller
     public function show(Recipe $recipe)
     {
         $this->authorize("view", $recipe);
-        $recipe->load('user');
+
         return Inertia::render('Recipe/Show',
             [
-                "recipe" => $recipe,
+                "recipe" => $recipe->load('user'),
                 "ingredients" => $recipe->ingredients()->get(),
                 "review" => $recipe->reviewForRecipeByUser(Auth::user()),
                 "average" => round($recipe->reviews()->avg("rating", 2), 2) ?: "No Rating Yet",
@@ -110,6 +110,7 @@ class RecipeController extends Controller
     public function edit(Recipe $recipe)
     {
         $this->authorize('update', $recipe);
+
         return Inertia::render('Recipe/Recipe_Edit', [
             "recipe" => $recipe,
             "recipe.ingredients" => $recipe->ingredients()->get()->pluck("id"),
@@ -125,7 +126,6 @@ class RecipeController extends Controller
     public function update(UpdateRecipeRequest $request, Recipe $recipe)
     {
         $this->authorize('update', $recipe);
-
         $recipe->title = $request->title;
         $recipe->description = $request->description;
         $recipe->instructions = $request->instructions;
@@ -138,9 +138,8 @@ class RecipeController extends Controller
         if ($recipe->is_public) {
             NotificationFacade::send(User::all()->except(Auth::user()->id), new RecipeCreated($recipe->title, Auth::user(), "Public"));
         } else {
-            NotificationFacade::send(User::getAdmins()->get(), new RecipeCreated($recipe->title, Auth::user()));
+            NotificationFacade::send(User::admins()->get(), new RecipeCreated($recipe->title, Auth::user()));
         }
-
         $this->flashSuccessMessage('Recipe updated successfully.');
 
         return redirect()->route('recipe.show', $recipe);
@@ -152,7 +151,6 @@ class RecipeController extends Controller
     public function destroy(Recipe $recipe)
     {
         $this->authorize('delete', $recipe);
-
         $recipe
             ->collections()
             ->withCount("recipes")
@@ -262,6 +260,7 @@ class RecipeController extends Controller
             $recipients = Notification::finalRecipientsForNotifications($recipe->user_id);
             NotificationFacade::send($recipients, new RecipeLiked($recipe->title, Auth::user()));
         }
+
         return redirect()->back();
     }
 
@@ -270,9 +269,8 @@ class RecipeController extends Controller
      */
     public function favorites(Request $request)
     {
-        $recipes = $this->orderAndPaginate(Auth::user()->favorites(), $request);
         return Inertia::render('User/Favorites', [
-            "recipes" => $recipes,
+            "recipes" => $this->orderAndPaginate(Auth::user()->favoriteRecipes(), $request),
         ]);
     }
 
@@ -283,11 +281,11 @@ class RecipeController extends Controller
     {
         $limit = $request->limit ?? 5;
         $ingredients = collect(json_decode($request->requestedIngredients));
-        $recipes = $spoonacular->getRecipes($ingredients, $limit);
+
         return Inertia::render('Recipe/Cooking', [
             'title' => 'Cooking',
             'ingredients' => Ingredient::orderBy('name')->get(),
-            'recipes' => $recipes,
+            'recipes' => $spoonacular->getRecipes($ingredients, $limit),
             'currentLimit' => +$limit,
             'selectedIngredients' => $ingredients
         ]);

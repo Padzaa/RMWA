@@ -5,7 +5,6 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 
 class Message extends Model
 {
@@ -19,7 +18,7 @@ class Message extends Model
      * User who sent the message
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function sender()
+    public function sender(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(User::class);
     }
@@ -28,42 +27,38 @@ class Message extends Model
      * User who received the message
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function receiver()
+    public function receiver(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
     /**
-     * Get all users who communicated with $user
+     * Get configured chats for user
      */
-    public static function existingChatsForUser($user)
+    public static function getActiveChatsForUser($user)
     {
-        return User::whereIn('id', self::getSendersAndReceiversIdsAssociatedWithUser($user))->get()->each(function ($chat) {
+        return self::getChatsForUser($user)->each(function ($chat) {
             static::configureChat($chat);
         })->sortByDesc('last_message.created_at')->values();
     }
 
     /**
-     * Returns all senders and receivers ids associated with $user
+     * Returns all unique senders and receivers associated with $user
      */
-    public static function getSendersAndReceiversIdsAssociatedWithUser($user)
+    public static function getChatsForUser($user): \Illuminate\Support\Collection
     {
-        return self::where('sender_id', $user->id)
-            ->select('receiver_id as id')
-            ->distinct()
-            ->union(
-                self::where('receiver_id', $user->id)
-                    ->select('sender_id as id')
-                    ->distinct()
-            )->get()->pluck('id');
+        $receivers = $user->sentMessages()->with('receiver')->get()->pluck('receiver');
+        $senders = $user->receivedMessages()->with('sender')->get()->pluck('sender');
+
+        return collect([...$receivers, ...$senders])->unique();
     }
 
     /**
      * Takes chat as a parameter and sets last_message and messages
      * @param $chat
-     * @return void
+     * @returns void
      */
-    public static function configureChat($chat)
+    public static function configureChat($chat): void
     {
         $chat->last_message = Message::messagesWithUser($chat)->with('sender', 'receiver')->latest()->first();
         $chat->messages = Message::messagesWithUser($chat)->with('sender', 'receiver')->get();
@@ -75,7 +70,7 @@ class Message extends Model
      * @param $user
      * @return mixed
      */
-    public function scopeMessagesWithUser($query, $user)
+    public function scopeMessagesWithUser($query, $user): mixed
     {
         return $query->where(function ($query) use ($user) {
             $query->where('sender_id', $user->id)

@@ -2,7 +2,6 @@
 
 namespace App\Http\Middleware;
 
-use DateTime;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 use Illuminate\Support\Facades\Auth;

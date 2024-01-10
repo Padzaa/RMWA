@@ -3,11 +3,9 @@
 namespace App\Http\Controllers\Guest;
 
 use App\Http\Controllers\Controller;
-use App\Http\Controllers\RecipeController;
 use App\Models\Category;
 use App\Models\Ingredient;
 use App\Models\Recipe;
-use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
@@ -36,7 +34,7 @@ class GuestController extends Controller
     public function public(Request $request)
     {
         $recipes = Recipe
-            ::publicRecipes()
+            ::public()
             ->filterRecipes($request);
 
         return Inertia::render('Recipe/All', [

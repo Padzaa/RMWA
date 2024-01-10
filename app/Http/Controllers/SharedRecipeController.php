@@ -4,11 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreSharedRecipeRequest;
 use App\Http\Requests\UpdateSharedRecipeRequest;
-use App\Models\Recipe;
 use App\Models\SharedRecipe;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
 class SharedRecipeController extends Controller
@@ -26,11 +24,9 @@ class SharedRecipeController extends Controller
      */
     public function sharedWithMe(Request $request)
     {
-        $recipes = Auth::user()->sharedWithMe();
-        $recipes = $this->orderAndPaginate($recipes, $request);
         return Inertia::render('User/Shared_Recipes', [
             'title' => "Recipes shared with me",
-            'recipes' => $recipes,
+            'recipes' => $this->orderAndPaginate(Auth::user()->sharedWithMe(), $request),
         ]);
     }
 
@@ -39,12 +35,9 @@ class SharedRecipeController extends Controller
      */
     public function myShared(Request $request)
     {
-        $recipes = Auth::user()->sharedRecipes();
-        $recipes = $this->orderAndPaginate($recipes, $request);
-
         return Inertia::render('User/Shared_Recipes', [
             'title' => "My Shared Recipes",
-            'recipes' => $recipes,
+            'recipes' => $this->orderAndPaginate(Auth::user()->sharedRecipes(), $request),
         ]);
     }
 

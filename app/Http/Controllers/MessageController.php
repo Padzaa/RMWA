@@ -8,8 +8,6 @@ use App\Http\Requests\UpdateMessageRequest;
 use App\Models\Message;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\URL;
-use Illuminate\Support\Facades\Validator;
 use Inertia\Inertia;
 
 class MessageController extends Controller
@@ -19,11 +17,12 @@ class MessageController extends Controller
      */
     public function index()
     {
-        $inboxes = Message::existingChatsForUser(Auth::user());
+        $inboxes = Message::getActiveChatsForUser(Auth::user());
+
         return Inertia::render('User/Messages', [
             'title' => 'Messages',
             'inboxes' => $inboxes,
-            'users' => User::all()->except(array_merge([Auth::user()->id], $inboxes->pluck('id')->toArray())),
+            'users' => User::whereNotIn('id', [Auth::user()->id, ...$inboxes->pluck('id')])->get()
         ]);
     }
 
@@ -40,7 +39,6 @@ class MessageController extends Controller
      */
     public function store(StoreMessageRequest $request)
     {
-
         $path = '';
         if ($request->hasFile('file')) {
             $uploadedFile = $request->file('file');

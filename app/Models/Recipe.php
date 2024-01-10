@@ -188,7 +188,7 @@ class Recipe extends Model
     /**
      * Check if a recipe is public
      */
-    public function scopePublicRecipes($query)
+    public function scopePublic($query)
     {
         $query->where("is_public", 1);
     }

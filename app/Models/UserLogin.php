@@ -17,7 +17,7 @@ class UserLogin extends Model
     /**
      * Retrieve the associated user.
      */
-    public function user()
+    public function user(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(User::class);
     }
@@ -25,7 +25,7 @@ class UserLogin extends Model
     /**
      * Get last users logins
      */
-    public static function lastUsersLogins()
+    public static function lastUserLogins()
     {
         return self::join('users', 'user_logins.user_id', '=', 'users.id')
             ->selectRaw('MAX(user_logins.created_at) as last_login,users.id,users.firstname,users.lastname,users.email')

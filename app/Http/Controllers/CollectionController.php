@@ -5,11 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreCollectionRequest;
 use App\Http\Requests\UpdateCollectionRequest;
 use App\Models\Collection;
-use App\Models\Recipe;
-use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\URL;
-use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 
 class CollectionController extends Controller
@@ -19,9 +16,8 @@ class CollectionController extends Controller
      */
     public function index()
     {
-        $collections = Auth::user()->collections()->with('recipes')->get();
         return Inertia::render('Collection/Collections', [
-            "collections" => $collections
+            "collections" => Auth::user()->collections()->with('recipes')->get(),
         ]);
     }
 
@@ -98,6 +94,7 @@ class CollectionController extends Controller
     {
         $this->authorize('delete', $collection);
         $collection->delete();
+
         return Inertia::location(URL::previous());
     }
 }

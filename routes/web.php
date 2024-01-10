@@ -3,7 +3,6 @@
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CommentController;
-use App\Http\Controllers\Controller;
 use App\Http\Controllers\FollowController;
 use App\Http\Controllers\Guest\GuestController;
 use App\Http\Controllers\IngredientController;
@@ -14,14 +13,8 @@ use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\SharedRecipeController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\WelcomeController;
-use App\Models\Category;
-use App\Models\Ingredient;
-use App\Models\Recipe;
-use App\Models\User;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
 use App\Http\Controllers\CollectionController;
 
 /*

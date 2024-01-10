@@ -6,7 +6,6 @@ use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 use App\Models\User;
 use App\Notifications\UserFollowed;
-use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -64,11 +63,9 @@ class UserController extends Controller
     public function edit(User $user, Request $request)
     {
         $this->authorize('update', $user);
-        $recipes = $user->recipes();
-        $recipes = $this->orderAndPaginate($recipes, $request);
 
         return Inertia::render('User/User_Edit', [
-                "recipes" => $recipes,
+                "recipes" => $this->orderAndPaginate($user->recipes(), $request),
                 "user" => $user,
             ]
         );
@@ -122,6 +119,7 @@ class UserController extends Controller
         if (Auth::user()->followsUser($user)->exists()) {
             NotificationFacade::send($user, new UserFollowed(Auth::user()));
         }
+
         return redirect()->back();
     }
 
@@ -132,9 +130,11 @@ class UserController extends Controller
     {
         if ($id) {
             Notification::where('id', $id)->update(['read_at' => now()]);
+
             return redirect()->back();
         }
         Notification::where('notifiable_id', Auth::user()->id)->where('read_at', null)->update(['read_at' => now()]);
+
         return Inertia::location(URL::previous());
     }
 
