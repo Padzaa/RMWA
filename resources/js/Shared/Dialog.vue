@@ -188,6 +188,7 @@ export default {
     <v-dialog min-width="400px"
               width="fit-content"
               v-model="this.$parent.$data.isActive"
+              class="openingDialogForCards"
     >
 
         <v-card class="position-relative" :title="dialogTitle">
@@ -234,11 +235,12 @@ export default {
                             </Link>
                             <span v-else>{{ this.getFieldContent(field, data) }}</span>
                         </td>
-                        <td style="display: grid;justify-content: center"
+                        <td style=""
                             v-if="dialogFields.hasOwnProperty('Notification')">
                             <v-checkbox-btn v-model="checked" :value="data['id']"
                                             :disabled="checked.some(item => item == data['id'])"
                                             @click="[updateNewDialogData(data['id']),markAsRead(data['id'])]"
+                                            style="width:fit-content;margin:0 auto;"
                             />
                         </td>
                         <td

@@ -25,8 +25,11 @@ export default {
     <Head>
         <title>Follows</title>
     </Head>
+
     <div class="cont">
         <h1>Follows</h1>
+        <p class="text-center fs-4 fw-bold text-red-accent-3 font-italic bigger-screen">In order to see tables, you
+            have to switch to the bigger screen.</p>
         <div class="tables">
             <table class="table table-striped" v-for="table in tables">
                 <caption>{{ table.caption }}</caption>
@@ -61,11 +64,15 @@ export default {
 </template>
 
 <style scoped>
+.bigger-screen {
+    display: none;
+}
+
 .tables {
     display: flex;
     justify-content: space-between;
     padding: 2em;
-    gap: 20px;;
+    gap: 20px;
 }
 
 tr {
@@ -88,5 +95,22 @@ caption {
 
 .cont > h1 {
     text-align: center;
+}
+
+@media (max-width: 1200px) {
+    .tables {
+        flex-direction: column;
+    }
+}
+
+@media (max-width: 680px) {
+    .tables {
+        display: none;
+    }
+
+    .bigger-screen {
+        display: block;
+        padding: 0 1em;
+    }
 }
 </style>

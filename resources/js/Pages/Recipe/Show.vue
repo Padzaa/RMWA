@@ -11,7 +11,8 @@
                                :href="'/user/' + recipe.user_id">{{
                 recipe.user.firstname + " " + recipe.user.lastname
             }}</Link> </span>
-                    <Link v-if="this.$attrs.auth ? this.$page.props.auth.user.id == recipe.user_id : false" as="button" class="heart" method="PUT"
+                    <Link v-if="this.$attrs.auth ? this.$page.props.auth.user.id == recipe.user_id : false" as="button"
+                          class="heart" method="PUT"
                           :href="'/recipe/' + recipe.id + '/favorite'" preserve-scroll>
                         <v-icon class="icon-of-rcard">{{
                                 recipe.is_favorite ? 'mdi-heart' : 'mdi-heart-outline'
@@ -41,16 +42,17 @@
                         <h4>Average rating : {{ average }}</h4>
                         <div class="modals">
                             <Link v-if="this.$attrs.auth" :href="'/recipe/' + recipe.id + '/like'" method="PUT"
-                            preserve-scroll>
-                                    <v-icon style="font-size:42px" :color="is_liked ? 'red': 'blue'">{{
-                                            is_liked ? 'mdi-thumb-down' : 'mdi-thumb-up'
-                                        }}</v-icon>
+                                  preserve-scroll>
+                                <v-icon style="font-size:42px" :color="is_liked ? 'red': 'blue'">{{
+                                        is_liked ? 'mdi-thumb-down' : 'mdi-thumb-up'
+                                    }}
+                                </v-icon>
                             </Link>
                             <button v-if="this.$attrs.auth ? this.$attrs.auth.user.id == recipe.user_id : false"
                                     class=" share"
                                     data-bs-toggle="modal"
                                     :data-bs-target="'#shareModal'+recipe.id">
-                                    <v-icon style="font-size:42px;color:blue;">mdi-share-variant</v-icon>
+                                <v-icon style="font-size:42px;color:blue;">mdi-share-variant</v-icon>
                             </button>
                             <div v-if=" this.$attrs.auth ? this.$attrs.auth.user.id == recipe.user_id : false"
                                  class="modal fade" :id="'shareModal'+recipe.id" tabindex="-1"
@@ -416,7 +418,7 @@ div.picture {
 }
 
 .recipe {
-    min-width: 750px;
+    min-width: 350px;
     max-width: 750px;
     box-shadow: rgba(17, 17, 26, 0.1) 0px 4px 16px, rgba(17, 17, 26, 0.1) 0px 8px 24px, rgba(17, 17, 26, 0.1) 0px 16px 56px;
     border-radius: 25px;

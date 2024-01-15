@@ -37,4 +37,10 @@ export default {
 .c > h1 {
     text-align: center;
 }
+
+@media (max-width: 500px) {
+    .c {
+        padding: 2em 0;
+    }
+}
 </style>

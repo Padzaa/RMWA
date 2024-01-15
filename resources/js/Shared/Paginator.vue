@@ -15,22 +15,22 @@ export default {
         }
     },
     watch: {
-      "per_page": function () {
-          this.perPage();
-      }
+        "per_page": function () {
+            this.perPage();
+        }
     },
     methods: {
         /**
          * Change the page of the recipe pagination.
          */
-        changePage(){
+        changePage() {
             Inertia.get(this.$page.url, {page: this.page});
         },
         /**
          * Paginate per page
          */
-        perPage(){
-            Inertia.get(this.$page.url, {per_page :this.per_page});
+        perPage() {
+            Inertia.get(this.$page.url, {per_page: this.per_page});
         }
     }
 }
@@ -43,17 +43,17 @@ export default {
     <div style="display: grid;grid-template-columns: 1fr min-content;position:relative;">
 
 
-    <v-pagination
-        v-model="page"
-        :length="recipes.links.length - 2"
-        :total-visible="5"
+        <v-pagination
+            v-model="page"
+            :length="recipes.links.length - 2"
+            :total-visible="5"
 
 
-        @click="changePage"
-    ></v-pagination>
+            @click="changePage"
+        ></v-pagination>
 
-    <v-select style="width:100px;position:absolute;right:0" v-model="per_page" :items="number_per_page"
-    label="Per Page" @change="perPage"></v-select>
+        <v-select style="" v-model="per_page" :items="number_per_page"
+                  label="Per Page" @change="perPage"></v-select>
     </div>
 </template>
 
@@ -75,5 +75,17 @@ p {
 
 .v-pagination:deep(.v-pagination__list) {
     padding-left: 0;
+}
+
+.v-select {
+    width: 100px;
+    position: absolute;
+    right: 0
+}
+
+@media (max-width: 500px) {
+    .v-select {
+        position: unset;
+    }
 }
 </style>

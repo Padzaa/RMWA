@@ -104,7 +104,6 @@ gap: 1em;">
                 class="mx-auto"
                 :key="index"
                 max-width="344"
-                min-width="344"
                 style="height: min-content;"
             >
                 <v-img
@@ -158,5 +157,15 @@ gap: 1em;">
     display: grid;
     gap: 1em;
     grid-template-columns: repeat(auto-fit, minmax(344px, 1fr));
+}
+
+@media (max-width: 400px) {
+    .cards {
+        grid-template-columns: 1fr !important;
+    }
+
+    .cards:deep(.v-card) {
+        width: 280px !important;
+    }
 }
 </style>

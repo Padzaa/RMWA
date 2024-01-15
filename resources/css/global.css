@@ -1,60 +1,69 @@
 /*  ------------------------------------------  */
-div.form{
+div.form {
     padding: 2em;
 
 }
-form>button{
-    color:white;
+
+form > button {
+    color: white;
 }
+
 /*  ------------------------------------------  */
-.collection-box{
-    display:grid;
+.collection-box {
+    display: grid;
     height: 100%;
     justify-content: center;
-    padding:3em;
+    padding: 3em;
 }
-.collection{
-    width:460px;
+
+.collection {
+    width: 460px;
     border-radius: 25px;
     padding: 1em 1.5em;
     height: fit-content;
 }
-.collection .header{
+
+.collection .header {
     font-style: italic;
 
 }
-.h5-class{
+
+.h5-class {
     margin: 1em 0;
 }
-ul p>a{
+
+ul p > a {
     font-size: 18px;
 }
 
 /*  ------------------------------------------  */
 
-.collections{
+.collections {
     padding: 2em;
-    display:grid;
+    display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap:1.5em
+    gap: 1.5em
 }
+
 .single-collection {
     font-family: "Roboto", sans-serif;
     font-weight: 550;
-    border:1px solid black;
+    border: 1px solid black;
     min-height: fit-content;
     padding: 1em;
     max-height: 600px;
-    border-radius:15px;
+    border-radius: 15px;
 }
 
-.collections-actions{
+.collections-actions {
     grid-column: 1/-1;
 }
-.info{
+
+.info {
     height: 100%;
-    display:grid;
+    display: grid;
 }
+
 /* -------------------------------------  */
 
 #paginator p {
@@ -134,76 +143,91 @@ input#search {
 .dr-lb {
     width: calc(100% - 1px);
 }
+
 /* ---------------------------------------  */
-form{
+form {
     display: grid;
     gap: 1em;
 }
-textarea#description{
-    min-height:150px;
-    max-height:150px;
+
+textarea#description {
+    min-height: 150px;
+    max-height: 150px;
 }
-textarea#instructions{
-    min-height:150px;
-    max-height:500px;
+
+textarea#instructions {
+    min-height: 150px;
+    max-height: 500px;
 }
+
 /* ---------------------------------------  */
 
 
-.owner{
-    font-size:18px;
+.owner {
+    font-size: 18px;
     font-style: italic;
 }
-.leave-comment{
-    width:750px;
-    display:grid;
+
+.leave-comment {
+    width: 750px;
+    display: grid;
 
 }
-div.comments{
-    display:grid;
-    gap:10px
+
+div.comments {
+    display: grid;
+    gap: 10px
 }
-div.comment{
-    width:750px;
-    display:grid;
+
+div.comment {
+    width: 750px;
+    display: grid;
     grid-template-columns: 1fr 9fr;
 
-    padding:0 !important;
+    padding: 0 !important;
 
-    border-radius:20px;
+    border-radius: 20px;
 }
-.body>h6{
+
+.body > h6 {
     font-style: italic;
 }
-.body>p{
+
+.body > p {
     font-size: 14px;
-    color:gray;
+    color: gray;
     font-style: italic;
 }
-div.body{
+
+div.body {
     border-left: 1px solid lightgray;
-    padding:1em;
+    padding: 1em;
 }
-div.picture{
-    padding:1em;
+
+div.picture {
+    padding: 1em;
 }
-.picture img{
-    height:75px;
+
+.picture img {
+    height: 75px;
     width: 75px;
     border-radius: 50%;
-    object-fit:cover;
+    object-fit: cover;
 }
-.leave-comment>textarea{
+
+.leave-comment > textarea {
     max-height: 150px;
-    font-size:14px;
+    font-size: 14px;
 }
-.review{
-    min-width: 750px;
+
+.review {
+    min-width: 350px;
     max-width: 750px;
-    height:fit-content !important;
+    height: fit-content !important;
     border-radius: 12px;
     margin: 0;
 }
+
 .show-recipe {
     display: grid;
     padding: 3em 0;
@@ -247,23 +271,27 @@ h1 {
     top: 1.3em;
     right: 2em;
 }
-.rate-me{
-    align-self:end;
-    display:grid;
+
+.rate-me {
+    align-self: end;
+    display: grid;
     grid-template-columns: 6fr 1fr;
     width: 100%;
 }
+
 .rate-me h4 {
     height: fit-content;
-    align-self:center;
-    margin:0;
+    align-self: center;
+    margin: 0;
     justify-self: start;
 }
-.modals{
+
+.modals {
     display: flex;
-    gap:10px;
-    justify-content:end;
+    gap: 10px;
+    justify-content: end;
 }
+
 /* ---------------------------------------- */
 
 div.card {
@@ -272,19 +300,21 @@ div.card {
     min-height: 450px;
 }
 
-.card-header{
+.card-header {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
     text-align: center;
 }
-.card-title{
+
+.card-title {
     overflow: hidden;
     text-overflow: ellipsis !important;
     white-space: nowrap;
-    font-size:1.3rem;
+    font-size: 1.3rem;
 
 }
+
 .card-text {
     width: 100%;
 
@@ -299,20 +329,23 @@ div.card {
 .card-body {
     display: grid;
     height: 100%;
-    padding-bottom:10px;
+    padding-bottom: 10px;
     grid-template-rows: min-content auto min-content;
 }
+
 /* --------------------------------------  */
 .filters {
     display: grid;
-//padding: 1.5em 3em;
-//height: 92px;
+/ / padding: 1.5 em 3 em;
+/ / height: 92 px;
     width: fit-content;
 }
-button{
-    color:white;
+
+button {
+    color: white;
     font-weight: 500;
 }
+
 .dropdown-menu {
     overflow-y: auto;
     max-height: 400px;
@@ -321,6 +354,7 @@ button{
 .dropdown-toggle {
     padding: 0.5em 1.6em;
 }
+
 /* --------------------------------------  */
 .grid-net {
     display: grid;
@@ -351,15 +385,18 @@ div.actions > a {
     text-align: center;
     height: fit-content;
 }
-h5{
-    text-align:center;
-    margin:0;
+
+h5 {
+    text-align: center;
+    margin: 0;
 }
-.records{
+
+.records {
     grid-column: 2/3;
 
     font-size: 1.65rem;
 }
+
 /* --------------------------------------  */
 
 header {
@@ -371,8 +408,8 @@ header {
     justify-content: space-between;
     grid-auto-flow: column;
     padding: 0 2em;
-    background: rgb(232,106,3);
-    background: linear-gradient(174deg, rgba(232,106,3,1) 0%, rgba(255,248,0,1) 100%);
+    background: rgb(232, 106, 3);
+    background: linear-gradient(174deg, rgba(232, 106, 3, 1) 0%, rgba(255, 248, 0, 1) 100%);
     border-bottom: 2px solid black;
 }
 
@@ -387,40 +424,47 @@ h2 {
     display: flex;
     gap: 10px;
 }
-.profile-pic,.profile-section>a[href="/logout"]{
-    width:60px;
-    height:60px;
-    border-radius:50%;
+
+.profile-pic, .profile-section > a[href="/logout"] {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
 }
-.profile-pic{
+
+.profile-pic {
     object-fit: cover;
 }
-.profile-section{
-    display:grid;
-    gap:10px;
+
+.profile-section {
+    display: grid;
+    gap: 10px;
     grid-auto-flow: column;
 
 }
-.profile-section>button{
-    height:fit-content;
-    align-self:center;
+
+.profile-section > button {
+    height: fit-content;
+    align-self: center;
 }
-.active{
+
+.active {
     font-weight: bold;
 
 }
-.links a{
-    font-size:1.25rem;
+
+.links a {
+    font-size: 1.25rem;
 }
+
 /* --------------------------------------  */
 #recipes_menu {
 
     padding: 2em;
-    display:grid;
+    display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 1.5em;
     height: fit-content;
-    justify-items:center;
+    justify-items: center;
 
 }
 
@@ -437,7 +481,7 @@ img {
 
 div.card {
     height: 100%;
-    padding:1em 1.5em;
-    width:300px
+    padding: 1em 1.5em;
+    width: 300px
 
 }

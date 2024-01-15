@@ -141,8 +141,8 @@ export default {
 </script>
 
 <template>
-    <div style="padding: 2em 4em 1em 4em;display:grid;grid-auto-flow:column;grid-template-columns: 1fr 2fr;">
-        <div class="search" style="display: grid;grid-auto-flow:column;gap:5px;">
+    <div class="filters-div">
+        <div class="search" style="display: grid;grid-auto-flow:column;gap:5px;width: 100%">
             <input placeholder="Search recipes" @keyup="ifSearchEmpty" v-model="form.search" type="search" name="search"
                    id="search"
                    class="form-input form-control">
@@ -153,7 +153,7 @@ export default {
 
 
         </div>
-        <div style="justify-self: end;display:grid;grid-auto-flow:column;gap:10px;">
+        <div class="filter-reset-btns">
             <v-btn style="width:fit-content;font-size:1.25rem;justify-self:end;" @click="dialog = !dialog" color="black"
                    append-icon="mdi-filter">Filter
             </v-btn>
@@ -165,10 +165,10 @@ export default {
         <v-row justify="center">
             <v-dialog
                 v-model="dialog"
-                width="fit-content"
+                max-width="600px"
             >
 
-                <v-card style="border-radius:15px;min-height:400px;min-width:350px;">
+                <v-card style="border-radius:15px;min-height:400px;min-width:250px;">
                     <form @submit.prevent="submit" class="filter-form">
                         <div class="pickers">
                             <v-container fluid style="padding:0 !important;">
@@ -293,6 +293,20 @@ export default {
 
 <style scoped>
 
+.filter-reset-btns {
+    justify-self: end;
+    display: grid;
+    grid-auto-flow: column;
+    gap: 10px;
+}
+
+.filters-div {
+    padding: 2em 4em 1em 4em;
+    display: grid;
+    grid-auto-flow: column;
+    grid-template-columns: 2fr 2fr;
+}
+
 .v-dialog:deep(.v-card) {
     display: grid !important;
 }
@@ -357,6 +371,7 @@ export default {
 
 input#search {
     font-size: 1.2em;
+
 }
 
 .dr-lb {
@@ -377,6 +392,25 @@ button.fr {
     max-width: 400px;
 
 
+}
+
+@media (max-width: 828px) {
+    .filters-div {
+        justify-content: center;
+        grid-template-columns: unset !important;
+        grid-auto-flow: unset !important;
+        row-gap: 1em;
+    }
+
+    .filter-reset-btns {
+        justify-self: center !important;
+    }
+}
+
+@media (max-width: 500px) {
+    .filters-div {
+        padding: 1em 2em !important;
+    }
 }
 
 </style>

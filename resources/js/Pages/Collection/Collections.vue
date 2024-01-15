@@ -4,7 +4,7 @@ import Header from "../../Shared/Header.vue";
 export default {
     components: {Header},
     props: {
-        collections:{
+        collections: {
             type: [Object, Array],
         },
     }
@@ -70,7 +70,7 @@ export default {
 .collections {
     padding: 2em;
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
     gap: 1.5em
 }
 
@@ -120,24 +120,29 @@ div.actions > a {
     color: #646464;
     font-style: oblique 20deg;
 }
-.titles-more{
+
+.titles-more {
     font-style: italic;
     color: #000000;
 }
+
 .add-new {
     background-color: #0080ff;
 
 }
+
 .icon-of-rcard {
     font-size: 39px;
     color: #d91432;
 }
+
 h2 {
     overflow: hidden;
     text-overflow: ellipsis !important;
     white-space: nowrap;
 }
-.records{
+
+.records {
     font-size: 1.65rem;
     color: grey;
     font-style: italic;

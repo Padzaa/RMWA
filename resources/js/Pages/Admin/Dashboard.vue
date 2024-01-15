@@ -338,18 +338,18 @@ export default {
         <Dialog ref="childDialog" :dialogData="dialogData" :dialogTitle="dialogTitle" :dialogFields="dialogFields"
                 :cardType="cardType"/>
         <div class="additional-buttons">
-            <v-btn class="ch-btn" variant="outlined"
+            <v-btn class="ch-btn"
                    @click="openDialogAndPassData('User activities',activities,this.activitiesFields)">New User
                 Activities
             </v-btn>
 
-            <v-btn class="ch-btn" variant="outlined"
-                   @click="openDialogAndPassData('Users last logins',last_user_logins,this.usersLoginsFields)">Users
+            <v-btn class="ch-btn"
+                   @click="openDialogAndPassData('Users last logins',last_user_logins,this.usersLoginsFields)">User
                 Last Logins
             </v-btn>
 
-            <v-btn class="ch-btn" variant="outlined"
-                   @click="openDialogAndPassData('Users comments',users_comments,this.usersCommentsFields)">Users
+            <v-btn class="ch-btn"
+                   @click="openDialogAndPassData('Users comments',users_comments,this.usersCommentsFields)">User
                 Comments
             </v-btn>
         </div>
@@ -377,21 +377,22 @@ export default {
                       :key="this.chartOptions.plugins.title.text"
                 />
                 <div class="changeChartButtons">
-                    <v-btn class="ch-btn" variant="outlined"
+                    <v-btn class="ch-btn"
                            @click="changeChart(this.charts.monthlyUsers, 'Monthly Users')"
                            :disabled="this.chartOptions.plugins.title.text === 'Monthly Users'">Users
                     </v-btn>
-                    <v-btn class="ch-btn" variant="outlined"
+                    <v-btn class="ch-btn"
                            @click="changeChart(this.charts.monthlyRecipes, 'Monthly Recipes')"
                            :disabled="this.chartOptions.plugins.title.text === 'Monthly Recipes'">Recipes
                     </v-btn>
-                    <v-btn class="ch-btn" variant="outlined"
+                    <v-btn class="ch-btn"
                            @click="changeChart(this.charts.monthlyCollections, 'Monthly Collections')"
                            :disabled="this.chartOptions.plugins.title.text === 'Monthly Collections'">Collections
                     </v-btn>
                     <v-select variant="outlined"
                               label="Select year"
                               name="requestedChartYear"
+                              :hide-details="true"
                               :items="this.available_years"
                               v-model="requestedChartYear"
                               @update:modelValue="requestChartYear()"
@@ -401,12 +402,15 @@ export default {
                 </div>
 
             </div>
+            <p class="text-center fs-4 fw-bold text-red-accent-3 font-italic bigger-screen">In order to see charts, you
+                have to switch to the bigger screen.</p>
         </div>
 
     </div>
 </template>
 
 <style scoped>
+
 .dashboard {
     padding: 1em 2em;
     display: grid;
@@ -414,37 +418,75 @@ export default {
 }
 
 .ch-btn {
-    height: max-content !important;
+    height: 100% !important;
     padding: 1.3em 1em;
+    box-shadow: rgba(9, 30, 66, 0.25) 0px 4px 8px -2px, rgba(9, 30, 66, 0.08) 0px 0px 0px 1px;
+
+}
+
+.additional-buttons:deep(.v-btn) {
+    padding: 1.3em 2em;
 }
 
 .charts {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 20px;
+
 }
 
 .top-users {
-    display: grid;
     box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
     padding: 0 1em;
+    border-radius: 0.375rem;
 }
 
 .monthly {
-    width: 100%;
     box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
     padding: 0 1em;
+    border-radius: 0.375rem;
+
+}
+
+.top-users > canvas,
+.monthly > canvas {
+    max-width: 100%;
 }
 
 .changeChartButtons {
     padding: 1em 2em;
     display: grid;
-    gap: 1em;
+    gap: 20px;
     grid-auto-flow: column;
 }
 
 .additional-buttons {
-    display: flex;
-    gap: 10px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    column-gap: 20px;
+    row-gap: 15px;
+
+}
+
+.bigger-screen {
+    display: none;
+}
+
+@media (max-width: 1440px) {
+    .charts {
+        grid-template-columns: unset;
+        grid-auto-flow: row;
+    }
+}
+
+@media (max-width: 640px) {
+    .bigger-screen {
+        margin-top: 2em;
+        display: block;
+    }
+
+    .top-users, .monthly {
+        display: none;
+    }
 }
 </style>

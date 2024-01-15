@@ -115,6 +115,8 @@ export default {
 </template>
 
 <style scoped>
+
+
 .grid-net {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
@@ -201,5 +203,12 @@ h5 {
 .icon-of-rcard {
     font-size: 42px;
     color: #d91432;
+}
+
+@media (max-width: 500px) {
+    .grid-net {
+        padding: 1em !important;
+        grid-template-columns: unset !important;
+    }
 }
 </style>

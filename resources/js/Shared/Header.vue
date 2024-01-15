@@ -12,9 +12,10 @@
             <v-app v-if="this.$page.props.auth" style="position:absolute;">
 
                 <v-navigation-drawer :key="$props.pageUrl"
-                                     style="top:0;width:320px;background-color: rgb(43,43,43);border: none;"
+                                     style="top:0;width:320px;background-color: rgb(43,43,43);border: none;z-index: 9999;"
                                      v-model="opener"
                                      temporary
+                                     class="side-menu-drawer"
 
                 >
                     <div class="space">
@@ -123,7 +124,7 @@
                                      v-model="notificationOpener"
                                      temporary=""
                                      location="right"
-                                     style="top:0;width:320px;background-color: rgb(43,43,43);border: none;">
+                                     style="top:0;width:320px;background-color: rgb(43,43,43);border: none;z-index:9999">
                     <div class="space-notification">
                         <button @click="notificationOpener = !notificationOpener" class="opener">
                             <img src="../../../public/close.svg" alt="menu">
@@ -330,6 +331,7 @@ export default {
 </script>
 
 <style scoped>
+
 .notification-card {
     background-color: #bdbdbd;
     border-bottom: 1px solid white;
@@ -366,8 +368,6 @@ export default {
 
 .space {
     height: 100px;
-
-
     display: grid;
     align-items: center;
     justify-items: start;
@@ -563,6 +563,12 @@ h2 {
 
 .v-expansion-panel:deep( .v-btn:hover) {
     background-color: rgba(12, 48, 58, 0.2) !important;
+}
+
+@media (max-width: 786px) {
+    .menu .v-navigation-drawer {
+        width: 100% !important;
+    }
 }
 
 </style>

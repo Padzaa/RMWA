@@ -107,6 +107,14 @@ export default {
         setActiveChat(chat) {
             this.activeChat = chat;
             this.activeChat.messages = JSON.parse(sessionStorage.getItem(chat.inbox_id)) ? JSON.parse(sessionStorage.getItem(chat.inbox_id)) : [];
+            this.$refs.activeChat.style.display = 'grid';
+        },
+        /**
+         * Removes active chat
+         */
+        removeActiveChat() {
+            this.activeChat = [];
+            this.$refs.activeChat.style.display = 'none';
         },
         /**
          * Send Message
@@ -288,10 +296,13 @@ export default {
     </Head>
     <div class="inbox">
         <Alert ref="alertBox" v-if="this.shouldShow" :alert-flash="errorMsg"/>
-        <Inboxes :key="items" :items="items" :set-active-chat="this.setActiveChat"/>
-        <div class="active-chat" v-if="activeChat">
+        <Inboxes class="inboxes" :key="items" :items="items" :set-active-chat="this.setActiveChat"/>
+        <div ref="activeChat" class="active-chat" v-if="activeChat">
             <div class="chat-header">
-                <h3 style="margin: 0; text-align:center;">{{ activeChat.title }}</h3>
+                <v-btn @click="removeActiveChat()" class="removeChat" prepend-icon="mdi-arrow-left"></v-btn>
+                <h3 style="margin: 0; text-align:center;vertical-align: middle;line-height: 1.9">{{
+                        activeChat.title
+                    }}</h3>
             </div>
             <div id="msgs" ref="msgs" class="chat-messages">
                 <div class="message" v-for="message in activeChat.messages">
@@ -303,7 +314,7 @@ export default {
                             {{
                                 !(message.content.includes('/storage/') || message.content.includes('blob:')) ? capitalize(message.content) : ''
                             }}
-                            <img ref="image" style="height:170px;aspect-ratio: auto;"
+                            <img ref="image" style="max-height: 300px;aspect-ratio: auto;max-width: 200px"
                                  v-if="message.content.includes('/storage/') || message.content.includes('blob:')"
                                  :src="message.content" alt="IF IMAGE IS NOT SHOWING PLEASE RELOAD">
                             <br>
@@ -360,12 +371,8 @@ export default {
     justify-content: start;
     height: calc(100% - 100px);
     grid-template-columns: max-content 3fr;
+    transition: grid-template-columns 0.5s ease-in-out;
 }
-
-.inbox > .v-card {
-    overflow-y: auto;
-}
-
 
 .file-input:deep(.v-input__control) {
     display: none;
@@ -384,6 +391,7 @@ export default {
     display: grid;
     height: 100%;
     overflow-y: auto;
+    width: 100%;
     grid-template-rows:min-content 1fr min-content;
 }
 
@@ -391,7 +399,7 @@ export default {
     height: 52px;
     outline: 1px solid rgba(0, 0, 0, 0.12);
     display: grid;
-    align-items: center;
+    grid-template-columns: min-content 1fr;
 }
 
 .input-message {
@@ -426,7 +434,7 @@ export default {
     display: grid;
     grid-auto-flow: column;
     column-gap: 1em;
-    max-width: 50%;
+
 }
 
 .received {
@@ -434,7 +442,6 @@ export default {
     display: grid;
     grid-auto-flow: column;
     column-gap: 1em;
-    max-width: 50%;
 }
 
 .text-message {
@@ -483,5 +490,31 @@ export default {
     background-color: rgba(16, 229, 197, 0.53);
     padding: 7px 10px;
     border-radius: 5px;
+}
+
+.chat-header:deep(.v-btn) {
+    width: fit-content;
+    height: 52px;
+    font-size: 1.25em;
+    box-shadow: none;
+    color: black;
+    border-radius: 0;
+}
+
+@media (max-width: 768px) {
+    .active-chat {
+        position: absolute;
+        background-color: white;
+        height: calc(100% - 100px);
+    }
+
+    #inbox {
+        max-width: unset;
+        width: 100% !important;
+    }
+
+    .inbox {
+        grid-template-columns: 1fr;
+    }
 }
 </style>

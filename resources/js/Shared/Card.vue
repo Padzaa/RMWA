@@ -96,7 +96,7 @@ div.card {
     padding-right: 10px;
     font-style: italic;
     margin: 0;
-//border-bottom: 1px solid white; color: #414141;
+    //border-bottom: 1px solid white; color: #414141;
 }
 
 .card-body {
@@ -107,4 +107,11 @@ div.card {
     border-top: 1px solid #e5e5e5;
 
 }
+
+@media (max-width: 500px) {
+    div.card {
+        min-width: 288px !important;
+    }
+}
+
 </style>

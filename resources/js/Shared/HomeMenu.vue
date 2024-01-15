@@ -147,10 +147,16 @@ export default {
 </script>
 
 <style scoped>
+@media (min-width: 420px) {
+    #menu {
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    }
+}
+
 #menu {
     padding: 2em;
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+
     gap: 1.5em;
     height: fit-content;
 }
@@ -168,6 +174,13 @@ h1 {
     border-radius: 1px;
     display: grid;
     box-shadow: rgba(50, 50, 93, 0.25) 0 6px 12px -2px, rgba(0, 0, 0, 0.3) 0 3px 7px -3px;
+
+}
+
+.link:deep(.v-list-item__content) {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .link:hover {

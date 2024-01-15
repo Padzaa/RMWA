@@ -10,7 +10,7 @@ export default {
         /**
          * Pass data to dialog and opens it
          */
-        openDialogAndPassData(title, data, fields,cardType) {
+        openDialogAndPassData(title, data, fields, cardType) {
             this.$parent.isActive = true;
             this.$parent.dialogTitle = title;
             this.$parent.dialogData = data;
@@ -34,7 +34,7 @@ export default {
             <v-btn style="border-radius: 0 0 4px 4px" variant="flat"
                    @click="openDialogAndPassData(card.title, card.value, card.fields, card.type)"
                    class="read-more"
-                    :disabled="card.value.length === 0">
+                   :disabled="card.value.length === 0">
                 <v-icon>mdi-arrow-down</v-icon>
             </v-btn>
         </div>

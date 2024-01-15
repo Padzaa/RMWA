@@ -85,6 +85,7 @@ a {
 .recipe_name {
     font-weight: bold;
     font-size: 1.1em;
+    word-break:
 }
 
 .rating-hdr {
@@ -96,7 +97,7 @@ a {
 .reviews {
     display: grid;
     justify-content: center;
-    grid-template-columns: repeat(auto-fill, minmax(400px, 450px));
+    grid-template-columns: repeat(auto-fill, minmax(250px, 450px));
     gap: 2em;
     padding: 2em 0;
 }
@@ -137,13 +138,18 @@ h4 {
 
 .v-rating {
     gap: 20px;
-
     margin-right: 20px;
 }
 
 .v-rating:deep( * ) {
     cursor: unset;
 }
+@media (max-width: 480px) {
+    .v-rating {
+        gap: 0;
+        margin: 0;
+    }
 
+}
 
 </style>

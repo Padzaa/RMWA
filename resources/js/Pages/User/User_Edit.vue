@@ -63,7 +63,7 @@
                         </div>
                         <div class="mt-5 text-center">
                             <v-btn @click="submit" class="profile-button text-black" name="submit"
-                                    type="submit">Save Profile
+                                   type="submit">Save Profile
                             </v-btn>
                         </div>
                     </div>
@@ -74,7 +74,7 @@
     </div>
     <div class="rec" v-if="user.id == this.$page.props.auth.user.id">
         <h1 class="text-center">My recipes</h1>
-        <GridNet :recipes="recipes.data" :auth="this.$attrs.auth" ></GridNet>
+        <GridNet :recipes="recipes.data" :auth="this.$attrs.auth"></GridNet>
         <Paginator :recipes="recipes"></Paginator>
     </div>
 
@@ -92,7 +92,7 @@ export default {
         recipes: {
             type: [Object, Array],
         },
-        user : {
+        user: {
             type: [Object, Array],
         }
     },
@@ -233,5 +233,11 @@ form input[type="file"] {
 
 .rec {
     padding: 0 2em;
+}
+
+@media (max-width: 500px) {
+    .rec {
+        padding: 0;
+    }
 }
 </style>
