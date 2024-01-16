@@ -418,7 +418,7 @@ div.picture {
 }
 
 .recipe {
-    min-width: 350px;
+    //min-width: 350px;
     max-width: 750px;
     box-shadow: rgba(17, 17, 26, 0.1) 0px 4px 16px, rgba(17, 17, 26, 0.1) 0px 8px 24px, rgba(17, 17, 26, 0.1) 0px 16px 56px;
     border-radius: 25px;
@@ -527,5 +527,35 @@ h1 {
 .icon-of-rcard {
     font-size: 42px;
     color: #d91432;
+}
+
+@media (max-width: 751px) {
+    .show-recipe {
+        width: unset !important;
+        padding-left: 1em;
+        padding-right: 1em;
+    }
+    
+    .leave-comment {
+        width: 100% !important;
+    }
+
+    .comment {
+        width: 100% !important;
+    }
+
+    .reviews {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 400px) {
+    .rate-me {
+        grid-template-columns: unset !important;
+        grid-auto-flow: row;
+        justify-content: center;
+        row-gap: 1em;
+    }
+
 }
 </style>

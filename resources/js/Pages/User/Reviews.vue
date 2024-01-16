@@ -48,9 +48,10 @@ export default {
                     <div class="review-comment">
                         <h5>Comment:</h5>
                         <p class="comment"><cite><q>{{ review.message }}</q></cite></p>
-                    </div>
 
+                    </div>
                     <span class="posted-at">Rated: {{ this.$utils.normalDate(review.created_at) }}</span>
+
                 </div>
 
             </template>
@@ -108,10 +109,13 @@ a {
     max-width: 450px;
     min-height: 300px;
     border-radius: 20px;
-    padding: 1em 1.5em;
+    padding: 1em 0;
     box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
 }
-
+.review-card .review-comment,
+.review-card .posted-at {
+    padding: 0 1em;
+}
 .review-card p {
     line-break: anywhere;
     text-align: justify;
@@ -148,6 +152,9 @@ h4 {
     .v-rating {
         gap: 0;
         margin: 0;
+    }
+    .v-rating:deep(.v-btn){
+        width:fit-content;
     }
 
 }

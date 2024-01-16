@@ -264,7 +264,6 @@ export default {
          */
         setBarChartValues() {
             let file = this;
-            console.log("UPDATING");
             this.top_users.forEach(function (user) {
                 file.barData.labels.push(user.firstname);
                 file.barData.datasets[0].data.push(user.average_rating);

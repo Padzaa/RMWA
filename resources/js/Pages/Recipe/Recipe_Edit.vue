@@ -16,12 +16,12 @@
                 </div>
                 <div class="optionals">
                     <div class="form-group" style="">
-                        <v-checkbox-btn v-model="form.public"  label="Public"></v-checkbox-btn>
+                        <v-checkbox-btn v-model="form.public" label="Public"></v-checkbox-btn>
 
                     </div>
 
                     <div class="form-group" style="">
-                        <v-checkbox-btn v-model="form.favorite"  label="Favorite"></v-checkbox-btn>
+                        <v-checkbox-btn v-model="form.favorite" label="Favorite"></v-checkbox-btn>
 
                     </div>
                 </div>
@@ -166,7 +166,7 @@ form > button[type="submit"] {
     width: fit-content;
 }
 
-.v-checkbox-btn:deep( label ){
+.v-checkbox-btn:deep( label ) {
     font-size: 1.30rem;
     color: black;
 }
@@ -183,5 +183,11 @@ form > button[type="submit"] {
     align-items: center;
 
     justify-content: center;
+}
+
+@media (max-width: 768px) {
+    .el {
+        grid-template-columns: 1fr;
+    }
 }
 </style>

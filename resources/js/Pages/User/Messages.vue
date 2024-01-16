@@ -35,6 +35,8 @@ export default {
         isTyping: false,
         typingMessage: '',
         typingAvatar: null,
+        dialog: false,
+        imageForPreview: null
     }),
     methods: {
         capitalize,
@@ -107,7 +109,9 @@ export default {
         setActiveChat(chat) {
             this.activeChat = chat;
             this.activeChat.messages = JSON.parse(sessionStorage.getItem(chat.inbox_id)) ? JSON.parse(sessionStorage.getItem(chat.inbox_id)) : [];
-            this.$refs.activeChat.style.display = 'grid';
+            this.$nextTick(() => {
+                this.$refs.activeChat.style.display = 'grid';
+            });
         },
         /**
          * Removes active chat
@@ -205,7 +209,6 @@ export default {
             if (file.size / 1000000 < 10) {
                 this.fileName = file.name;
                 this.fileUrl = URL.createObjectURL(file);
-                console.log(this.fileName, this.fileUrl);
                 this.submit(item);
             } else {
                 this.shouldShow = true;
@@ -250,6 +253,13 @@ export default {
             this.isTyping = false;
             this.typingMessage = '';
         },
+        /**
+         * Preview picture, open a dialog where the image is shown
+         */
+        previewImage(image) {
+            this.imageForPreview = image;
+            this.dialog = true;
+        }
     }
     ,
     mounted() {
@@ -316,7 +326,9 @@ export default {
                             }}
                             <img ref="image" style="max-height: 300px;aspect-ratio: auto;max-width: 200px"
                                  v-if="message.content.includes('/storage/') || message.content.includes('blob:')"
-                                 :src="message.content" alt="IF IMAGE IS NOT SHOWING PLEASE RELOAD">
+                                 :src="message.content" alt="IF IMAGE IS NOT SHOWING PLEASE RELOAD"
+                                 @click="previewImage(message.content)"
+                            >
                             <br>
                             <span style="color:grey;font-size: 14px;">{{
                                     this.$utils.normalDate(message?.created_at)
@@ -361,6 +373,22 @@ export default {
                 </form>
             </div>
         </div>
+        <v-dialog
+            v-model="dialog"
+            max-width="800px"
+            max-height="800px"
+        >
+            <v-card>
+                <v-card-text style="display:grid;justify-content: center">
+                    <img :src="imageForPreview" style="max-width: 500px">
+                </v-card-text>
+                <v-card-actions>
+                    <v-btn color="black" variant="outlined" block @click="dialog = false">
+                        Close
+                    </v-btn>
+                </v-card-actions>
+            </v-card>
+        </v-dialog>
     </div>
 
 </template>
