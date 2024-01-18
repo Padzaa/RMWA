@@ -1,4 +1,5 @@
 import {Inertia} from "@inertiajs/inertia";
+import {nextTick} from "vue";
 
 /**
  * Convert a given date to a normal date format.
@@ -220,4 +221,25 @@ export function addIngredient(editData) {
     Inertia.post('/ingredient', {
         name: editData
     });
+}
+
+/**
+ * Checks if requested active chat exists
+ */
+export function checkForRequestedActiveChat() {
+    return sessionStorage.getItem('openActiveChatForUser');
+}
+
+/**
+ * Remove request for opening active chat from session storage
+ */
+export function removeRequestedActiveChat() {
+    sessionStorage.removeItem('openActiveChatForUser');
+}
+
+/**
+ * Get requested active chat
+ */
+export function getRequestedActiveChat() {
+    return JSON.parse(sessionStorage.getItem('openActiveChatForUser'));
 }

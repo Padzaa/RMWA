@@ -189,4 +189,10 @@ form > button[type="submit"] {
 
     justify-content: center;
 }
+
+@media (max-width: 640px) {
+    .el {
+        grid-template-columns: 1fr;
+    }
+}
 </style>

@@ -1,10 +1,20 @@
 <script>
+import {Inertia} from "@inertiajs/inertia";
+
 export default {
     props: {
         user: {
             type: [Object, Array],
         },
         is_following: Boolean
+    },
+    methods: {
+        sendMessage(id) {
+            sessionStorage.setItem('openActiveChatForUser', id);
+            this.$nextTick(() => {
+                Inertia.visit('/message');
+            });
+        }
     }
 }
 </script>
@@ -15,14 +25,9 @@ export default {
         <title>{{user.firstname + " " + user.lastname}}</title>
     </Head>
     <div class="container rounded bg-white mt-5 mb-5">
-
-
         <div class="row justify-content-center">
-
-
             <div class="col-md-3 border-right">
                 <div class="d-flex flex-column align-items-center text-center p-3 py-5">
-
                     <label for="fileToUpload">
                         <div class="profile-pic">
                             <img
@@ -30,7 +35,6 @@ export default {
                                 alt="">
                         </div>
                     </label>
-
                     <span class="font-weight-bold">{{ user.firstname }}</span>
                     <span class="text-black-50">{{ user.email }}</span>
                     <span> </span>
@@ -75,7 +79,7 @@ export default {
                       :class="is_following ? 'btn-danger' : 'btn-primary'" class="btn">
                     {{ is_following ? 'Unfollow' : 'Follow' }}
                 </Link>
-                <Link href="/message" class="btn btn-primary">
+                <Link @click="sendMessage(user.id)" class="btn btn-primary">
                     Send Message
                 </Link>
             </div>

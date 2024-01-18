@@ -29,7 +29,8 @@
                     <div class="ingredients-div">
                         <h6>INGREDIENTS:</h6>
                         <ul>
-                            <li v-for="ingredient in recipe.ingredients">
+                            <!--                            <li v-for="ingredient in recipe.ingredients">-->
+                            <li v-for="ingredient in ingredients">
                                 <p>{{ ingredient.name }}</p>
                             </li>
                         </ul>
@@ -197,7 +198,8 @@
                     <p style="text-align: justify;" class="comment"><q>{{ review.message }}</q></p>
                 </div>
                 <template v-for="review in reviews">
-                    <div class="review alert alert-danger">
+                    <div class="review alert" style="
+box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;">
                         <div class="text-center">
                             <v-rating
                                 v-model="review.rating"
@@ -207,7 +209,7 @@
                             ></v-rating>
                         </div>
                         <p style="font-size: 14px;text-align: center">
-                            <Link href="'/user/' + review.user_id">
+                            <Link :href="'/user/' + review.user_id">
                                 {{ review.user.firstname + " " + review.user.lastname }}
                             </Link>
                             rated this recipe with <b>{{ review.rating }}</b>
@@ -535,7 +537,7 @@ h1 {
         padding-left: 1em;
         padding-right: 1em;
     }
-    
+
     .leave-comment {
         width: 100% !important;
     }

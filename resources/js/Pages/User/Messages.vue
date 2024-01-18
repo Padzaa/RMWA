@@ -145,10 +145,7 @@ export default {
                         inertia.startTyping();
                     }
                 });
-
-
             }
-
         },
         /**
          * Submit form and send file
@@ -259,13 +256,46 @@ export default {
         previewImage(image) {
             this.imageForPreview = image;
             this.dialog = true;
+            this.$nextTick(() => {
+                const renderedImage = document.querySelector('.rendered-preview-image');
+                const previewDialog = document.querySelector('.preview-dialog .v-overlay__content');
+                const media650 = window.matchMedia('(max-width:650px)');
+                console.log(previewDialog.style.maxWidth);
+                if (renderedImage.width > renderedImage.height) {
+                    previewDialog.style.maxWidth = '100%';
+                    previewDialog.style.maxHeight = '100%';
+                    renderedImage.style.maxWidth = '100%';
+                    media650.addEventListener('change', function () {
+                        if (media650.matches) {
+                            console.log('Media query matches: 650px');
+                            previewDialog.style.transform = 'rotate(90deg)';
+                            previewDialog.style.width = '100%';
+                        } else {
+                            previewDialog.style.transform = 'rotate(0)';
+                            previewDialog.style.width = 'auto';
+                        }
+                    });
+                }
+            });
+        },
+        /**
+         * Request to open active chat on loading
+         */
+        checkRequestedActiveChat() {
+            if (this.$utils.checkForRequestedActiveChat()) {
+                const requestedActiveChat = this.$utils.getRequestedActiveChat();
+                this.$nextTick(() => {
+                    this.setActiveChat(this.items.find(inbox => inbox.inbox_id === requestedActiveChat));
+                    this.$utils.removeRequestedActiveChat();
+                })
+            }
         }
     }
     ,
     mounted() {
         this.checkForUploadError();
         this.items = this.setMessagesAndInboxes(this.inboxes);
-
+        this.checkRequestedActiveChat();
         window.Echo.private('message.' + this.$page.props.auth?.user.id).listen('.my-message', (message) => {
             this.reconstructAndDistribute(message);
             this.updateInboxes();
@@ -274,7 +304,6 @@ export default {
     ,
     watch: {
         'activeChat.messages.length':
-
             function () {
                 this.$nextTick(() => {
                     this.scrollToBottom();
@@ -309,16 +338,20 @@ export default {
         <Inboxes class="inboxes" :key="items" :items="items" :set-active-chat="this.setActiveChat"/>
         <div ref="activeChat" class="active-chat" v-if="activeChat">
             <div class="chat-header">
-                <v-btn @click="removeActiveChat()" class="removeChat" prepend-icon="mdi-arrow-left"></v-btn>
-                <h3 style="margin: 0; text-align:center;vertical-align: middle;line-height: 1.9">{{
-                        activeChat.title
-                    }}</h3>
+                <v-btn @click="removeActiveChat()" class="removeChat" prepend-icon="mdi-close"></v-btn>
+                <h3 style="margin: 0; text-align:center;vertical-align: middle;line-height: 1.9">
+                    <Link :href="'/user/'+activeChat.inbox_id">{{ activeChat.title }}</Link>
+                </h3>
             </div>
             <div id="msgs" ref="msgs" class="chat-messages">
                 <div class="message" v-for="message in activeChat.messages">
                     <div :class="message.sender_id == $page.props.auth.user.id ? 'sent' : 'received'">
-                        <v-avatar v-if="message.sender_id != $page.props.auth.user.id"
-                                  :image="activeChat.prependAvatar"></v-avatar>
+                        <Link :href="'/user/'+ message.sender_id">
+                            <v-avatar v-if="message.sender_id != $page.props.auth.user.id"
+                                      :image="activeChat.prependAvatar"
+                            ></v-avatar>
+                        </Link>
+
                         <p :style="message.sender_id == $page.props.auth.user.id ? 'justify-self: end' : 'justify-self: start'"
                            class="text-message">
                             {{
@@ -377,10 +410,11 @@ export default {
             v-model="dialog"
             max-width="800px"
             max-height="800px"
+            class="preview-dialog"
         >
             <v-card>
                 <v-card-text style="display:grid;justify-content: center">
-                    <img :src="imageForPreview" style="max-width: 500px">
+                    <img class="rendered-preview-image" :src="imageForPreview" style="max-width: 500px" alt="alt">
                 </v-card-text>
                 <v-card-actions>
                     <v-btn color="black" variant="outlined" block @click="dialog = false">
@@ -421,6 +455,7 @@ export default {
     overflow-y: auto;
     width: 100%;
     grid-template-rows:min-content 1fr min-content;
+    border-left: 1px solid lightgray;
 }
 
 .chat-header {
@@ -476,12 +511,13 @@ export default {
     margin: 0;
     height: fit-content;
     align-self: center;
-    background-color: rgba(16, 229, 197, 0.53);
+    background-color: rgb(255, 255, 255);
     padding: 0.5em;
     border-radius: 7px;
     color: black;
     font-size: 1.1rem;
     word-break: break-all;
+    box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
 }
 
 @keyframes pulse {
@@ -545,4 +581,5 @@ export default {
         grid-template-columns: 1fr;
     }
 }
+
 </style>

@@ -1,13 +1,13 @@
 <script>
 import Header from "./Header.vue";
 import Alert from "./Alert.vue";
-import Echo from 'laravel-echo';
-import Pusher from 'pusher-js';
+import Chatbot from "./Chatbot.vue";
 
 export default {
     components: {
         Alert,
-        Header
+        Header,
+        Chatbot
     },
     watch: {
         "$page.url": function (newUrl, oldUrl) {
@@ -23,7 +23,17 @@ export default {
             not_key_len: 1000,
         }
     },
-    methods: {},
+    methods: {
+        /**
+         * Chatbot show 'rules'
+         */
+        showRules() {
+            return this.$page.url === '/'
+                || this.$page.url.includes('/dashboard')
+                || this.$page.url.includes('/public')
+                || this.$page.url.includes('/recipe')
+        }
+    },
     mounted() {
         window.Echo.private('notifications.' + this.$page.props.auth?.user.id).listen('.my-notifications', (data) => {
             if (data.data?.notificationsOnLogin) {
@@ -71,11 +81,18 @@ export default {
         type:'error',
         title:'Error',
     }"/>
+    <Chatbot class="chatbot-component" v-if="showRules()"/>
     <!--    <v-btn class="previous-page" icon="mdi-reply" @click="$inertia.get('/back')"></v-btn>-->
 </template>
 
 
 <style scoped>
+.chatbot-component {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+}
+
 /*
 .previous-page {
     position: fixed;

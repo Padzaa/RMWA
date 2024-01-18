@@ -77,7 +77,7 @@
                         <Link v-if="this.$page.props.auth.user.is_admin == 1" as="button" href="/dashboard"
                               style="background-color: #494949;font-size:1.25rem;border-radius: 0;height: 70px;width:100%;font-weight: 550;text-align: start;padding: 16px 24px;"
                               @click="opener = !opener"
-                              :class="this.$page.url == '/dashboard' ? 'active' : ''"
+                              :class="this.$page.url.includes('/dashboard') ? 'active' : ''"
                               class="text-white home-btn"
                         >Admin Dashboard
                         </Link>
@@ -161,7 +161,7 @@
         </div>
 
 
-        <div v-if="!$page.props.auth" class="profile-section">
+        <div v-if="!$page.props.auth" class="nav-section">
 
             <Link class="btn btn-outline-light" href="/guest/public">Public</Link>
             <Link class="btn btn-outline-light" href="/login">Login</Link>
@@ -423,7 +423,7 @@ header {
     grid-auto-flow: column;
     padding: 0 2em 0 0;
 
-    background-color: #791212;
+    background-color: #444444;
     border-bottom: 2px solid black;
 }
 
@@ -467,7 +467,7 @@ h2 {
 }
 
 
-.profile-pic, .profile-section > a[href="/logout"] {
+.profile-pic, .nav-section > a[href="/logout"] {
     width: 60px;
     height: 60px;
     border-radius: 50%;
@@ -479,14 +479,14 @@ h2 {
     outline: 2px solid white;
 }
 
-.profile-section {
+.nav-section {
     display: grid;
     gap: 20px;
     grid-auto-flow: column;
 
 }
 
-.profile-section > button {
+.nav-section > button {
     height: fit-content;
     align-self: center;
     font-size: 1.25rem;
@@ -499,14 +499,13 @@ h2 {
 
 }
 
-.profile-section > a {
+.nav-section > a {
     font-size: 1.25rem;
 }
 
 .logout-btn:deep( .v-btn__append) {
     margin-inline-start: 0 !important;
 }
-
 
 .link {
 
@@ -571,4 +570,9 @@ h2 {
     }
 }
 
+@media (max-width: 1200px) {
+    .nav-section {
+        display: none;
+    }
+}
 </style>

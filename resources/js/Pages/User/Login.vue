@@ -79,10 +79,19 @@
                                         class="text-blue text-decoration-none"
                                         href="/register"
                                         rel="noopener noreferrer"
-
                                     >
                                         Sign up now
                                         <v-icon icon="mdi-chevron-right"></v-icon>
+                                    </a>
+                                    <v-divider class="under-bp"></v-divider>
+                                    <a
+
+                                        class="text-blue text-decoration-none under-bp"
+                                        href="/guest/public"
+                                        rel="noopener noreferrer"
+                                    >
+                                        Public page
+                                        <v-icon icon="mdi-earth"></v-icon>
                                     </a>
                                 </v-card-text>
                             </v-card>
@@ -121,9 +130,12 @@ button {
 }
 
 .container {
-
     padding: 5em
-
 }
 
+@media (min-width: 1200px) {
+    .under-bp {
+        display: none;
+    }
+}
 </style>

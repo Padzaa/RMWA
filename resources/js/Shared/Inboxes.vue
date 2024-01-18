@@ -44,9 +44,7 @@ export default {
             });
             this.$nextTick(() => {
                 // chats.style.transform = this.inboxCollapsed ? 'translateX(0)' : 'translateX(-100%)';
-                inboxTitle.style.borderBottom = '1px solid lightgray';
                 this.inboxCollapsed = !this.inboxCollapsed;
-
             });
 
         }
@@ -60,7 +58,7 @@ export default {
         id="inbox"
     >
         <v-card-title
-            style="height: 52px;padding: 0;display: grid;grid-template-columns: 1fr min-content;"
+            style="height: 53px;padding: 0;display: grid;grid-template-columns: 1fr min-content;border-bottom: 1px solid lightgray;border-right: 1px solid lightgray;"
             id="inbox-title">
             <div style="padding: 0.5em 1em">Inbox</div>
             <div class="collapse-btn">
@@ -83,7 +81,7 @@ export default {
                         <div v-html="item.subtitle" class="msg-content"></div>
                     </v-list-item-content>
                 </v-list-item>
-                <v-divider v-if="item.type"></v-divider>
+                <v-divider class="myDivider" v-if="item.type"></v-divider>
             </template>
         </v-list>
 
@@ -91,6 +89,10 @@ export default {
 </template>
 
 <style scoped>
+.myDivider:first-of-type {
+    display: none;
+}
+
 .msg-content {
     white-space: pre-wrap;
     word-break: break-word;
@@ -129,11 +131,12 @@ export default {
 .v-list .v-list-item {
     padding: 1em 0;
     max-height: 100px;
+
 }
 
 .v-card-title:deep(.v-btn) {
     width: fit-content;
-    height: 52px;
+    height: 53px;
     font-size: 1.25em;
     box-shadow: none;
     color: black;

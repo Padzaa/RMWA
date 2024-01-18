@@ -73,7 +73,7 @@
         </form>
     </div>
     <div class="rec" v-if="user.id == this.$page.props.auth.user.id">
-        <h1 class="text-center">My recipes</h1>
+        <h1 style="padding-left:32px">My recipes</h1>
         <GridNet :recipes="recipes.data" :auth="this.$attrs.auth"></GridNet>
         <Paginator :recipes="recipes"></Paginator>
     </div>
@@ -171,7 +171,7 @@ export default {
 </script>
 <style scoped>
 .profile-pic {
-    border: 5px solid red;
+    border: 2px solid black;
     border-radius: 50%;
     height: 150px;
     width: 150px;
