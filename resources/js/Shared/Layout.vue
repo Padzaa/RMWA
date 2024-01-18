@@ -28,10 +28,9 @@ export default {
          * Chatbot show 'rules'
          */
         showRules() {
-            return this.$page.url === '/'
+            return (this.$page.url === '/'
                 || this.$page.url.includes('/dashboard')
-                || this.$page.url.includes('/public')
-                || this.$page.url.includes('/recipe')
+                || this.$page.url.includes('/recipe') && this.$page.props.auth);
         }
     },
     mounted() {
@@ -81,17 +80,13 @@ export default {
         type:'error',
         title:'Error',
     }"/>
-    <Chatbot class="chatbot-component" v-if="showRules()"/>
+    <Chatbot v-if="showRules()"/>
     <!--    <v-btn class="previous-page" icon="mdi-reply" @click="$inertia.get('/back')"></v-btn>-->
 </template>
 
 
 <style scoped>
-.chatbot-component {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-}
+
 
 /*
 .previous-page {
