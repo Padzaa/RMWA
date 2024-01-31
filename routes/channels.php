@@ -25,3 +25,6 @@ Broadcast::channel('message.{id}', function ($user, $id) {
 Broadcast::channel('is_typing.{id}', function () {
     return Auth::check();
 });
+Broadcast::channel('technical-support', function () {
+    return Auth::check();
+});

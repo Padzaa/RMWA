@@ -72,8 +72,14 @@ export default {
         available_years: {
             type: [Array, Object],
         },
+        technical_support_requests: {
+            type: [Array, Object],
+        },
         chosen_year: Number,
-        chosen_number_of_users: Number
+        chosen_number_of_users: Number,
+        technicalSupportRequestDateRange: {
+            type: [Array, Object],
+        }
     },
     components: {
         ADCards,
@@ -255,7 +261,13 @@ export default {
                 "Email": 'user_email',
                 'Comment': 'comment',
             },
-
+            technicalSupportRequests: [],
+            dialogReset: [],
+            technicalSupportRequestsFields: {
+                "User": 'tsr_name',
+                "Email": 'tsr_email',
+                'Requested at': 'requested_at',
+            }
         }
     },
     methods: {
@@ -323,10 +335,53 @@ export default {
             });
         },
 
+
     },
     beforeMount() {
         this.setBarChartValues();
+        this.$utils.setTechnicalSupportRequests(this.technical_support_requests);
+        this.technicalSupportRequests = this.$utils.getTechnicalSupportRequests();
     },
+    // created() {
+    //     if (this.$page.props.auth.user.is_admin) {
+    //         window.Echo.leave('technical-support');
+    //         window.Echo.private('technical-support').listen('.technical-support-request', (data) => {
+    //             if (this.$page.props.auth.user.id == data.technicalSupport.notifiable_id) {
+    //                 data.technicalSupport.id = data.id;
+    //                 data.technicalSupport.data = JSON.parse(data.technicalSupport.data);
+    //                 let existingTechnicalSupportRequests = this.$utils.getTechnicalSupportRequests();
+    //                 console.log(existingTechnicalSupportRequests);
+    //                 existingTechnicalSupportRequests.push(data.technicalSupport);
+    //                 existingTechnicalSupportRequests.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+    //                 sessionStorage.setItem('technicalSupportRequests', JSON.stringify(existingTechnicalSupportRequests));
+    //                 this.technicalSupportRequests = existingTechnicalSupportRequests;
+    //                 this.$refs.childDialog.$data.newDialogData = this.technicalSupportRequests;
+    //             }
+    //         });
+    //         window.Echo.private('technical-support').listenForWhisper('action', () => {
+    //             Inertia.reload({
+    //                 only: ['technical_support_requests'],
+    //             });
+    //         });
+    //     }
+    // },
+    watch: {
+        isActive() {
+            if (!this.isActive) {
+                this.dialogData = [];
+                this.$refs.childDialog.$data.newDialogData = this.dialogData;
+            }
+        },
+        technical_support_requests() {
+            this.technicalSupportRequests = this.technical_support_requests;
+            if (this.$refs.childDialog.$props.dialogTitle?.includes('Support')) {
+                this.$refs.childDialog.$data.newDialogData = this.technicalSupportRequests;
+            }
+        },
+        technicalSupportRequestDateRange() {
+            this.$refs.childDialog.supportRequestsDateRange = this.technicalSupportRequestDateRange;
+        }
+    }
 }
 </script>
 
@@ -334,7 +389,9 @@ export default {
     <Head :title="title"></Head>
     <div class="dashboard">
         <ADCards :cards="cards"/>
-        <Dialog ref="childDialog" :dialogData="dialogData" :dialogTitle="dialogTitle" :dialogFields="dialogFields"
+        <Dialog ref="childDialog"
+                :dialogData="dialogData"
+                :dialogTitle="dialogTitle" :dialogFields="dialogFields"
                 :cardType="cardType"/>
         <div class="additional-buttons">
             <v-btn class="ch-btn"
@@ -350,6 +407,10 @@ export default {
             <v-btn class="ch-btn"
                    @click="openDialogAndPassData('Users comments',users_comments,this.usersCommentsFields)">User
                 Comments
+            </v-btn>
+            <v-btn class="ch-btn"
+                   @click="openDialogAndPassData('Technical Support Requests',this.technicalSupportRequests,this.technicalSupportRequestsFields)">
+                Technical Support Requests
             </v-btn>
         </div>
         <div class="charts">

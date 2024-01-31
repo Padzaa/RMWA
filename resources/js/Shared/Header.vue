@@ -38,12 +38,14 @@
                         </Link>
                         <v-divider style="color:white;margin: 0;"></v-divider>
                         <div style="display: grid;padding: 10px 0;">
-                            <Link href="/logout" as="button" method="POST" style="justify-self:center;width:90%;">
-                                <v-btn class="logout-btn" style="justify-self:center;font-size: 1em;width:100%;"
-                                       variant="outlined" color="white"
-                                       append-icon="mdi-logout">Logout
-                                </v-btn>
-                            </Link>
+
+                            <v-btn class="logout-btn" style="justify-self:center;font-size: 1em;width:90%;"
+                                   variant="outlined" color="white"
+                                   @click="logout()"
+                                   append-icon="mdi-logout">Logout
+
+                            </v-btn>
+
                         </div>
 
                     </div>
@@ -74,7 +76,7 @@
                               class="text-white home-btn"
                         >Chat
                         </Link>
-                        <Link v-if="this.$page.props.auth.user.is_admin == 1" as="button" href="/dashboard"
+                        <Link v-if="this.$page.props.administrator" as="button" href="/dashboard"
                               style="background-color: #494949;font-size:1.25rem;border-radius: 0;height: 70px;width:100%;font-weight: 550;text-align: start;padding: 16px 24px;"
                               @click="opener = !opener"
                               :class="this.$page.url.includes('/dashboard') ? 'active' : ''"
@@ -147,7 +149,7 @@
                         <div v-for="notification in notifications" class="notification-card">
                             <p class="notification-text">
                                 {{
-                                    notification.data.message ? notification.data.message : JSON.parse(notification.data).message
+                                    notification.data.message ? notification.data.message : 'JSON.parse(notification.data).message'
                                 }}
                             </p>
 
@@ -294,6 +296,13 @@ export default {
 
 
     methods: {
+        logout() {
+            sessionStorage.clear();
+            // window.Echo.private('technical-support').whisper('logout', {
+            //     user_id: this.$page.props.auth.user.id
+            // });
+            Inertia.post('/logout');
+        },
         /**
          * Loop through panels and panel items to check if any item is a link to the current page and makes it active,
          * so the panel will be expanded when menu is opened

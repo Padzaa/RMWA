@@ -37,7 +37,7 @@ class IngredientController extends Controller
         ]);
         $this->flashSuccessMessage("Ingredient {$ingredient->name} created successfully");
 
-        return Inertia::location(URL::previous());
+        return redirect()->back();
     }
 
     /**

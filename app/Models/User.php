@@ -182,5 +182,29 @@ class User extends Authenticatable
         return self::where('is_admin', 1);
     }
 
+    /**
+     * Return all TSR for user
+     */
+    public function technicalSupportRequests()
+    {
+        return $this->notifications()->where('type', 'App\Notifications\TechnicalSupportRequest');
+    }
+
+    /**
+     * Return all TSR for user by user
+     */
+    public function technicalSupportRequestsByUser($user)
+    {
+        return $this->technicalSupportRequests()->where('tsr_sender_id', $user->id);
+    }
+
+    /**
+     * Return all pending TSR
+     */
+
+    public function pendingTechnicalSupportRequests()
+    {
+        return $this->technicalSupportRequests()->where('tsr_status', null);
+    }
 
 }

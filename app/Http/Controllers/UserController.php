@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 use App\Models\User;
+use App\Notifications\TechnicalSupportRequest;
 use App\Notifications\UserFollowed;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -129,13 +131,49 @@ class UserController extends Controller
     public function notifications($id = null)
     {
         if ($id) {
-            Notification::where('id', $id)->update(['read_at' => now()]);
+            Notification::where('id', $id)->update(['read_at' => Carbon::now()]);
 
             return redirect()->back();
         }
-        Notification::where('notifiable_id', Auth::user()->id)->where('read_at', null)->update(['read_at' => now()]);
+        Notification::where('notifiable_id', Auth::user()->id)->where('read_at', null)->update(['read_at' => Carbon::now()]);
 
         return Inertia::location(URL::previous());
+    }
+
+    /**
+     * Mark TSRs as read
+     */
+    public function updateTSRs(Request $request)
+    {
+        $user = User::find($request->user_id);
+        if ($request->tsr_status === 'accepted') {
+            Notification::acceptTSRsFromUser($user);
+        }
+        if ($request->tsr_status === 'rejected') {
+            Notification::rejectTSRsFromUser($user);
+        }
+        if ($request->tsr_status === 'terminated') {
+            Notification::terminateTSRsFromUser($user);
+        }
+        if ($request->tsr_status === 'processed') {
+            Notification::processTSRsFromUser($user);
+        }
+        Notification::skipTSRsFromUser($user);
+    }
+
+    /**
+     * Requests a technical support from admins
+     * If user has not already requested a technical support and doesn't have any accepted requests,
+     * because only false(doesn't have pending requests) and false(doesn't have accepted requests) can with ! return true
+     */
+    public function requestTechnicalSupport(Request $request): void
+    {
+        if (!(Inertia::getShared('pendingRequests') || Inertia::getShared('acceptedRequests'))) {
+            $user = User::find($request->user_id);
+            NotificationFacade::send(User::admins()->get(), new TechnicalSupportRequest($user));
+            Inertia::share('pendingRequests', true);
+        }
+
     }
 
 }

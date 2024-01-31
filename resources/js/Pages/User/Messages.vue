@@ -260,14 +260,12 @@ export default {
                 const renderedImage = document.querySelector('.rendered-preview-image');
                 const previewDialog = document.querySelector('.preview-dialog .v-overlay__content');
                 const media650 = window.matchMedia('(max-width:650px)');
-                console.log(previewDialog.style.maxWidth);
                 if (renderedImage.width > renderedImage.height) {
                     previewDialog.style.maxWidth = '100%';
                     previewDialog.style.maxHeight = '100%';
                     renderedImage.style.maxWidth = '100%';
                     media650.addEventListener('change', function () {
                         if (media650.matches) {
-                            console.log('Media query matches: 650px');
                             previewDialog.style.transform = 'rotate(90deg)';
                             previewDialog.style.width = '100%';
                         } else {

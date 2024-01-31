@@ -243,3 +243,101 @@ export function removeRequestedActiveChat() {
 export function getRequestedActiveChat() {
     return JSON.parse(sessionStorage.getItem('openActiveChatForUser'));
 }
+
+/**
+ * Listen for technical support requests
+ */
+export function listenForTechnicalSupportRequests() {
+    window.Echo.private('technical-support').listen('.technical-support-request', (data) => {
+        console.log(data);
+        let existingTechnicalSupportRequests = JSON.parse(sessionStorage.getItem('technicalSupportRequests')) || [];
+        existingTechnicalSupportRequests = existingTechnicalSupportRequests.filter(item => item.user_id !== data.user_id);
+        existingTechnicalSupportRequests.push(data.technicalSupport);
+        sessionStorage.setItem('technicalSupportRequests', JSON.stringify(existingTechnicalSupportRequests));
+    });
+}
+
+/**
+ * Retrieve technical support requests from session storage
+ * @returns {any}
+ */
+export function getTechnicalSupportRequests() {
+    return JSON.parse(sessionStorage.getItem('technicalSupportRequests')) || [];
+}
+
+/**
+ * Retrieve technical support requests from session storage
+ * @returns {any}
+ */
+export function setTechnicalSupportRequests(data) {
+    sessionStorage.setItem('technicalSupportRequests', JSON.stringify(data));
+}
+
+/**
+ * Update technical support list from session storage
+ * @returns {any}
+ */
+export function updateTechnicalSupportRequestList(newRequests) {
+    let existing = getTechnicalSupportRequests();
+    existing.push(newRequests);
+    sessionStorage.setItem('technicalSupportRequests', JSON.stringify(existing));
+}
+
+/**
+ * Decline technical support request
+ */
+export function declineTechnicalSupportRequest(id, currentStatus) {
+    let existingRequests = getTechnicalSupportRequests();
+    existingRequests = existingRequests.filter(request => (request.id !== id));
+    sessionStorage.setItem('technicalSupportRequests', JSON.stringify(existingRequests));
+    sessionStorage.removeItem('technical-' + id);
+    sessionStorage.removeItem('activeSupportChat');
+}
+
+/**
+ * Accept technical support request
+ */
+export function acceptTechnicalSupportRequest(id, currentStatus) {
+    let existingRequests = getTechnicalSupportRequests();
+    existingRequests.find(request => (request.id === id)).read_at = new Date();
+    existingRequests.find(request => (request.id === id)).tsr_status = currentStatus === null ? 'accepted' : 'processed';
+    sessionStorage.setItem('technicalSupportRequests', JSON.stringify(existingRequests));
+
+}
+
+/**
+ * Returns accepted technical support requests
+ * @returns {*}
+ */
+export function getAcceptedTechnicalSupportRequests() {
+    let existingRequests = getTechnicalSupportRequests();
+    return existingRequests.filter(request => (request.tsr_status === 'accepted')) || [];
+}
+
+/**
+ * Get Messages for support chat
+ * @param id
+ * @returns {any|*[]}
+ */
+export function getMessagesForSupportChat(id = null) {
+    if (id) {
+        return sessionStorage.getItem('technical-' + id) ? JSON.parse(sessionStorage.getItem('technical-' + id)) : [];
+    }
+    return JSON.parse(sessionStorage.getItem('activeSupportChat')) || [];
+}
+
+/**
+ * Update support chat messages
+ */
+export function updateSupportChatMessages(newMessage, id = null) {
+    if (id) {
+        let existingMessages = getMessagesForSupportChat(id);
+        existingMessages.push(newMessage);
+        sessionStorage.setItem('technical-' + id, JSON.stringify(existingMessages));
+    } else {
+        let existingMessages = getMessagesForSupportChat();
+        existingMessages.push(newMessage);
+        sessionStorage.setItem('activeSupportChat', JSON.stringify(existingMessages));
+    }
+
+}

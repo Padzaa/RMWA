@@ -13,6 +13,7 @@ use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\SharedRecipeController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\WelcomeController;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CollectionController;
@@ -70,11 +71,14 @@ Route::middleware(['auth'])->group(function () {
     Route::group([], function () {
         Route::put('/user/{user}/follow', [UserController::class, 'follow'])->name('follow');//Follow a user
         Route::put('/notifications/{id?}', [UserController::class, 'notifications'])->name('notifications');//Mark notification as read
+        Route::put('/update-tsrs/', [UserController::class, 'updateTSRs'])->name('updateTSRs');//Mark TSR as read
     });
     //COMMENT ROUTES
     Route::group([], function () {
         Route::delete('/comment/{comment}', [CommentController::class, 'destroy'])->name('delete-comment');//Like a comment
     });
+
+    Route::put('/request-technical-support/', [UserController::class, 'requestTechnicalSupport'])->name('request-technical-support');
 });
 /*---------------------------------------------------------------------------------------*/
 /*------------------END OF (ONLY ACCESSABLE WHEN USER LOGGED IN) ROUTES------------------*/

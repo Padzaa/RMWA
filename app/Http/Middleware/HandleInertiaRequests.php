@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Notification;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 use Illuminate\Support\Facades\Auth;
@@ -37,18 +38,28 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
+        $user = Auth::user();
         return array_merge(parent::share($request), [
-            "auth" => Auth::user() ? [
+            "auth" => $user ? [
                 'user' => [
-                    "id" => Auth::user()->id,
-                    "firstname" => Auth::user()->firstname,
-                    "lastname" => Auth::user()->lastname,
-                    "email" => Auth::user()->email,
-                    "picture" => Auth::user()->picture ? asset(Auth::user()->picture) : null,
-                    "is_admin" => Auth::user()->is_admin
+                    "id" => $user->id,
+                    "firstname" => $user->firstname,
+                    "lastname" => $user->lastname,
+                    "email" => $user->email,
+                    "picture" => $user->picture ? asset($user->picture) : null,
+                    "is_admin" => $user->is_admin
                 ]
             ] : null,
+            'administrator' => $user && $user->is_admin ? true : false,
             'alertFlash' => $request->session()->get('alert'),
+            'canRequestTechnicalSupport' => $user && !$user->is_admin && !Notification::technicalSupportRequestsByUser($user)->where('tsr_status', null)->exists(),
+            'pendingRequests' => $user && !$user->is_admin ? Notification::technicalSupportRequestsByUser($user)->where('tsr_status', null)->exists() : null,
+            'acceptedRequests' => $user && !$user->is_admin ? Notification::technicalSupportRequestsByUser($user)->where('tsr_status', 'accepted')->exists() : null,
+            'technicalSupportRequests' => $user && $user->is_admin ? $user->technicalSupportRequests()->where(function ($query) {
+                $query->where('tsr_status', null)->orWhere('tsr_status', 'accepted');
+            })->get() : null,
+            'currentOperator' => $user && $user->is_admin && Notification::technicalSupportRequestsByUser($user)->where('tsr_status', 'accepted')->first() !== null
+                ? Notification::technicalSupportRequestsByUser($user)->where('tsr_status', 'accepted')->first()->user()->first() : []
         ]);
     }
 }

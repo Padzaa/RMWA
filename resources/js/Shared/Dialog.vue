@@ -1,6 +1,8 @@
 <script>
 import {Inertia} from "@inertiajs/inertia";
 import {capitalize} from "vue";
+import VueDatePicker from "@vuepic/vue-datepicker";
+import '@vuepic/vue-datepicker/dist/main.css';
 
 export default {
     props: {
@@ -13,6 +15,9 @@ export default {
         },
         cardType: String,
     },
+    components: {
+        VueDatePicker
+    },
     data() {
         return {
             checked: [],
@@ -20,10 +25,32 @@ export default {
             checkActiveDialog: false,
             checkActiveDialogData: [],
             formData: '',
+            supportRequestsDateRange: [],
         }
-    }
-    ,
+    },
     methods: {
+        /**
+         * Request technical support requests for selected date range
+         */
+        requestTSRsForDateRange() {
+            console.log(this.supportRequestsDateRange);
+            Inertia.get('/dashboard', {
+                dateRange: this.supportRequestsDateRange
+            }, {
+                preserveState: true,
+                only: ['technical_support_requests', 'technicalSupportRequestDateRange']
+            });
+        },
+        /**
+         * Reset technical support requests for selected date range
+         */
+        resetDateRangeForRequestsTSRs() {
+            Inertia.get('/dashboard', {}, {
+                preserveState: true,
+                only: ['technical_support_requests', 'technicalSupportRequestDateRange']
+            });
+        },
+
         /**
          * Returns dialog heading text
          */
@@ -117,6 +144,12 @@ export default {
                     return this.$utils.normalDate(data[field]);
                 case "last_login":
                     return this.$utils.normalDate(data[field]);
+                case "requested_at":
+                    return this.$utils.normalDate(data['created_at']);
+                case "tsr_email":
+                    return data.data.user.email;
+                case "tsr_name":
+                    return data.data.user.firstname;
                 case "user_email":
                     return data['user'].email;
                 case "comment":
@@ -166,6 +199,14 @@ export default {
                 case 'add':
                     return 'blue'
             }
+        },
+        /**
+         * Format calendar date preview
+         */
+        formatCalendarDate(startDate, endDate) {
+            let start = new Date(startDate);
+            let end = new Date(endDate);
+            return `Requests from ${start.getDate()}/${start.getMonth() + 1}/${start.getFullYear()} to ${end.getDate()}/${end.getMonth() + 1}/${end.getFullYear()}`
         }
     },
     watch: {
@@ -180,6 +221,9 @@ export default {
             immediate: true, // Trigger the watcher immediately when the component is created
         },
     },
+    mounted() {
+        this.supportRequestsDateRange = this.$parent.$props.technicalSupportRequestDateRange;
+    }
 }
 
 </script>
@@ -189,9 +233,12 @@ export default {
               width="fit-content"
               v-model="this.$parent.$data.isActive"
               class="openingDialogForCards"
+              height="max-content"
     >
 
-        <v-card class="position-relative" :title="dialogTitle">
+        <v-card class="position-relative" :title="dialogTitle"
+                :style="dialogTitle.includes('Support') ? 'min-height: 500px' : ''">
+
             <v-card-text>
                 <v-btn style="position:absolute;right: 10px"
                        v-if="dialogTitle.includes('Categories') ||
@@ -200,6 +247,14 @@ export default {
                        color="blue">
                     Add
                 </v-btn>
+                <VueDatePicker v-if="dialogTitle.includes('Support')"
+                               v-model="supportRequestsDateRange"
+                               :enable-time-picker="false" range
+                               :placeholder="supportRequestsDateRange ? formatCalendarDate(supportRequestsDateRange['startDate'], supportRequestsDateRange['endDate']) : console.log(supportRequestsDateRange)"
+                               @update:model-value="requestTSRsForDateRange()"
+                >
+
+                </VueDatePicker>
                 <table class="table mt-2 table-striped" v-if="newDialogData.length != 0">
                     <thead>
                     <tr>
@@ -210,8 +265,11 @@ export default {
                         <th v-if="dialogFields.hasOwnProperty('Notification')">
                             Mark As Read
                         </th>
-                        <th v-if="dialogTitle != 'Public Recipes' && !dialogTitle.includes('activities') && !dialogTitle.includes('logins') ">
+                        <th v-if="dialogTitle != 'Public Recipes' && !dialogTitle.includes('activities') && !dialogTitle.includes('logins') && !dialogTitle.includes('Support') ">
                             Actions
+                        </th>
+                        <th v-if="dialogTitle.includes('Support')">
+                            Status
                         </th>
                     </tr>
                     </thead>
@@ -242,9 +300,10 @@ export default {
                                             @click="[updateNewDialogData(data['id']),markAsRead(data['id'])]"
                                             style="width:fit-content;margin:0 auto;"
                             />
+
                         </td>
                         <td
-                            v-if="dialogTitle != 'Public Recipes' && !dialogTitle.includes('activities') && !dialogTitle.includes('logins')">
+                            v-if="dialogTitle != 'Public Recipes' && !dialogTitle.includes('activities') && !dialogTitle.includes('logins') && !dialogTitle.includes('Support')">
                             <v-btn v-if="(data['id'] != this.$page.props.auth.user.id || data['is_admin'] != 1) "
                                    @click="[setCheckActiveDialogData(data),checkActiveDialog = true]"
                                    color="error">
@@ -265,7 +324,26 @@ export default {
                             </v-btn>
 
                         </td>
-
+                        <td v-if="dialogTitle.includes('Support')" style="text-align: center">
+                            <v-progress-circular v-if="data['tsr_status'] === null"
+                                                 indeterminate="disable-shrink"
+                                                 color="primary"/>
+                            <v-icon v-else-if="data['tsr_status'] === 'accepted'"
+                                    style="font-size: 2.25em" class="blink"
+                                    color="#08e83b">
+                                mdi-circle-medium
+                            </v-icon>
+                            <v-icon
+                                v-else-if="data['tsr_status'] === 'processed' || data['tsr_status'] === 'rejected' || data['tsr_status'] === 'terminated'"
+                                :color="data['tsr_status'] === 'processed' ? '#08e83b' : 'red'"
+                                style="font-size: 2.25em">{{
+                                    data['tsr_status'] === 'processed' ? 'mdi-check' : 'mdi-close'
+                                }}
+                            </v-icon>
+                            <v-icon v-else-if="data['tsr_status'] === 'skipped'">
+                                mdi-skip-next
+                            </v-icon>
+                        </td>
                     </tr>
                     </tbody>
 
@@ -368,5 +446,37 @@ td {
     align-self: center;
     gap: 1em;
 
+}
+
+@keyframes pulse {
+    0% {
+        opacity: 100%;
+    }
+    25% {
+        opacity: 65%;
+    }
+    50% {
+        opacity: 45%;
+    }
+    75% {
+        opacity: 65%;
+    }
+    100% {
+        opacity: 100%;
+    }
+}
+
+.blink {
+    animation: pulse 1.35s infinite;
+}
+
+:deep(.dp__action_row) {
+    display: grid !important;
+    grid-auto-flow: row;
+    row-gap: 0.7em;
+}
+
+:deep(.dp__selection_preview) {
+    text-align: center;
 }
 </style>

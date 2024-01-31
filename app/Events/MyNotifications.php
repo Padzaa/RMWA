@@ -22,7 +22,7 @@ class MyNotifications implements ShouldBroadcast
     public function __construct($user)
     {
         $this->user = $user;
-        $this->data = ['notificationsOnLogin' => $user->unreadNotifications()->get()];
+        $this->data = ['notificationsOnLogin' => $user->unreadNotifications()->where('type', '!=', 'App\Notifications\TechnicalSupportRequest')->get()];
     }
 
     /**
