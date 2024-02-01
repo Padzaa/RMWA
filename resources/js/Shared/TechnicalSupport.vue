@@ -166,6 +166,7 @@ export default {
                     <v-list-item
                         :title="request.data.user.firstname"
                         :subtitle="request.data.user.email"
+                        v-if="request.tsr_status !== 'rejected' && request.tsr_status !== 'terminated'"
                         @click="request.tsr_status === 'accepted' ? setActiveSupportChat(request.data.user) : null"
                     >
                         <template v-slot:append>
